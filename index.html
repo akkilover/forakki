@@ -53,7 +53,7 @@
 
   <!-- BACKGROUND VIDEO ELEMENT -->
   <video autoplay muted loop playsinline id="bg-video">
-    <source id="video-source" src="2.mp4" type="video/mp4">
+    <source id="video-source" src="5.mp4" type="video/mp4">
   </video>
 
   <!-- BACKGROUND MP4 MUSIC ELEMENT -->
@@ -89,12 +89,11 @@
 
   <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
-    // 10-MINUTE AUTOMATIC VIDEO SWITCHER
     const videoList = [
-      "2.mp4", "3.mp4", "7.mp4", "5.mp4", "9.mp4", "10.mp4",
-      "12.mp4", "14.mp4", "15.mp4", "16.mp4", "20.mp4",
-      "21.mp4", "22.mp4", "32.mp4", "11.mp4", "25.mp4",
-      "27.mp4", "29.mp4", "30.mp4", "31.mp4"
+      "5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", 
+      "14.mp4", "15.mp4", "16.mp4", "20.mp4", "21.mp4", 
+      "22.mp4", "32.mp4", "11.mp4", "25.mp4", "27.mp4", 
+      "29.mp4", "30.mp4", "31.mp4"
     ];
 
     let currentVideoIndex = 0;
@@ -118,7 +117,6 @@
 
     setInterval(changeBackgroundVideo, tenMinutesInMs);
 
-    // 10 MP4 MUSIC PLAYLIST LOGIC
     const musicList = [
       "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
       "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
@@ -128,9 +126,9 @@
 
     window.playMusic = function() {
       const musicPlayer = document.getElementById("bg-music");
-      musicPlayer.volume = 0.4; // Set 40% background volume
-      musicPlayer.play().catch(() => {
-        console.log("Autoplay prevented by browser.");
+      musicPlayer.volume = 0.4;
+      musicPlayer.play().catch((err) => {
+        console.log("Autoplay blocked:", err);
       });
     };
 
@@ -146,7 +144,6 @@
       }
     };
 
-    // Auto-advance to next song
     document.addEventListener("DOMContentLoaded", () => {
       const musicPlayer = document.getElementById("bg-music");
       const musicSource = document.getElementById("music-source");
@@ -186,7 +183,7 @@
       if (enteredPass === SECRET_PASSWORD) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("chat-screen").style.display = "block";
-        window.playMusic(); // Calls global playMusic function
+        window.playMusic();
       } else {
         alert("Incorrect password!");
       }
