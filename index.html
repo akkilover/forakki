@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Chat</title>
+  
+  <!-- Emoji Picker Component -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+
   <style>
     /* ENDLESS BACKGROUND VIDEO STYLES */
     #bg-video {
@@ -19,34 +23,113 @@
 
     body { 
       font-family: Arial, sans-serif; 
-      max-width: 500px; 
-      margin: 30px auto; 
-      padding: 20px; 
+      max-width: 520px; 
+      margin: 20px auto; 
+      padding: 15px; 
       min-height: 90vh;
     }
     h2 { text-align: center; color: #333; }
-    #login-screen { background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; border: 1px solid #ccc; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
-    #chat-screen { display: none; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
-    #chat-box { height: 350px; border: 1px solid #ccc; background: rgba(249, 249, 249, 0.95); overflow-y: scroll; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-    .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; width: fit-content; max-width: 80%; }
+    
+    #login-screen { 
+      background: rgba(255, 255, 255, 0.92); 
+      padding: 20px; 
+      border-radius: 12px; 
+      border: 1px solid #ccc; 
+      text-align: center; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+      backdrop-filter: blur(8px); 
+    }
+    
+    #chat-screen { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.92); 
+      padding: 20px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+      backdrop-filter: blur(8px); 
+    }
+    
+    #chat-box { 
+      height: 350px; 
+      border: 1px solid #ccc; 
+      background: rgba(249, 249, 249, 0.95); 
+      overflow-y: scroll; 
+      padding: 12px; 
+      border-radius: 8px; 
+      margin-bottom: 5px; 
+    }
+
+    /* MESSAGE STYLES */
+    .message { 
+      margin-bottom: 12px; 
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      width: fit-content; 
+      max-width: 80%; 
+      word-wrap: break-word;
+      position: relative;
+    }
     .my-msg { background: #007bff; color: white; margin-left: auto; }
     .friend-msg { background: #e9e9eb; color: #333; }
-    .input-group { display: flex; gap: 8px; }
-    input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
-    button { padding: 10px 16px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-    button:hover { background: #0056b3; }
     
-    /* MUSIC CONTROL BUTTON STYLES */
-    .music-btn {
+    .timestamp {
+      font-size: 10px;
+      opacity: 0.75;
+      margin-top: 4px;
+      text-align: right;
+      display: block;
+    }
+
+    /* TYPING INDICATOR */
+    #typing-indicator {
+      font-size: 12px;
+      font-style: italic;
+      color: #666;
+      height: 18px;
+      margin-bottom: 8px;
+    }
+
+    /* INPUT CONTROLS */
+    .input-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group { display: flex; gap: 6px; align-items: center; }
+    input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 14px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+
+    /* HEADER CONTROLS */
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .music-btn, .theme-select {
       background: #6c757d;
       color: white;
       font-size: 12px;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
     }
-    .music-btn:hover { background: #5a6268; }
+
+    /* EMOJI PICKER POPUP */
+    emoji-picker {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      display: none;
+      z-index: 100;
+      --num-columns: 8;
+      --category-emoji-size: 1.125rem;
+    }
   </style>
 </head>
 <body>
@@ -73,34 +156,52 @@
 
   <!-- STEP 2: CHAT SCREEN -->
   <div id="chat-screen">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2 style="margin: 0;">Secret Chat Room</h2>
-      <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute Music</button>
+    <div class="control-bar">
+      <h3 style="margin: 0; font-size: 16px;">Secret Chat</h3>
+      <div>
+        <!-- THEME SWITCHER -->
+        <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
+          <option value="all">🎬 Theme: All</option>
+          <option value="romantic">💖 Romantic</option>
+          <option value="lofi">🌙 Lofi</option>
+          <option value="rainy">🌧️ Rainy</option>
+        </select>
+        
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute</button>
+      </div>
     </div>
-    <br>
-    <div id="chat-box"></div>
 
-    <div class="input-group">
-      <input type="text" id="username" placeholder="Secret Alias..." style="width: 35%;" value="">
-      <input type="text" id="message" placeholder="Type a message...">
-      <button onclick="sendMessage()">Send</button>
+    <div id="chat-box"></div>
+    <div id="typing-indicator"></div>
+
+    <div class="input-container">
+      <emoji-picker id="picker"></emoji-picker>
+      
+      <div class="input-group">
+        <input type="text" id="username" placeholder="Secret Alias..." style="width: 30%;" value="">
+        <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
+        <button type="button" onclick="toggleEmojiPicker()">😊</button>
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
   </div>
 
   <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
-    const videoList = [
-      "5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", 
-      "14.mp4", "15.mp4", "16.mp4", "20.mp4", "21.mp4", 
-      "22.mp4", "32.mp4", "11.mp4", "25.mp4", "27.mp4", 
-      "29.mp4", "30.mp4", "31.mp4"
-    ];
+    // VIDEO THEME CATEGORIES
+    const videoThemes = {
+      all: ["5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", "14.mp4", "15.mp4", "16.mp4", "20.mp4", "21.mp4", "22.mp4", "32.mp4", "11.mp4", "25.mp4", "27.mp4", "29.mp4", "30.mp4", "31.mp4"],
+      romantic: ["5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", "14.mp4"],
+      lofi: ["15.mp4", "16.mp4", "20.mp4", "21.mp4", "22.mp4"],
+      rainy: ["25.mp4", "27.mp4", "29.mp4", "30.mp4", "31.mp4", "32.mp4"]
+    };
 
+    let activeVideoList = videoThemes.all;
     let currentVideoIndex = 0;
     const tenMinutesInMs = 10 * 60 * 1000;
 
     function changeBackgroundVideo() {
-      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
+      currentVideoIndex = (currentVideoIndex + 1) % activeVideoList.length;
       
       const videoPlayer = document.getElementById("bg-video");
       const videoSource = document.getElementById("video-source");
@@ -108,26 +209,55 @@
       videoPlayer.style.opacity = "0";
 
       setTimeout(() => {
-        videoSource.src = videoList[currentVideoIndex];
+        videoSource.src = activeVideoList[currentVideoIndex];
         videoPlayer.load();
         videoPlayer.play();
         videoPlayer.style.opacity = "1";
       }, 1000);
     }
 
+    function changeThemeCategory(category) {
+      if (videoThemes[category]) {
+        activeVideoList = videoThemes[category];
+        currentVideoIndex = -1;
+        changeBackgroundVideo();
+      }
+    }
+
     setInterval(changeBackgroundVideo, tenMinutesInMs);
 
+    // 1.5 MINUTE FAST-MIX MUSIC PLAYLIST LOGIC
     const musicList = [
       "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
-      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
+      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4",
+      "music11.mp4", "music12.mp4", "music13.mp4", "music14.mp4", "music15.mp4",
+      "music16.mp4", "music17.mp4", "music18.mp4", "music19.mp4", "music20.mp4"
     ];
 
     let currentMusicIndex = 0;
+    let musicTimer = null;
+    const mixDurationMs = 90 * 1000;
+
+    function playNextSongInMix() {
+      const musicPlayer = document.getElementById("bg-music");
+      const musicSource = document.getElementById("music-source");
+
+      currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+      musicSource.src = musicList[currentMusicIndex];
+      musicPlayer.load();
+      musicPlayer.play();
+
+      clearTimeout(musicTimer);
+      musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
+    }
 
     window.playMusic = function() {
       const musicPlayer = document.getElementById("bg-music");
       musicPlayer.volume = 0.4;
-      musicPlayer.play().catch((err) => {
+      musicPlayer.play().then(() => {
+        clearTimeout(musicTimer);
+        musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
+      }).catch((err) => {
         console.log("Autoplay blocked:", err);
       });
     };
@@ -137,30 +267,37 @@
       const musicBtn = document.getElementById("music-toggle");
       if (musicPlayer.paused) {
         musicPlayer.play();
-        musicBtn.innerText = "🔊 Mute Music";
+        musicBtn.innerText = "🔊 Mute";
+        musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
       } else {
         musicPlayer.pause();
-        musicBtn.innerText = "📁 Play Music";
+        musicBtn.innerText = "📁 Play";
+        clearTimeout(musicTimer);
       }
     };
 
     document.addEventListener("DOMContentLoaded", () => {
       const musicPlayer = document.getElementById("bg-music");
-      const musicSource = document.getElementById("music-source");
+      musicPlayer.addEventListener("ended", playNextSongInMix);
 
-      musicPlayer.addEventListener("ended", () => {
-        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
-        musicSource.src = musicList[currentMusicIndex];
-        musicPlayer.load();
-        musicPlayer.play();
+      // Emoji picker listener
+      const picker = document.getElementById('picker');
+      picker.addEventListener('emoji-click', event => {
+        const msgInput = document.getElementById("message");
+        msgInput.value += event.detail.unicode;
       });
     });
+
+    function toggleEmojiPicker() {
+      const picker = document.getElementById('picker');
+      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    }
   </script>
 
-  <!-- FIREBASE CHAT LOGIC -->
+  <!-- FIREBASE CHAT & REALTIME LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
@@ -175,8 +312,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const messagesRef = ref(db, "messages");
+    const typingRef = ref(db, "typing");
 
     const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
+    let typingTimeout = null;
 
     window.checkPassword = function() {
       const enteredPass = document.getElementById("pass-input").value.trim().toUpperCase();
@@ -189,6 +328,32 @@
       }
     };
 
+    // TYPING INDICATOR LOGIC
+    window.handleTyping = function() {
+      const user = document.getElementById("username").value.trim();
+      if (!user) return;
+
+      set(typingRef, { user: user, isTyping: true });
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        set(typingRef, { user: user, isTyping: false });
+      }, 2000);
+    };
+
+    onValue(typingRef, (snapshot) => {
+      const data = snapshot.val();
+      const currentUser = document.getElementById("username").value.trim();
+      const typingDiv = document.getElementById("typing-indicator");
+
+      if (data && data.isTyping && data.user !== currentUser) {
+        typingDiv.innerText = `${data.user} is typing...`;
+      } else {
+        typingDiv.innerText = "";
+      }
+    });
+
+    // SEND MESSAGE WITH TIMESTAMP
     window.sendMessage = function() {
       const user = document.getElementById("username").value.trim();
       const text = document.getElementById("message").value.trim();
@@ -202,12 +367,18 @@
         return;
       }
 
+      const now = new Date();
+      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
       push(messagesRef, {
         user: user,
-        text: text
+        text: text,
+        time: timeString
       });
 
       document.getElementById("message").value = "";
+      document.getElementById('picker').style.display = 'none';
+      set(typingRef, { user: user, isTyping: false });
     };
 
     onChildAdded(messagesRef, (snapshot) => {
@@ -218,7 +389,10 @@
       const chatBox = document.getElementById("chat-box");
       const msgDiv = document.createElement("div");
       msgDiv.className = `message ${isMe ? 'my-msg' : 'friend-msg'}`;
-      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}`;
+      
+      const timeFormatted = data.time ? data.time : '';
+      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}<span class="timestamp">${timeFormatted}</span>`;
+      
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
     });
