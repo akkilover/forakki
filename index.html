@@ -5,11 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Chat</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 500px; margin: 30px auto; padding: 20px; background: #f4f4f9; }
+    /* ENDLESS BACKGROUND VIDEO STYLES */
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 500px; 
+      margin: 30px auto; 
+      padding: 20px; 
+      min-height: 90vh;
+    }
     h2 { text-align: center; color: #333; }
-    #login-screen { background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ccc; text-align: center; }
-    #chat-screen { display: none; }
-    #chat-box { height: 350px; border: 1px solid #ccc; background: #fff; overflow-y: scroll; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+    #login-screen { background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; border: 1px solid #ccc; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
+    #chat-screen { display: none; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
+    #chat-box { height: 350px; border: 1px solid #ccc; background: rgba(249, 249, 249, 0.95); overflow-y: scroll; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
     .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; width: fit-content; max-width: 80%; }
     .my-msg { background: #007bff; color: white; margin-left: auto; }
     .friend-msg { background: #e9e9eb; color: #333; }
@@ -21,7 +38,10 @@
 </head>
 <body>
 
-  <!-- STEP 1: PASSWORD LOCK SCREEN -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="https://cdn.pixabay.com/video/2019/04/20/22908-331828348_large.mp4" type="video/mp4">
+  </video>
+
   <div id="login-screen">
     <h2>🔒 Protected Chat</h2>
     <p>Enter the secret password to join:</p>
@@ -31,7 +51,6 @@
     </div>
   </div>
 
-  <!-- STEP 2: CHAT SCREEN -->
   <div id="chat-screen">
     <h2>Secret Chat Room</h2>
     <div id="chat-box"></div>
