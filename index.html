@@ -53,7 +53,7 @@
 
   <!-- BACKGROUND VIDEO ELEMENT -->
   <video autoplay muted loop playsinline id="bg-video">
-    <source id="video-source" src="1.mp4" type="video/mp4">
+    <source id="video-source" src="2.mp4" type="video/mp4">
   </video>
 
   <!-- BACKGROUND MP4 MUSIC ELEMENT -->
@@ -87,17 +87,18 @@
     </div>
   </div>
 
-  <!-- 30-MINUTE AUTOMATIC VIDEO SWITCHER -->
+  <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
+    // 10-MINUTE AUTOMATIC VIDEO SWITCHER
     const videoList = [
       "2.mp4", "3.mp4", "7.mp4", "5.mp4", "9.mp4", "10.mp4",
       "12.mp4", "14.mp4", "15.mp4", "16.mp4", "20.mp4",
       "21.mp4", "22.mp4", "32.mp4", "11.mp4", "25.mp4",
-      "27.mp4", "29.mp4", "30.mp4", "31.mp4",
+      "27.mp4", "29.mp4", "30.mp4", "31.mp4"
     ];
 
     let currentVideoIndex = 0;
-    const thirtyMinutesInMs = 30 * 60 * 1000;
+    const tenMinutesInMs = 10 * 60 * 1000;
 
     function changeBackgroundVideo() {
       currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
@@ -115,7 +116,7 @@
       }, 1000);
     }
 
-    setInterval(changeBackgroundVideo, thirtyMinutesInMs);
+    setInterval(changeBackgroundVideo, tenMinutesInMs);
 
     // 10 MP4 MUSIC PLAYLIST LOGIC
     const musicList = [
@@ -124,25 +125,17 @@
     ];
 
     let currentMusicIndex = 0;
-    const musicPlayer = document.getElementById("bg-music");
-    const musicSource = document.getElementById("music-source");
 
-    function playMusic() {
+    window.playMusic = function() {
+      const musicPlayer = document.getElementById("bg-music");
       musicPlayer.volume = 0.4; // Set 40% background volume
       musicPlayer.play().catch(() => {
         console.log("Autoplay prevented by browser.");
       });
-    }
+    };
 
-    // Auto-advance to next MP4 song when the current one finishes
-    musicPlayer.addEventListener("ended", () => {
-      currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
-      musicSource.src = musicList[currentMusicIndex];
-      musicPlayer.load();
-      musicPlayer.play();
-    });
-
-    function toggleMusic() {
+    window.toggleMusic = function() {
+      const musicPlayer = document.getElementById("bg-music");
       const musicBtn = document.getElementById("music-toggle");
       if (musicPlayer.paused) {
         musicPlayer.play();
@@ -151,7 +144,20 @@
         musicPlayer.pause();
         musicBtn.innerText = "📁 Play Music";
       }
-    }
+    };
+
+    // Auto-advance to next song
+    document.addEventListener("DOMContentLoaded", () => {
+      const musicPlayer = document.getElementById("bg-music");
+      const musicSource = document.getElementById("music-source");
+
+      musicPlayer.addEventListener("ended", () => {
+        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+        musicSource.src = musicList[currentMusicIndex];
+        musicPlayer.load();
+        musicPlayer.play();
+      });
+    });
   </script>
 
   <!-- FIREBASE CHAT LOGIC -->
@@ -180,7 +186,7 @@
       if (enteredPass === SECRET_PASSWORD) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("chat-screen").style.display = "block";
-        playMusic(); // Starts song 1 upon entering password
+        window.playMusic(); // Calls global playMusic function
       } else {
         alert("Incorrect password!");
       }
