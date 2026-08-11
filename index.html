@@ -38,6 +38,8 @@
       object-fit: cover;
       transition: opacity 1s ease-in-out;
       display: none;
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     h2 { text-align: center; color: #333; }
@@ -80,9 +82,24 @@
       max-width: 80%; 
       word-wrap: break-word;
       position: relative;
+      color: #222;
     }
-    .my-msg { background: #007bff; color: white; margin-left: auto; }
-    .friend-msg { background: #e9e9eb; color: #333; }
+    
+    /* CUSTOM USER COLOR CLASSES */
+    .akki-msg { 
+      background: #00e5ff; /* Cyan */
+      margin-right: auto;
+    }
+    
+    .akkilover-msg { 
+      background: #ffea00; /* Yellow */
+      margin-left: auto;
+    }
+
+    .other-msg {
+      background: #e9e9eb;
+      margin-right: auto;
+    }
     
     .timestamp {
       font-size: 10px;
@@ -191,7 +208,7 @@
       <emoji-picker id="picker"></emoji-picker>
       
       <div class="input-group">
-        <input type="text" id="username" placeholder="Secret Alias..." style="width: 30%;" value="">
+        <input type="text" id="username" placeholder="akki or akkilover" style="width: 35%;" value="">
         <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
         <button type="button" onclick="toggleEmojiPicker()">😊</button>
         <button onclick="sendMessage()">Send</button>
@@ -201,7 +218,7 @@
 
   <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
-    // VIDEO CATEGORY MAP WITH YOUR EXACT FILENAMES (1 TO 15)
+    // VIDEO CATEGORY MAP WITH FILENAMES (1 TO 15)
     const videoThemes = {
       default: [],
       space: [
@@ -362,7 +379,7 @@
     };
 
     window.handleTyping = function() {
-      const user = document.getElementById("username").value.trim();
+      const user = document.getElementById("username").value.trim().toLowerCase();
       if (!user) return;
 
       set(typingRef, { user: user, isTyping: true });
@@ -375,7 +392,7 @@
 
     onValue(typingRef, (snapshot) => {
       const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim();
+      const currentUser = document.getElementById("username").value.trim().toLowerCase();
       const typingDiv = document.getElementById("typing-indicator");
 
       if (data && data.isTyping && data.user !== currentUser) {
@@ -386,11 +403,12 @@
     });
 
     window.sendMessage = function() {
-      const user = document.getElementById("username").value.trim();
+      const user = document.getElementById("username").value.trim().toLowerCase();
       const text = document.getElementById("message").value.trim();
 
-      if (!user) {
-        alert("Please enter a secret alias first!");
+      // RESTRICT USERNAMES TO ONLY AKKI OR AKKILOVER
+      if (user !== "akki" && user !== "akkilover") {
+        alert("Only 'akki' or 'akkilover' are allowed as secret aliases!");
         return;
       }
       if (!text) {
@@ -414,12 +432,19 @@
 
     onChildAdded(messagesRef, (snapshot) => {
       const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim();
-      const isMe = data.user === currentUser;
+      const usernameLower = data.user ? data.user.toLowerCase() : '';
 
       const chatBox = document.getElementById("chat-box");
       const msgDiv = document.createElement("div");
-      msgDiv.className = `message ${isMe ? 'my-msg' : 'friend-msg'}`;
+      
+      // ASSIGN COLORS ACCORDING TO USERNAME
+      if (usernameLower === 'akki') {
+        msgDiv.className = 'message akki-msg';
+      } else if (usernameLower === 'akkilover') {
+        msgDiv.className = 'message akkilover-msg';
+      } else {
+        msgDiv.className = 'message other-msg';
+      }
       
       const timeFormatted = data.time ? data.time : '';
       msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}<span class="timestamp">${timeFormatted}</span>`;
