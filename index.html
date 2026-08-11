@@ -9,7 +9,25 @@
   <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
   <style>
-    /* ENDLESS BACKGROUND VIDEO STYLES */
+    /* DYNAMIC CSS COLOR-CHANGING BACKGROUND (DEFAULT THEME) */
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 520px; 
+      margin: 20px auto; 
+      padding: 15px; 
+      min-height: 90vh;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* BACKGROUND VIDEO STYLES */
     #bg-video {
       position: fixed;
       right: 0;
@@ -19,15 +37,9 @@
       z-index: -1;
       object-fit: cover;
       transition: opacity 1s ease-in-out;
+      display: none;
     }
 
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 520px; 
-      margin: 20px auto; 
-      padding: 15px; 
-      min-height: 90vh;
-    }
     h2 { text-align: center; color: #333; }
     
     #login-screen { 
@@ -136,7 +148,7 @@
 
   <!-- BACKGROUND VIDEO ELEMENT -->
   <video autoplay muted loop playsinline id="bg-video">
-    <source id="video-source" src="5.mp4" type="video/mp4">
+    <source id="video-source" src="" type="video/mp4">
   </video>
 
   <!-- BACKGROUND MP4 MUSIC ELEMENT -->
@@ -159,12 +171,13 @@
     <div class="control-bar">
       <h3 style="margin: 0; font-size: 16px;">Secret Chat</h3>
       <div>
-        <!-- THEME SWITCHER -->
+        <!-- THEME SWITCHER DROPDOWN -->
         <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
-          <option value="all">🎬 Theme: All</option>
-          <option value="romantic">💖 Romantic</option>
-          <option value="lofi">🌙 Lofi</option>
-          <option value="rainy">🌧️ Rainy</option>
+          <option value="default">🎨 Default</option>
+          <option value="space">🌌 Space</option>
+          <option value="cinematic">🎬 Cinematic</option>
+          <option value="love">💖 Love</option>
+          <option value="rain">🌧️ Rain</option>
         </select>
         
         <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute</button>
@@ -188,28 +201,48 @@
 
   <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
-    // VIDEO THEME CATEGORIES
+    // VIDEO CATEGORY MAP WITH YOUR EXACT FILENAMES (1 TO 15)
     const videoThemes = {
-      all: ["5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", "14.mp4", "15.mp4", "16.mp4", "20.mp4", "21.mp4", "22.mp4", "32.mp4", "11.mp4", "25.mp4", "27.mp4", "29.mp4", "30.mp4", "31.mp4"],
-      romantic: ["5.mp4", "7.mp4", "9.mp4", "10.mp4", "12.mp4", "14.mp4"],
-      lofi: ["15.mp4", "16.mp4", "20.mp4", "21.mp4", "22.mp4"],
-      rainy: ["25.mp4", "27.mp4", "29.mp4", "30.mp4", "31.mp4", "32.mp4"]
+      default: [],
+      space: [
+        "s1.mp4", "s2.mp4", "s3.mp4", "s4.mp4", "s5.mp4",
+        "s6.mp4", "s7.mp4", "s8.mp4", "s9.mp4", "s10.mp4",
+        "s11.mp4", "s12.mp4", "s13.mp4", "s14.mp4", "s15.mp4"
+      ],
+      cinematic: [
+        "c1.mp4", "c2.mp4", "c3.mp4", "c4.mp4", "c5.mp4",
+        "c6.mp4", "c7.mp4", "c8.mp4", "c9.mp4", "c10.mp4",
+        "c11.mp4", "c12.mp4", "c13.mp4", "c14.mp4", "c15.mp4"
+      ],
+      love: [
+        "l1.mp4", "l2.mp4", "l3.mp4", "l4.mp4", "l5.mp4",
+        "l6.mp4", "l7.mp4", "l8.mp4", "l9.mp4", "l10.mp4",
+        "l11.mp4", "l12.mp4", "l13.mp4", "l14.mp4", "l15.mp4"
+      ],
+      rain: [
+        "r1.mp4", "r2.mp4", "r3.mp4", "r4.mp4", "r5.mp4",
+        "r6.mp4", "r7.mp4", "r8.mp4", "r9.mp4", "r10.mp4",
+        "r11.mp4", "r12.mp4", "r13.mp4", "r14.mp4", "r15.mp4"
+      ]
     };
 
-    let activeVideoList = videoThemes.all;
+    let currentCategory = "default";
     let currentVideoIndex = 0;
-    const tenMinutesInMs = 10 * 60 * 1000;
+    let videoTimer = null;
+    const fiveMinutesInMs = 5 * 60 * 1000;
 
-    function changeBackgroundVideo() {
-      currentVideoIndex = (currentVideoIndex + 1) % activeVideoList.length;
-      
+    function rotateVideo() {
+      const videoList = videoThemes[currentCategory];
+      if (!videoList || videoList.length === 0) return;
+
+      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
       const videoPlayer = document.getElementById("bg-video");
       const videoSource = document.getElementById("video-source");
 
       videoPlayer.style.opacity = "0";
 
       setTimeout(() => {
-        videoSource.src = activeVideoList[currentVideoIndex];
+        videoSource.src = videoList[currentVideoIndex];
         videoPlayer.load();
         videoPlayer.play();
         videoPlayer.style.opacity = "1";
@@ -217,16 +250,32 @@
     }
 
     function changeThemeCategory(category) {
-      if (videoThemes[category]) {
-        activeVideoList = videoThemes[category];
-        currentVideoIndex = -1;
-        changeBackgroundVideo();
+      currentCategory = category;
+      clearInterval(videoTimer);
+
+      const videoPlayer = document.getElementById("bg-video");
+      const videoSource = document.getElementById("video-source");
+
+      if (category === "default") {
+        videoPlayer.style.display = "none";
+        videoSource.src = "";
+      } else {
+        videoPlayer.style.display = "block";
+        currentVideoIndex = 0;
+        const videoList = videoThemes[category];
+
+        if (videoList && videoList.length > 0) {
+          videoSource.src = videoList[0];
+          videoPlayer.load();
+          videoPlayer.play();
+          videoPlayer.style.opacity = "1";
+
+          videoTimer = setInterval(rotateVideo, fiveMinutesInMs);
+        }
       }
     }
 
-    setInterval(changeBackgroundVideo, tenMinutesInMs);
-
-    // FULL SONG NORMAL PLAYLIST LOGIC
+    // FULL-LENGTH MUSIC PLAYLIST LOGIC
     const musicList = [
       "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
       "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
@@ -254,7 +303,6 @@
       }
     };
 
-    // Play next full song when current song naturally ends
     document.addEventListener("DOMContentLoaded", () => {
       const musicPlayer = document.getElementById("bg-music");
       const musicSource = document.getElementById("music-source");
@@ -266,7 +314,6 @@
         musicPlayer.play();
       });
 
-      // Emoji picker setup
       const picker = document.getElementById('picker');
       picker.addEventListener('emoji-click', event => {
         const msgInput = document.getElementById("message");
