@@ -5,24 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Chat</title>
   <style>
-    /* ENDLESS MOVING GRADIENT BACKGROUND */
+    /* ENDLESS BACKGROUND VIDEO STYLES */
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      transition: opacity 1s ease-in-out;
+    }
+
     body { 
       font-family: Arial, sans-serif; 
       max-width: 500px; 
       margin: 30px auto; 
       padding: 20px; 
       min-height: 90vh;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
     }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
     h2 { text-align: center; color: #333; }
     #login-screen { background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; border: 1px solid #ccc; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
     #chat-screen { display: none; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
@@ -37,6 +38,11 @@
   </style>
 </head>
 <body>
+
+  <!-- BACKGROUND VIDEO ELEMENT -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source id="video-source" src="bg1.mp4" type="video/mp4">
+  </video>
 
   <!-- STEP 1: PASSWORD LOCK SCREEN -->
   <div id="login-screen">
@@ -60,6 +66,43 @@
     </div>
   </div>
 
+  <!-- 30-MINUTE AUTOMATIC VIDEO SWITCHER -->
+  <script>
+    // List of 30 video filenames stored in your repository
+    const videoList = [
+      "1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4",
+      "6.mp4", "7.mp4", "8.mp4", "9.mp4", "10.mp4",
+      "11.mp4", "12.mp4", "13.mp4", "14.mp4", "15.mp4",
+      "16.mp4", "17.mp4", "18.mp4", "19.mp4", "20.mp4",
+      "21.mp4", "22.mp4", "23.mp4", "24.mp4", "25.mp4",
+      "26.mp4", "27.mp4", "28.mp4", "29.mp4", "30.mp4"
+    ];
+
+    let currentVideoIndex = 0;
+    const thirtyMinutesInMs = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+    function changeBackgroundVideo() {
+      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
+      
+      const videoPlayer = document.getElementById("bg-video");
+      const videoSource = document.getElementById("video-source");
+
+      // Smooth fade out/in effect
+      videoPlayer.style.opacity = "0";
+
+      setTimeout(() => {
+        videoSource.src = videoList[currentVideoIndex];
+        videoPlayer.load();
+        videoPlayer.play();
+        videoPlayer.style.opacity = "1";
+      }, 1000);
+    }
+
+    // Automatically trigger video switch every 30 minutes
+    setInterval(changeBackgroundVideo, thirtyMinutesInMs);
+  </script>
+
+  <!-- FIREBASE CHAT LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
