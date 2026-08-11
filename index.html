@@ -35,6 +35,18 @@
     input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
     button { padding: 10px 16px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
     button:hover { background: #0056b3; }
+    
+    /* MUSIC CONTROL BUTTON STYLES */
+    .music-btn {
+      background: #6c757d;
+      color: white;
+      font-size: 12px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .music-btn:hover { background: #5a6268; }
   </style>
 </head>
 <body>
@@ -43,6 +55,11 @@
   <video autoplay muted loop playsinline id="bg-video">
     <source id="video-source" src="1.mp4" type="video/mp4">
   </video>
+
+  <!-- BACKGROUND MP4 MUSIC ELEMENT -->
+  <audio id="bg-music">
+    <source id="music-source" src="music1.mp4" type="audio/mp4">
+  </audio>
 
   <!-- STEP 1: PASSWORD LOCK SCREEN -->
   <div id="login-screen">
@@ -56,7 +73,11 @@
 
   <!-- STEP 2: CHAT SCREEN -->
   <div id="chat-screen">
-    <h2>Secret Chat Room</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">Secret Chat Room</h2>
+      <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute Music</button>
+    </div>
+    <br>
     <div id="chat-box"></div>
 
     <div class="input-group">
@@ -68,16 +89,15 @@
 
   <!-- 30-MINUTE AUTOMATIC VIDEO SWITCHER -->
   <script>
-    // List of your actual uploaded video files
     const videoList = [
-      "1.mp4", "3.mp4", "4.mp4", "5.mp4", "9.mp4", "10.mp4",
+      "2.mp4", "3.mp4", "7.mp4", "5.mp4", "9.mp4", "10.mp4",
       "12.mp4", "14.mp4", "15.mp4", "16.mp4", "20.mp4",
-      "21.mp4", "22.mp4", "23.mp4", "24.mp4", "25.mp4",
-      "27.mp4", "29.mp4", "30.mp4", "31.mp4"
+      "21.mp4", "22.mp4", "32.mp4", "11.mp4", "25.mp4",
+      "27.mp4", "29.mp4", "30.mp4", "31.mp4",
     ];
 
     let currentVideoIndex = 0;
-    const thirtyMinutesInMs = 30 * 60 * 1000; // 30 minutes in milliseconds
+    const thirtyMinutesInMs = 30 * 60 * 1000;
 
     function changeBackgroundVideo() {
       currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
@@ -85,7 +105,6 @@
       const videoPlayer = document.getElementById("bg-video");
       const videoSource = document.getElementById("video-source");
 
-      // Smooth fade out/in effect
       videoPlayer.style.opacity = "0";
 
       setTimeout(() => {
@@ -96,8 +115,43 @@
       }, 1000);
     }
 
-    // Automatically trigger video switch every 30 minutes
     setInterval(changeBackgroundVideo, thirtyMinutesInMs);
+
+    // 10 MP4 MUSIC PLAYLIST LOGIC
+    const musicList = [
+      "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
+      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
+    ];
+
+    let currentMusicIndex = 0;
+    const musicPlayer = document.getElementById("bg-music");
+    const musicSource = document.getElementById("music-source");
+
+    function playMusic() {
+      musicPlayer.volume = 0.4; // Set 40% background volume
+      musicPlayer.play().catch(() => {
+        console.log("Autoplay prevented by browser.");
+      });
+    }
+
+    // Auto-advance to next MP4 song when the current one finishes
+    musicPlayer.addEventListener("ended", () => {
+      currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+      musicSource.src = musicList[currentMusicIndex];
+      musicPlayer.load();
+      musicPlayer.play();
+    });
+
+    function toggleMusic() {
+      const musicBtn = document.getElementById("music-toggle");
+      if (musicPlayer.paused) {
+        musicPlayer.play();
+        musicBtn.innerText = "🔊 Mute Music";
+      } else {
+        musicPlayer.pause();
+        musicBtn.innerText = "📁 Play Music";
+      }
+    }
   </script>
 
   <!-- FIREBASE CHAT LOGIC -->
@@ -126,6 +180,7 @@
       if (enteredPass === SECRET_PASSWORD) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("chat-screen").style.display = "block";
+        playMusic(); // Starts song 1 upon entering password
       } else {
         alert("Incorrect password!");
       }
