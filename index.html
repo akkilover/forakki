@@ -226,38 +226,18 @@
 
     setInterval(changeBackgroundVideo, tenMinutesInMs);
 
-    // 1.5 MINUTE FAST-MIX MUSIC PLAYLIST LOGIC
+    // FULL SONG NORMAL PLAYLIST LOGIC
     const musicList = [
       "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
-      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4",
-      "music11.mp4", "music12.mp4", "music13.mp4", "music14.mp4", "music15.mp4",
-      "music16.mp4", "music17.mp4", "music18.mp4", "music19.mp4", "music20.mp4"
+      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
     ];
 
     let currentMusicIndex = 0;
-    let musicTimer = null;
-    const mixDurationMs = 90 * 1000;
-
-    function playNextSongInMix() {
-      const musicPlayer = document.getElementById("bg-music");
-      const musicSource = document.getElementById("music-source");
-
-      currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
-      musicSource.src = musicList[currentMusicIndex];
-      musicPlayer.load();
-      musicPlayer.play();
-
-      clearTimeout(musicTimer);
-      musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
-    }
 
     window.playMusic = function() {
       const musicPlayer = document.getElementById("bg-music");
       musicPlayer.volume = 0.4;
-      musicPlayer.play().then(() => {
-        clearTimeout(musicTimer);
-        musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
-      }).catch((err) => {
+      musicPlayer.play().catch((err) => {
         console.log("Autoplay blocked:", err);
       });
     };
@@ -268,19 +248,25 @@
       if (musicPlayer.paused) {
         musicPlayer.play();
         musicBtn.innerText = "🔊 Mute";
-        musicTimer = setTimeout(playNextSongInMix, mixDurationMs);
       } else {
         musicPlayer.pause();
         musicBtn.innerText = "📁 Play";
-        clearTimeout(musicTimer);
       }
     };
 
+    // Play next full song when current song naturally ends
     document.addEventListener("DOMContentLoaded", () => {
       const musicPlayer = document.getElementById("bg-music");
-      musicPlayer.addEventListener("ended", playNextSongInMix);
+      const musicSource = document.getElementById("music-source");
 
-      // Emoji picker listener
+      musicPlayer.addEventListener("ended", () => {
+        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+        musicSource.src = musicList[currentMusicIndex];
+        musicPlayer.load();
+        musicPlayer.play();
+      });
+
+      // Emoji picker setup
       const picker = document.getElementById('picker');
       picker.addEventListener('emoji-click', event => {
         const msgInput = document.getElementById("message");
@@ -294,7 +280,7 @@
     }
   </script>
 
-  <!-- FIREBASE CHAT & REALTIME LOGIC -->
+  <!-- FIREBASE CHAT LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -328,7 +314,6 @@
       }
     };
 
-    // TYPING INDICATOR LOGIC
     window.handleTyping = function() {
       const user = document.getElementById("username").value.trim();
       if (!user) return;
@@ -353,7 +338,6 @@
       }
     });
 
-    // SEND MESSAGE WITH TIMESTAMP
     window.sendMessage = function() {
       const user = document.getElementById("username").value.trim();
       const text = document.getElementById("message").value.trim();
