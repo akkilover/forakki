@@ -2,12 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ambient Video & Custom Alert Hub</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
       font-family: Arial, sans-serif;
       background-color: #121212;
@@ -19,34 +15,19 @@
       max-width: 900px;
       margin: 0 auto;
     }
-    h2 {
-      margin-top: 0;
-      text-align: center;
-    }
     .controls-panel {
       background: #1e1e1e;
       padding: 20px;
       border-radius: 8px;
       margin-bottom: 20px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
-    }
-    @media (min-width: 650px) {
-      .controls-panel {
-        grid-template-columns: repeat(3, 1fr);
-      }
     }
     .control-group {
-      display: flex;
-      flex-direction: column;
+      margin-bottom: 15px;
     }
     label {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
-      font-size: 13px;
-      color: #ccc;
     }
     select, input[type="file"], button {
       padding: 8px 12px;
@@ -55,20 +36,11 @@
       background: #2a2a2a;
       color: #fff;
       font-size: 14px;
-      outline: none;
-    }
-    .alert-actions {
-      display: flex;
-      gap: 6px;
-    }
-    .alert-actions select {
-      flex: 1;
     }
     button {
       cursor: pointer;
       background: #007bff;
       border: none;
-      font-weight: bold;
     }
     button:hover {
       background: #0056b3;
@@ -80,7 +52,6 @@
       overflow: hidden;
       border-radius: 8px;
       background: #000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
     .video-container video {
       position: absolute;
@@ -90,11 +61,11 @@
       height: 100%;
       object-fit: cover;
     }
-    .status-bar {
+    .status-msg {
       margin-top: 10px;
-      font-size: 12px;
-      color: #888;
-      text-align: right;
+      font-size: 13px;
+      color: #ff5555;
+      text-align: center;
     }
   </style>
 </head>
@@ -106,7 +77,7 @@
   <div class="controls-panel">
     <!-- Category Selection (15 videos per section) -->
     <div class="control-group">
-      <label for="categorySelect">Theme (15 Videos, 5-min switch):</label>
+      <label for="categorySelect">Choose Theme (15 Videos, 5-min auto switch):</label>
       <select id="categorySelect" onchange="changeCategory()">
         <option value="space">Space</option>
         <option value="cinematic">Cinematic</option>
@@ -135,21 +106,18 @@
 
     <!-- Custom Alert Tone Controls -->
     <div class="control-group">
-      <label for="toneSelect">Alert Tone Engine:</label>
-      <div class="alert-actions">
-        <select id="toneSelect" onchange="updateAlertTone()">
-          <option value="https://actions.google.com/sounds/v1/notifications/beep_short.ogg">Default Beep</option>
-          <option value="https://actions.google.com/sounds/v1/notifications/ambient_bell.ogg">Ambient Bell</option>
-          <option value="https://actions.google.com/sounds/v1/notifications/chime.ogg">Chime</option>
-          <option value="alert1.mp3">Local Alert 1</option>
-          <option value="alert2.mp3">Local Alert 2</option>
-          <option value="custom">Upload File...</option>
-        </select>
-        <button onclick="playAlertTone()">Test</button>
-      </div>
+      <label for="toneSelect">Select Alert Tone:</label>
+      <select id="toneSelect" onchange="updateAlertTone()">
+        <option value="https://actions.google.com/sounds/v1/notifications/beep_short.ogg">Default Beep</option>
+        <option value="https://actions.google.com/sounds/v1/notifications/ambient_bell.ogg">Ambient Bell</option>
+        <option value="https://actions.google.com/sounds/v1/notifications/chime.ogg">Chime</option>
+        <option value="alert1.mp3">Alert Tone 1</option>
+        <option value="custom">Upload Custom Alert Tone...</option>
+      </select>
 
       <!-- Hidden File Input for Custom Tone Upload -->
       <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
+      <button onclick="playAlertTone()">Test Alert Tone</button>
     </div>
   </div>
 
@@ -157,35 +125,30 @@
   <div class="video-container">
     <video id="mainPlayer" autoplay muted loop playsinline></video>
   </div>
-  <div class="status-bar" id="statusBar">Initializing player...</div>
+  <div id="statusMsg" class="status-msg"></div>
 </div>
 
 <!-- Audio Player for Background Music -->
 <audio id="bgMusicPlayer" loop></audio>
 
 <script>
-  // GitHub Page / External Host Configuration (Optional: change if using raw links)
-  const USE_GITHUB_HOSTING = false;
-  const GITHUB_USERNAME = "your-username";
-  const GITHUB_REPO = "your-repo";
-  const GITHUB_BRANCH = "main";
+  const USERNAME = "akkilover";
+  const REPO = "forakki";
+  const BRANCH = "main"; 
 
-  function getPath(file) {
-    if (file.startsWith("http://") || file.startsWith("https://")) {
-      return file;
+  function getMediaUrl(filename) {
+    if (filename.startsWith("http://") || filename.startsWith("https://")) {
+      return filename;
     }
-    if (USE_GITHUB_HOSTING) {
-      return `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file}`;
-    }
-    return `./${file}`;
+    return `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${filename}`;
   }
 
-  // Database of 15 videos per category
+  // Database updated to match your short file names (s1..s15, c1..c15, l1..l15, r1..r15)
   const videoData = {
-    space: Array.from({length: 15}, (_, i) => `space${i + 1}.mp4`),
-    cinematic: Array.from({length: 15}, (_, i) => `cinematic${i + 1}.mp4`),
-    love: Array.from({length: 15}, (_, i) => `love${i + 1}.mp4`),
-    rain: Array.from({length: 15}, (_, i) => `rain${i + 1}.mp4`)
+    space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
+    cinematic: Array.from({length: 15}, (_, i) => `c${i + 1}.mp4`),
+    love: Array.from({length: 15}, (_, i) => `l${i + 1}.mp4`),
+    rain: Array.from({length: 15}, (_, i) => `r${i + 1}.mp4`)
   };
 
   let currentCategory = "space";
@@ -194,25 +157,21 @@
 
   const player = document.getElementById("mainPlayer");
   const bgMusicPlayer = document.getElementById("bgMusicPlayer");
-  const statusBar = document.getElementById("statusBar");
-  let alertAudio = new Audio(getPath("https://actions.google.com/sounds/v1/notifications/beep_short.ogg"));
+  const statusMsg = document.getElementById("statusMsg");
+  let alertAudio = new Audio(getMediaUrl("https://actions.google.com/sounds/v1/notifications/beep_short.ogg"));
 
-  // Safe Video Loader with Fallback Error Handling
   player.onerror = function() {
-    console.warn("Could not load video source:", player.src);
-    statusBar.textContent = `File non-existent or path error: ${videoData[currentCategory][currentVideoIndex]}`;
+    statusMsg.textContent = `⚠️ File not found on GitHub: "${videoData[currentCategory][currentVideoIndex]}". Please verify file extension (case-sensitive)!`;
   };
 
   function loadVideo() {
+    statusMsg.textContent = "";
     const videoList = videoData[currentCategory];
-    const targetFile = videoList[currentVideoIndex];
-    player.src = getPath(targetFile);
-    statusBar.textContent = `Theme: ${currentCategory.toUpperCase()} | Playing: ${targetFile} (${currentVideoIndex + 1}/15)`;
-    
+    const fileName = videoList[currentVideoIndex];
+    player.src = getMediaUrl(fileName);
     player.play().catch(e => console.log("Autoplay check:", e));
   }
 
-  // 5-minute auto rotation logic (300,000 ms)
   function startVideoRotation() {
     if (rotationTimer) clearInterval(rotationTimer);
     
@@ -229,24 +188,22 @@
     startVideoRotation();
   }
 
-  // Music Player logic
   function changeMusic() {
     const musicSrc = document.getElementById("musicSelect").value;
     if (musicSrc) {
-      bgMusicPlayer.src = getPath(musicSrc);
-      bgMusicPlayer.play().catch(e => console.log("Music play blocked/file missing:", e));
+      bgMusicPlayer.src = getMediaUrl(musicSrc);
+      bgMusicPlayer.play().catch(e => alert("Music file '" + musicSrc + "' not found in GitHub repo!"));
     } else {
       bgMusicPlayer.pause();
     }
   }
 
-  // Custom Alert Tone logic
   function updateAlertTone() {
     const select = document.getElementById("toneSelect");
     if (select.value === "custom") {
       document.getElementById("customToneInput").click();
     } else {
-      alertAudio.src = getPath(select.value);
+      alertAudio.src = getMediaUrl(select.value);
     }
   }
 
@@ -255,19 +212,14 @@
     if (file) {
       const customUrl = URL.createObjectURL(file);
       alertAudio.src = customUrl;
-      alertAudio.play().catch(e => console.log("Audio play blocked:", e));
     }
   }
 
   function playAlertTone() {
     alertAudio.currentTime = 0;
-    alertAudio.play().catch(err => {
-      console.log("Audio play blocked:", err);
-      alert("Selected audio file not found or browser blocked playback!");
-    });
+    alertAudio.play().catch(err => alert("Could not play audio track. Check if file exists on GitHub."));
   }
 
-  // Initialize
   loadVideo();
   startVideoRotation();
 </script>
