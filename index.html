@@ -4,454 +4,2963 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Chat</title>
-  
-  <!-- Emoji Picker Component -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+
+  <!-- Emoji Picker -->
+  <script type="module"
+    src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js">
+  </script>
 
   <style>
-    /* DYNAMIC CSS COLOR-CHANGING BACKGROUND (DEFAULT THEME) */
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 520px; 
-      margin: 20px auto; 
-      padding: 15px; 
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 520px;
+      margin: 20px auto;
+      padding: 15px;
       min-height: 90vh;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+
+      background:
+        linear-gradient(
+          -45deg,
+          #ee7752,
+          #e73c7e,
+          #23a6d5,
+          #23d5ab
+        );
+
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
     }
 
     @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
-    /* BACKGROUND VIDEO STYLES */
+    /* =========================
+       BACKGROUND VIDEO
+    ========================= */
+
     #bg-video {
       position: fixed;
       right: 0;
       bottom: 0;
+
       min-width: 100%;
       min-height: 100%;
+
       z-index: -1;
       object-fit: cover;
+
       transition: opacity 1s ease-in-out;
+
       display: none;
-      transform: translateZ(0);
-      will-change: transform;
     }
 
-    h2 { text-align: center; color: #333; }
-    
-    #login-screen { 
-      background: rgba(255, 255, 255, 0.92); 
-      padding: 20px; 
-      border-radius: 12px; 
-      border: 1px solid #ccc; 
-      text-align: center; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-      backdrop-filter: blur(8px); 
-    }
-    
-    #chat-screen { 
-      display: none; 
-      background: rgba(255, 255, 255, 0.92); 
-      padding: 20px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-      backdrop-filter: blur(8px); 
-    }
-    
-    #chat-box { 
-      height: 350px; 
-      border: 1px solid #ccc; 
-      background: rgba(249, 249, 249, 0.95); 
-      overflow-y: scroll; 
-      padding: 12px; 
-      border-radius: 8px; 
-      margin-bottom: 5px; 
+    /* =========================
+       LOGIN
+    ========================= */
+
+    #login-screen {
+      background: rgba(255,255,255,0.92);
+
+      padding: 20px;
+
+      border-radius: 12px;
+
+      border: 1px solid #ccc;
+
+      text-align: center;
+
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+
+      backdrop-filter: blur(8px);
     }
 
-    /* MESSAGE STYLES */
-    .message { 
-      margin-bottom: 12px; 
-      padding: 8px 12px; 
-      border-radius: 8px; 
-      width: fit-content; 
-      max-width: 80%; 
+    /* =========================
+       CHAT
+    ========================= */
+
+    #chat-screen {
+      display: none;
+
+      background: rgba(255,255,255,0.92);
+
+      padding: 20px;
+
+      border-radius: 12px;
+
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+
+      backdrop-filter: blur(8px);
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+
+    .control-bar {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 6px;
+
+      margin-bottom: 10px;
+    }
+
+    .control-buttons {
+      display: flex;
+
+      gap: 5px;
+
+      align-items: center;
+    }
+
+    .theme-select {
+      background: #6c757d;
+
+      color: white;
+
+      font-size: 12px;
+
+      padding: 6px 10px;
+
+      border: none;
+
+      border-radius: 6px;
+
+      cursor: pointer;
+    }
+
+    .settings-btn {
+      background: #343a40;
+
+      color: white;
+
+      padding: 7px 10px;
+
+      border-radius: 6px;
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    #status-line {
+      text-align: center;
+
+      font-size: 12px;
+
+      color: #666;
+
+      height: 18px;
+
+      margin-bottom: 5px;
+    }
+
+    /* =========================
+       CHAT BOX
+    ========================= */
+
+    #chat-box {
+      height: 350px;
+
+      border: 1px solid #ccc;
+
+      background: rgba(249,249,249,0.95);
+
+      overflow-y: scroll;
+
+      padding: 12px;
+
+      border-radius: 8px;
+
+      margin-bottom: 5px;
+    }
+
+    /* =========================
+       MESSAGES
+    ========================= */
+
+    .message {
+      margin-bottom: 12px;
+
+      padding: 8px 12px;
+
+      border-radius: 8px;
+
+      width: fit-content;
+
+      max-width: 80%;
+
       word-wrap: break-word;
+
       position: relative;
+
       color: #222;
     }
-    
-    /* CUSTOM USER COLOR CLASSES */
-    .akki-msg { 
-      background: #00e5ff; /* Cyan */
+
+    .akki-msg {
+      background: #dff5ff;
+
       margin-right: auto;
     }
-    
-    .akkilover-msg { 
-      background: #ffea00; /* Yellow */
+
+    .akkilover-msg {
+      background: #fff4a3;
+
       margin-left: auto;
     }
 
     .other-msg {
       background: #e9e9eb;
+
       margin-right: auto;
     }
-    
+
+    /* USERNAME COLORS */
+
+    .akki-name {
+      color: #007bff;
+
+      font-weight: bold;
+    }
+
+    .akkilover-name {
+      color: #d4a900;
+
+      font-weight: bold;
+    }
+
     .timestamp {
       font-size: 10px;
+
       opacity: 0.75;
+
       margin-top: 4px;
+
       text-align: right;
+
       display: block;
     }
 
-    /* TYPING INDICATOR */
+    .message-status {
+      font-size: 10px;
+
+      margin-left: 5px;
+    }
+
+    /* =========================
+       TYPING
+    ========================= */
+
     #typing-indicator {
       font-size: 12px;
+
       font-style: italic;
+
       color: #666;
+
       height: 18px;
+
       margin-bottom: 8px;
     }
 
-    /* INPUT CONTROLS */
+    /* =========================
+       INPUT
+    ========================= */
+
     .input-container {
       position: relative;
+
       display: flex;
+
       flex-direction: column;
+
       gap: 8px;
     }
 
-    .input-group { display: flex; gap: 6px; align-items: center; }
-    input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
-    button { padding: 10px 14px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-    button:hover { background: #0056b3; }
-
-    /* HEADER CONTROLS */
-    .control-bar {
+    .input-group {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+
       gap: 6px;
-      margin-bottom: 10px;
+
+      align-items: center;
     }
-    .music-btn, .theme-select {
-      background: #6c757d;
-      color: white;
-      font-size: 12px;
-      padding: 6px 10px;
-      border: none;
+
+    input,
+    textarea,
+    select {
+      padding: 10px;
+
+      border: 1px solid #ccc;
+
       border-radius: 6px;
+
+      font-family: Arial, sans-serif;
+    }
+
+    #message {
+      flex: 1;
+    }
+
+    button {
+      padding: 10px 14px;
+
+      background: #007bff;
+
+      color: white;
+
+      border: none;
+
+      border-radius: 6px;
+
       cursor: pointer;
     }
 
-    /* EMOJI PICKER POPUP */
+    button:hover {
+      background: #0056b3;
+    }
+
+    .gray-button {
+      background: #6c757d;
+    }
+
+    .gray-button:hover {
+      background: #545b62;
+    }
+
+    /* =========================
+       NOTIFY
+    ========================= */
+
+    .notify-section {
+      margin-top: 10px;
+
+      padding: 10px;
+
+      border-radius: 8px;
+
+      background: rgba(255,255,255,0.75);
+
+      border: 1px solid #ddd;
+    }
+
+    .notify-section textarea {
+      width: 100%;
+
+      min-height: 65px;
+
+      resize: vertical;
+
+      margin-top: 7px;
+    }
+
+    .notify-bottom {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-top: 5px;
+    }
+
+    .word-counter {
+      font-size: 11px;
+
+      color: #666;
+    }
+
+    /* =========================
+       EMOJI
+    ========================= */
+
     emoji-picker {
       position: absolute;
+
       bottom: 50px;
+
       right: 0;
+
       display: none;
+
       z-index: 100;
+
       --num-columns: 8;
+
       --category-emoji-size: 1.125rem;
+    }
+
+    /* =========================
+       SETTINGS MODAL
+    ========================= */
+
+    #settings-modal {
+      position: fixed;
+
+      inset: 0;
+
+      background: rgba(0,0,0,0.55);
+
+      display: none;
+
+      align-items: center;
+
+      justify-content: center;
+
+      z-index: 999;
+
+      padding: 15px;
+    }
+
+    .settings-box {
+      background: white;
+
+      width: 100%;
+
+      max-width: 500px;
+
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+    }
+
+    .settings-header {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 15px;
+    }
+
+    .settings-header h2 {
+      margin: 0;
+    }
+
+    .settings-group-title {
+      font-size: 15px;
+
+      font-weight: bold;
+
+      margin-top: 15px;
+
+      margin-bottom: 5px;
+
+      color: #333;
+    }
+
+    .setting-row {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 12px 0;
+
+      border-bottom: 1px solid #eee;
+    }
+
+    .setting-info {
+      flex: 1;
+    }
+
+    .setting-name {
+      font-weight: bold;
+
+      font-size: 14px;
+    }
+
+    .setting-description {
+      font-size: 11px;
+
+      color: #777;
+
+      margin-top: 3px;
+    }
+
+    .setting-row input[type="checkbox"] {
+      width: 20px;
+
+      height: 20px;
+    }
+
+    .close-settings {
+      background: #dc3545;
+    }
+
+    /* =========================
+       NOTIFICATION POPUP
+    ========================= */
+
+    #notify-popup {
+      position: fixed;
+
+      top: 20px;
+
+      right: 20px;
+
+      max-width: 330px;
+
+      background: white;
+
+      border-radius: 10px;
+
+      padding: 15px;
+
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+
+      display: none;
+
+      z-index: 2000;
+
+      animation: notificationSlide 0.3s ease;
+    }
+
+    @keyframes notificationSlide {
+      from {
+        transform: translateX(120%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .popup-title {
+      font-weight: bold;
+
+      margin-bottom: 5px;
+    }
+
+    .popup-message {
+      font-size: 14px;
+
+      color: #444;
     }
   </style>
 </head>
+
 <body>
 
-  <!-- BACKGROUND VIDEO ELEMENT -->
-  <video autoplay muted loop playsinline id="bg-video">
+  <!-- =========================
+       BACKGROUND VIDEO
+  ========================= -->
+
+  <video autoplay muted playsinline id="bg-video">
     <source id="video-source" src="" type="video/mp4">
   </video>
 
-  <!-- BACKGROUND MP4 MUSIC ELEMENT -->
+
+  <!-- =========================
+       MUSIC
+  ========================= -->
+
   <audio id="bg-music">
     <source id="music-source" src="music1.mp4" type="audio/mp4">
   </audio>
 
-  <!-- STEP 1: PASSWORD LOCK SCREEN -->
+
+  <!-- =========================
+       ALERT SOUND
+  ========================= -->
+
+  <audio id="alert-audio"></audio>
+
+
+  <!-- =========================
+       LOGIN
+  ========================= -->
+
   <div id="login-screen">
+
     <h2>🔒 Protected Chat</h2>
+
     <p>Enter the secret password to join:</p>
-    <div style="display: flex; gap: 8px; justify-content: center;">
-      <input type="password" id="pass-input" placeholder="Password...">
-      <button onclick="checkPassword()">Enter</button>
+
+    <div style="
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      flex-wrap:wrap;
+    ">
+
+      <input
+        type="password"
+        id="pass-input"
+        placeholder="Password..."
+      >
+
+      <button onclick="checkPassword()">
+        Enter
+      </button>
+
     </div>
+
   </div>
 
-  <!-- STEP 2: CHAT SCREEN -->
+
+  <!-- =========================
+       CHAT
+  ========================= -->
+
   <div id="chat-screen">
+
     <div class="control-bar">
-      <h3 style="margin: 0; font-size: 16px;">Secret Chat</h3>
+
       <div>
-        <!-- THEME SWITCHER DROPDOWN -->
-        <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
-          <option value="default">🎨 Default</option>
-          <option value="space">🌌 Space</option>
-          <option value="cinematic">🎬 Cinematic</option>
-          <option value="love">💖 Love</option>
-          <option value="rain">🌧️ Rain</option>
-        </select>
-        
-        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute</button>
+        <h3 style="margin:0;">
+          💬 Secret Chat
+        </h3>
+
+        <div id="status-line"></div>
       </div>
+
+      <div class="control-buttons">
+
+        <select
+          id="theme-select"
+          class="theme-select"
+          onchange="changeThemeCategory(this.value)"
+        >
+
+          <option value="default">
+            🎨 Default
+          </option>
+
+          <option value="space">
+            🌌 Space
+          </option>
+
+          <option value="cinematic">
+            🎬 Cinematic
+          </option>
+
+          <option value="love">
+            💖 Love
+          </option>
+
+          <option value="rain">
+            🌧️ Rain
+          </option>
+
+        </select>
+
+        <button
+          class="settings-btn"
+          onclick="openSettings()"
+        >
+          ⚙️
+        </button>
+
+      </div>
+
     </div>
+
+
+    <!-- CHAT -->
 
     <div id="chat-box"></div>
+
     <div id="typing-indicator"></div>
 
-    <div class="input-container">
-      <emoji-picker id="picker"></emoji-picker>
-      
-      <div class="input-group">
-        <input type="text" id="username" placeholder="akki or akkilover" style="width: 35%;" value="">
-        <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
-        <button type="button" onclick="toggleEmojiPicker()">😊</button>
-        <button onclick="sendMessage()">Send</button>
+
+    <!-- =========================
+         NOTIFY SECTION
+    ========================= -->
+
+    <div class="notify-section">
+
+      <strong>
+        🔔 Notify
+      </strong>
+
+      <textarea
+        id="notify-text"
+        maxlength="500"
+        placeholder="Write something to notify the other person..."
+      ></textarea>
+
+      <div class="notify-bottom">
+
+        <span
+          class="word-counter"
+          id="notify-counter"
+        >
+          0 / 50 words
+        </span>
+
+        <button onclick="sendNotify()">
+          Send Notify
+        </button>
+
       </div>
+
     </div>
+
+
+    <!-- =========================
+         MESSAGE INPUT
+    ========================= -->
+
+    <div class="input-container">
+
+      <emoji-picker id="picker"></emoji-picker>
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="message"
+          placeholder="Type a message..."
+          oninput="handleTyping()"
+        >
+
+        <button
+          type="button"
+          onclick="toggleEmojiPicker()"
+        >
+          😊
+        </button>
+
+        <button onclick="sendMessage()">
+          Send
+        </button>
+
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <span style="font-size:12px;">
+          You are:
+          <strong id="current-user"></strong>
+        </span>
+
+        <button
+          class="gray-button"
+          onclick="toggleMusic()"
+        >
+          🎵 Music
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <!-- VIDEO & MUSIC PLAYER SCRIPT -->
-  <script>
-    // VIDEO CATEGORY MAP WITH FILENAMES (1 TO 15)
-    const videoThemes = {
-      default: [],
-      space: [
-        "s1.mp4", "s2.mp4", "s3.mp4", "s4.mp4", "s5.mp4",
-        "s6.mp4", "s7.mp4", "s8.mp4", "s9.mp4", "s10.mp4",
-        "s11.mp4", "s12.mp4", "s13.mp4", "s14.mp4", "s15.mp4"
-      ],
-      cinematic: [
-        "c1.mp4", "c2.mp4", "c3.mp4", "c4.mp4", "c5.mp4",
-        "c6.mp4", "c7.mp4", "c8.mp4", "c9.mp4", "c10.mp4",
-        "c11.mp4", "c12.mp4", "c13.mp4", "c14.mp4", "c15.mp4"
-      ],
-      love: [
-        "l1.mp4", "l2.mp4", "l3.mp4", "l4.mp4", "l5.mp4",
-        "l6.mp4", "l7.mp4", "l8.mp4", "l9.mp4", "l10.mp4",
-        "l11.mp4", "l12.mp4", "l13.mp4", "l14.mp4", "l15.mp4"
-      ],
-      rain: [
-        "r1.mp4", "r2.mp4", "r3.mp4", "r4.mp4", "r5.mp4",
-        "r6.mp4", "r7.mp4", "r8.mp4", "r9.mp4", "r10.mp4",
-        "r11.mp4", "r12.mp4", "r13.mp4", "r14.mp4", "r15.mp4"
-      ]
-    };
 
-    let currentCategory = "default";
-    let currentVideoIndex = 0;
-    let videoTimer = null;
-    const fiveMinutesInMs = 5 * 60 * 1000;
+  <!-- =========================
+       SETTINGS
+  ========================= -->
 
-    function rotateVideo() {
-      const videoList = videoThemes[currentCategory];
-      if (!videoList || videoList.length === 0) return;
+  <div id="settings-modal">
 
-      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
-      const videoPlayer = document.getElementById("bg-video");
-      const videoSource = document.getElementById("video-source");
+    <div class="settings-box">
 
-      videoPlayer.style.opacity = "0";
+      <div class="settings-header">
 
-      setTimeout(() => {
-        videoSource.src = videoList[currentVideoIndex];
-        videoPlayer.load();
-        videoPlayer.play();
-        videoPlayer.style.opacity = "1";
-      }, 1000);
+        <h2>
+          ⚙️ Settings
+        </h2>
+
+        <button
+          class="close-settings"
+          onclick="closeSettings()"
+        >
+          Close
+        </button>
+
+      </div>
+
+
+      <!-- PRIVACY -->
+
+      <div class="settings-group-title">
+        👁️ Privacy & Status
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Last Seen
+          </div>
+
+          <div class="setting-description">
+            Allow the other person to see your last active time.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-last-seen"
+          onchange="changeSetting('lastSeen',this.checked)"
+        >
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Online Status
+          </div>
+
+          <div class="setting-description">
+            Show when you are currently online.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-online"
+          onchange="changeSetting('online',this.checked)"
+        >
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Typing Indicator
+          </div>
+
+          <div class="setting-description">
+            Show the other person when you are typing.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-typing"
+          onchange="changeSetting('typing',this.checked)"
+        >
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Read Receipts
+          </div>
+
+          <div class="setting-description">
+            Show whether messages have been read.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-read"
+          onchange="changeSetting('read',this.checked)"
+        >
+
+      </div>
+
+
+      <!-- NOTIFICATIONS -->
+
+      <div class="settings-group-title">
+        🔔 Notifications
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Notifications
+          </div>
+
+          <div class="setting-description">
+            Allow browser notifications.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-notifications"
+          onchange="notificationPermission()"
+        >
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Message Notifications
+          </div>
+
+          <div class="setting-description">
+            Notify you when a new message arrives.
+          </div>
+
+        </div>
+
+        <input
+          type="checkbox"
+          id="setting-message-notifications"
+          onchange="changeSetting(
+            'messageNotifications',
+            this.checked
+          )"
+        >
+
+      </div>
+
+
+      <!-- ALERT SOUND -->
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+
+          <div class="setting-name">
+            Notification Sound
+          </div>
+
+          <div class="setting-description">
+            Select the sound used for notifications.
+          </div>
+
+        </div>
+
+        <select
+          id="alert-sound"
+          onchange="changeSetting(
+            'alertSound',
+            this.value
+          )"
+        >
+
+          <option value="alert1.mp3">
+            Alert 1
+          </option>
+
+          <option value="alert2.mp3">
+            Alert 2
+          </option>
+
+          <option value="alert3.mp3">
+            Alert 3
+          </option>
+
+          <option value="alert4.mp3">
+            Alert 4
+          </option>
+
+          <option value="alert5.mp3">
+            Alert 5
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div style="
+        margin-top:15px;
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      ">
+
+        <button onclick="enableNotifications()">
+          🔔 Enable Notifications
+        </button>
+
+        <button
+          class="gray-button"
+          onclick="testAlertSound()"
+        >
+          🔊 Test Sound
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       CUSTOM NOTIFICATION POPUP
+  ========================= -->
+
+  <div id="notify-popup">
+
+    <div
+      class="popup-title"
+      id="popup-title"
+    ></div>
+
+    <div
+      class="popup-message"
+      id="popup-message"
+    ></div>
+
+  </div>
+
+
+<script>
+
+  /* =====================================================
+     VIDEO THEMES
+  ===================================================== */
+
+  const videoThemes = {
+
+    default: [],
+
+    space: [
+      "s1.mp4",
+      "s2.mp4",
+      "s3.mp4",
+      "s4.mp4",
+      "s5.mp4",
+      "s6.mp4",
+      "s7.mp4",
+      "s8.mp4",
+      "s9.mp4",
+      "s10.mp4",
+      "s11.mp4",
+      "s12.mp4",
+      "s13.mp4",
+      "s14.mp4",
+      "s15.mp4"
+    ],
+
+    love: [
+      "l1.mp4",
+      "l2.mp4",
+      "l3.mp4",
+      "l4.mp4",
+      "l5.mp4",
+      "l6.mp4",
+      "l7.mp4",
+      "l8.mp4",
+      "l9.mp4",
+      "l10.mp4",
+      "l11.mp4",
+      "l12.mp4",
+      "l13.mp4",
+      "l14.mp4",
+      "l15.mp4"
+    ],
+
+    rain: [
+      "r1.mp4",
+      "r2.mp4",
+      "r3.mp4",
+      "r4.mp4",
+      "r5.mp4",
+      "r6.mp4",
+      "r7.mp4",
+      "r8.mp4",
+      "r9.mp4",
+      "r10.mp4",
+      "r11.mp4",
+      "r12.mp4",
+      "r13.mp4",
+      "r14.mp4",
+      "r15.mp4"
+    ],
+
+    cinematic: [
+      "c1.mp4",
+      "c2.mp4",
+      "c3.mp4",
+      "c4.mp4",
+      "c5.mp4",
+      "c6.mp4",
+      "c7.mp4",
+      "c8.mp4",
+      "c9.mp4",
+      "c10.mp4",
+      "c11.mp4",
+      "c12.mp4",
+      "c13.mp4",
+      "c14.mp4",
+      "c15.mp4"
+    ]
+
+  };
+
+
+  let currentCategory = "default";
+
+  let currentVideoIndex = 0;
+
+  let videoTimer = null;
+
+  const fiveMinutes =
+    5 * 60 * 1000;
+
+
+  /* =====================================================
+     CHANGE VIDEO
+  ===================================================== */
+
+  function rotateVideo() {
+
+    const list =
+      videoThemes[currentCategory];
+
+    if (!list || list.length === 0) {
+      return;
     }
 
-    function changeThemeCategory(category) {
-      currentCategory = category;
-      clearInterval(videoTimer);
+    currentVideoIndex =
+      (currentVideoIndex + 1) %
+      list.length;
 
-      const videoPlayer = document.getElementById("bg-video");
-      const videoSource = document.getElementById("video-source");
+    const video =
+      document.getElementById("bg-video");
 
-      if (category === "default") {
-        videoPlayer.style.display = "none";
-        videoSource.src = "";
-      } else {
-        videoPlayer.style.display = "block";
-        currentVideoIndex = 0;
-        const videoList = videoThemes[category];
+    const source =
+      document.getElementById("video-source");
 
-        if (videoList && videoList.length > 0) {
-          videoSource.src = videoList[0];
-          videoPlayer.load();
-          videoPlayer.play();
-          videoPlayer.style.opacity = "1";
+    video.style.opacity = "0";
 
-          videoTimer = setInterval(rotateVideo, fiveMinutesInMs);
+    setTimeout(() => {
+
+      source.src =
+        list[currentVideoIndex];
+
+      video.load();
+
+      video.play().catch(() => {});
+
+      video.style.opacity = "1";
+
+    },1000);
+
+  }
+
+
+  /* =====================================================
+     CHANGE THEME
+  ===================================================== */
+
+  function changeThemeCategory(category) {
+
+    currentCategory = category;
+
+    clearInterval(videoTimer);
+
+    const video =
+      document.getElementById("bg-video");
+
+    const source =
+      document.getElementById("video-source");
+
+
+    if(category === "default") {
+
+      video.pause();
+
+      video.style.display = "none";
+
+      source.src = "";
+
+      return;
+
+    }
+
+
+    video.style.display = "block";
+
+    currentVideoIndex = 0;
+
+    source.src =
+      videoThemes[category][0];
+
+    video.load();
+
+    video.play().catch(() => {});
+
+    video.style.opacity = "1";
+
+
+    videoTimer =
+      setInterval(
+        rotateVideo,
+        fiveMinutes
+      );
+
+  }
+
+
+  /* =====================================================
+     MUSIC
+  ===================================================== */
+
+  const musicList = [
+
+    "music1.mp4",
+    "music2.mp4",
+    "music3.mp4",
+    "music4.mp4",
+    "music5.mp4",
+    "music6.mp4",
+    "music7.mp4",
+    "music8.mp4",
+    "music9.mp4",
+    "music10.mp4"
+
+  ];
+
+
+  let currentMusicIndex = 0;
+
+
+  function toggleMusic() {
+
+    const music =
+      document.getElementById("bg-music");
+
+    if(music.paused) {
+
+      music.play().catch(() => {});
+
+    } else {
+
+      music.pause();
+
+    }
+
+  }
+
+
+  document
+    .getElementById("bg-music")
+    .addEventListener(
+      "ended",
+      function() {
+
+        currentMusicIndex =
+          (currentMusicIndex + 1) %
+          musicList.length;
+
+        const source =
+          document.getElementById(
+            "music-source"
+          );
+
+        source.src =
+          musicList[currentMusicIndex];
+
+        this.load();
+
+        this.play().catch(() => {});
+
+      }
+    );
+
+
+  /* =====================================================
+     EMOJI
+  ===================================================== */
+
+  function toggleEmojiPicker() {
+
+    const picker =
+      document.getElementById("picker");
+
+    picker.style.display =
+      picker.style.display === "block"
+        ? "none"
+        : "block";
+
+  }
+
+
+  document
+    .getElementById("picker")
+    .addEventListener(
+      "emoji-click",
+      function(event) {
+
+        document.getElementById("message")
+          .value += event.detail.unicode;
+
+      }
+    );
+
+
+  /* =====================================================
+     NOTIFY WORD COUNTER
+  ===================================================== */
+
+  document
+    .getElementById("notify-text")
+    .addEventListener(
+      "input",
+      function() {
+
+        let text =
+          this.value.trim();
+
+        let words =
+          text
+            ? text.split(/\s+/)
+            : [];
+
+        if(words.length > 50) {
+
+          words =
+            words.slice(0,50);
+
+          this.value =
+            words.join(" ");
+
         }
+
+        document.getElementById(
+          "notify-counter"
+        ).textContent =
+          words.length +
+          " / 50 words";
+
       }
+    );
+
+
+  /* =====================================================
+     SETTINGS
+  ===================================================== */
+
+  const defaultSettings = {
+
+    lastSeen: true,
+
+    online: true,
+
+    typing: true,
+
+    read: true,
+
+    notifications: true,
+
+    messageNotifications: true,
+
+    alertSound: "alert1.mp3"
+
+  };
+
+
+  function getSettings() {
+
+    const saved =
+      localStorage.getItem(
+        "chatSettings_" +
+        currentUser
+      );
+
+    if(!saved) {
+
+      return {
+        ...defaultSettings
+      };
+
     }
 
-    // FULL-LENGTH MUSIC PLAYLIST LOGIC
-    const musicList = [
-      "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
-      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
-    ];
-
-    let currentMusicIndex = 0;
-
-    window.playMusic = function() {
-      const musicPlayer = document.getElementById("bg-music");
-      musicPlayer.volume = 0.4;
-      musicPlayer.play().catch((err) => {
-        console.log("Autoplay blocked:", err);
-      });
+    return {
+      ...defaultSettings,
+      ...JSON.parse(saved)
     };
 
-    window.toggleMusic = function() {
-      const musicPlayer = document.getElementById("bg-music");
-      const musicBtn = document.getElementById("music-toggle");
-      if (musicPlayer.paused) {
-        musicPlayer.play();
-        musicBtn.innerText = "🔊 Mute";
-      } else {
-        musicPlayer.pause();
-        musicBtn.innerText = "📁 Play";
-      }
-    };
+  }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const musicPlayer = document.getElementById("bg-music");
-      const musicSource = document.getElementById("music-source");
 
-      musicPlayer.addEventListener("ended", () => {
-        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
-        musicSource.src = musicList[currentMusicIndex];
-        musicPlayer.load();
-        musicPlayer.play();
-      });
+  function saveSettings(settings) {
 
-      const picker = document.getElementById('picker');
-      picker.addEventListener('emoji-click', event => {
-        const msgInput = document.getElementById("message");
-        msgInput.value += event.detail.unicode;
-      });
-    });
+    localStorage.setItem(
 
-    function toggleEmojiPicker() {
-      const picker = document.getElementById('picker');
-      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+      "chatSettings_" +
+      currentUser,
+
+      JSON.stringify(settings)
+
+    );
+
+  }
+
+
+  function changeSetting(
+    name,
+    value
+  ) {
+
+    const settings =
+      getSettings();
+
+    settings[name] =
+      value;
+
+    saveSettings(settings);
+
+
+    /*
+      Save settings in Firebase too.
+    */
+
+    if(currentUser) {
+
+      set(
+
+        ref(
+          database,
+          "users/" +
+          currentUser +
+          "/settings/" +
+          name
+        ),
+
+        value
+
+      );
+
     }
-  </script>
 
-  <!-- FIREBASE CHAT LOGIC -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
-      authDomain: "privatechat-8f1a8.firebaseapp.com",
-      databaseURL: "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
-      projectId: "privatechat-8f1a8",
-      storageBucket: "privatechat-8f1a8.firebasestorage.app",
-      messagingSenderId: "873702558512",
-      appId: "1:873702558512:web:ee506e3f954d0d9e69d6f5"
-    };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const messagesRef = ref(db, "messages");
-    const typingRef = ref(db, "typing");
+  function openSettings() {
 
-    const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
-    let typingTimeout = null;
+    const settings =
+      getSettings();
 
-    window.checkPassword = function() {
-      const enteredPass = document.getElementById("pass-input").value.trim().toUpperCase();
-      if (enteredPass === SECRET_PASSWORD) {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("chat-screen").style.display = "block";
-        window.playMusic();
-      } else {
-        alert("Incorrect password!");
+
+    document.getElementById(
+      "setting-last-seen"
+    ).checked =
+      settings.lastSeen;
+
+
+    document.getElementById(
+      "setting-online"
+    ).checked =
+      settings.online;
+
+
+    document.getElementById(
+      "setting-typing"
+    ).checked =
+      settings.typing;
+
+
+    document.getElementById(
+      "setting-read"
+    ).checked =
+      settings.read;
+
+
+    document.getElementById(
+      "setting-notifications"
+    ).checked =
+      settings.notifications;
+
+
+    document.getElementById(
+      "setting-message-notifications"
+    ).checked =
+      settings.messageNotifications;
+
+
+    document.getElementById(
+      "alert-sound"
+    ).value =
+      settings.alertSound;
+
+
+    document.getElementById(
+      "settings-modal"
+    ).style.display =
+      "flex";
+
+  }
+
+
+  function closeSettings() {
+
+    document.getElementById(
+      "settings-modal"
+    ).style.display =
+      "none";
+
+  }
+
+
+  /* =====================================================
+     ALERT SOUND
+  ===================================================== */
+
+  function playAlertSound(
+    filename
+  ) {
+
+    const audio =
+      document.getElementById(
+        "alert-audio"
+      );
+
+    audio.src =
+      filename;
+
+    audio.currentTime = 0;
+
+    audio.volume = 1;
+
+    audio.play().catch(
+      error => {
+        console.log(
+          "Audio blocked:",
+          error
+        );
       }
-    };
+    );
 
-    window.handleTyping = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      if (!user) return;
 
-      set(typingRef, { user: user, isTyping: true });
+    /*
+      Play for maximum 2 seconds.
+    */
 
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => {
-        set(typingRef, { user: user, isTyping: false });
-      }, 2000);
-    };
+    setTimeout(
+      function() {
 
-    onValue(typingRef, (snapshot) => {
-      const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim().toLowerCase();
-      const typingDiv = document.getElementById("typing-indicator");
+        audio.pause();
 
-      if (data && data.isTyping && data.user !== currentUser) {
-        typingDiv.innerText = `${data.user} is typing...`;
-      } else {
-        typingDiv.innerText = "";
+        audio.currentTime = 0;
+
+      },
+      2000
+    );
+
+  }
+
+
+  function testAlertSound() {
+
+    const settings =
+      getSettings();
+
+    playAlertSound(
+      settings.alertSound
+    );
+
+  }
+
+
+  /* =====================================================
+     BROWSER NOTIFICATION
+  ===================================================== */
+
+  async function enableNotifications() {
+
+    if(!("Notification" in window)) {
+
+      alert(
+        "Your browser does not support notifications."
+      );
+
+      return;
+
+    }
+
+
+    const permission =
+      await Notification.requestPermission();
+
+
+    if(permission === "granted") {
+
+      const settings =
+        getSettings();
+
+      settings.notifications =
+        true;
+
+      saveSettings(settings);
+
+      document.getElementById(
+        "setting-notifications"
+      ).checked = true;
+
+      alert(
+        "Notifications enabled."
+      );
+
+    }
+
+  }
+
+
+  async function notificationPermission() {
+
+    const checked =
+      document.getElementById(
+        "setting-notifications"
+      ).checked;
+
+
+    if(checked) {
+
+      await enableNotifications();
+
+    } else {
+
+      changeSetting(
+        "notifications",
+        false
+      );
+
+    }
+
+  }
+
+
+  function showBrowserNotification(
+    title,
+    body
+  ) {
+
+    if(
+      !("Notification" in window)
+    ) {
+      return;
+    }
+
+
+    if(
+      Notification.permission !==
+      "granted"
+    ) {
+      return;
+    }
+
+
+    const notification =
+      new Notification(
+        title,
+        {
+          body: body
+        }
+      );
+
+
+    notification.onclick =
+      function() {
+
+        window.focus();
+
+        notification.close();
+
+      };
+
+  }
+
+
+  /* =====================================================
+     CUSTOM NOTIFICATION POPUP
+  ===================================================== */
+
+  function showNotifyPopup(
+    title,
+    message
+  ) {
+
+    document.getElementById(
+      "popup-title"
+    ).textContent =
+      title;
+
+
+    document.getElementById(
+      "popup-message"
+    ).textContent =
+      message;
+
+
+    const popup =
+      document.getElementById(
+        "notify-popup"
+      );
+
+
+    popup.style.display =
+      "block";
+
+
+    setTimeout(
+      function() {
+
+        popup.style.display =
+          "none";
+
+      },
+      5000
+    );
+
+  }
+
+</script>
+
+
+<!-- =====================================================
+     FIREBASE
+===================================================== -->
+
+<script type="module">
+
+  import {
+    initializeApp
+  }
+
+  from
+  "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+
+  import {
+    getDatabase,
+    ref,
+    push,
+    onChildAdded,
+    onValue,
+    set,
+    update,
+    onDisconnect,
+    serverTimestamp
+  }
+
+  from
+  "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+
+  /* =====================================================
+     FIREBASE CONFIG
+  ===================================================== */
+
+  const firebaseConfig = {
+
+    apiKey:
+      "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
+
+    authDomain:
+      "privatechat-8f1a8.firebaseapp.com",
+
+    databaseURL:
+      "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
+
+    projectId:
+      "privatechat-8f1a8",
+
+    storageBucket:
+      "privatechat-8f1a8.firebasestorage.app",
+
+    messagingSenderId:
+      "873702558512",
+
+    appId:
+      "1:873702558512:web:ee506e3f954d0d9e69d6f5"
+
+  };
+
+
+  const app =
+    initializeApp(
+      firebaseConfig
+    );
+
+
+  const database =
+    getDatabase(app);
+
+
+  /* =====================================================
+     PASSWORD
+  ===================================================== */
+
+  const SECRET_PASSWORD =
+    "AKKISOMEONELOVESYOU";
+
+
+  let currentUser = "";
+
+  let typingTimeout = null;
+
+
+  /* =====================================================
+     GET OTHER USER
+  ===================================================== */
+
+  function getOtherUser() {
+
+    return currentUser === "akki"
+      ? "akkilover"
+      : "akki";
+
+  }
+
+
+  /* =====================================================
+     LOGIN
+  ===================================================== */
+
+  window.checkPassword =
+    function() {
+
+      const entered =
+        document
+          .getElementById(
+            "pass-input"
+          )
+          .value
+          .trim()
+          .toUpperCase();
+
+
+      if(
+        entered !==
+        SECRET_PASSWORD
+      ) {
+
+        alert(
+          "Incorrect password!"
+        );
+
+        return;
+
       }
+
+
+      let username =
+        prompt(
+          "Enter your username:\n\nAkki\nor\nAkkilover"
+        );
+
+
+      username =
+        (username || "")
+          .trim()
+          .toLowerCase();
+
+
+      if(
+        username !== "akki" &&
+        username !== "akkilover"
+      ) {
+
+        alert(
+          "Only Akki or Akkilover are allowed."
+        );
+
+        return;
+
+      }
+
+
+      currentUser =
+        username;
+
+
+      document.getElementById(
+        "login-screen"
+      ).style.display =
+        "none";
+
+
+      document.getElementById(
+        "chat-screen"
+      ).style.display =
+        "block";
+
+
+      const userLabel =
+        document.getElementById(
+          "current-user"
+        );
+
+
+      userLabel.textContent =
+        currentUser === "akki"
+          ? "Akki"
+          : "Akkilover";
+
+
+      userLabel.className =
+        currentUser === "akki"
+          ? "akki-name"
+          : "akkilover-name";
+
+
+      loadSettingsFromFirebase();
+
+
+      startPresence();
+
+
+      setupMessages();
+
+
+      setupTyping();
+
+
+      setupNotifications();
+
+
+      /*
+        Start music after the user
+        interacts with the site.
+      */
+
+      document
+        .getElementById("bg-music")
+        .play()
+        .catch(() => {});
+
+    };
+
+
+  /* =====================================================
+     LOAD SETTINGS
+  ===================================================== */
+
+  function loadSettingsFromFirebase() {
+
+    const settingsRef =
+      ref(
+        database,
+        "users/" +
+        currentUser +
+        "/settings"
+      );
+
+
+    onValue(
+      settingsRef,
+      snapshot => {
+
+        const remote =
+          snapshot.val();
+
+
+        if(remote) {
+
+          const local =
+            getSettings();
+
+
+          const merged =
+            {
+              ...local,
+              ...remote
+            };
+
+
+          saveSettings(
+            merged
+          );
+
+        }
+
+
+        openSettings();
+
+        closeSettings();
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     PRESENCE
+  ===================================================== */
+
+  function startPresence() {
+
+    const presenceRef =
+      ref(
+        database,
+        "presence/" +
+        currentUser
+      );
+
+
+    set(
+      presenceRef,
+      {
+        online: true,
+
+        lastSeen:
+          serverTimestamp()
+      }
+    );
+
+
+    onDisconnect(
+      presenceRef
+    ).set({
+
+      online: false,
+
+      lastSeen:
+        serverTimestamp()
+
     });
 
-    window.sendMessage = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const text = document.getElementById("message").value.trim();
 
-      // RESTRICT USERNAMES TO ONLY AKKI OR AKKILOVER
-      if (user !== "akki" && user !== "akkilover") {
-        alert("Only 'akki' or 'akkilover' are allowed as secret aliases!");
+    /*
+      Listen to other user.
+    */
+
+    const otherPresence =
+      ref(
+        database,
+        "presence/" +
+        getOtherUser()
+      );
+
+
+    onValue(
+      otherPresence,
+      snapshot => {
+
+        const data =
+          snapshot.val();
+
+
+        const settings =
+          getSettings();
+
+
+        const status =
+          document.getElementById(
+            "status-line"
+          );
+
+
+        if(!data) {
+
+          status.textContent =
+            "";
+
+          return;
+
+        }
+
+
+        if(
+          data.online &&
+          settings.online
+        ) {
+
+          status.textContent =
+            "🟢 Online";
+
+        }
+
+        else if(
+          !data.online &&
+          settings.lastSeen &&
+          data.lastSeen
+        ) {
+
+          const date =
+            new Date(
+              data.lastSeen
+            );
+
+
+          status.textContent =
+            "Last seen " +
+            date.toLocaleTimeString(
+              [],
+              {
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            );
+
+        }
+
+        else {
+
+          status.textContent =
+            "";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     TYPING
+  ===================================================== */
+
+  function setupTyping() {
+
+    const typingRef =
+      ref(
+        database,
+        "typing"
+      );
+
+
+    onValue(
+      typingRef,
+      snapshot => {
+
+        const data =
+          snapshot.val();
+
+
+        const settings =
+          getSettings();
+
+
+        const indicator =
+          document.getElementById(
+            "typing-indicator"
+          );
+
+
+        if(
+          settings.typing &&
+          data &&
+          data.user ===
+          getOtherUser() &&
+          data.isTyping
+        ) {
+
+          indicator.textContent =
+            data.user +
+            " is typing...";
+
+        }
+
+        else {
+
+          indicator.textContent =
+            "";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  window.handleTyping =
+    function() {
+
+      const settings =
+        getSettings();
+
+
+      if(!settings.typing) {
         return;
       }
-      if (!text) {
-        alert("Please enter a message!");
-        return;
-      }
 
-      const now = new Date();
-      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      push(messagesRef, {
-        user: user,
-        text: text,
-        time: timeString
-      });
+      const typingRef =
+        ref(
+          database,
+          "typing"
+        );
 
-      document.getElementById("message").value = "";
-      document.getElementById('picker').style.display = 'none';
-      set(typingRef, { user: user, isTyping: false });
+
+      set(
+        typingRef,
+        {
+          user: currentUser,
+
+          isTyping: true
+        }
+      );
+
+
+      clearTimeout(
+        typingTimeout
+      );
+
+
+      typingTimeout =
+        setTimeout(
+          function() {
+
+            set(
+              typingRef,
+              {
+                user: currentUser,
+
+                isTyping: false
+              }
+            );
+
+          },
+          2000
+        );
+
     };
 
-    onChildAdded(messagesRef, (snapshot) => {
-      const data = snapshot.val();
-      const usernameLower = data.user ? data.user.toLowerCase() : '';
 
-      const chatBox = document.getElementById("chat-box");
-      const msgDiv = document.createElement("div");
-      
-      // ASSIGN COLORS ACCORDING TO USERNAME
-      if (usernameLower === 'akki') {
-        msgDiv.className = 'message akki-msg';
-      } else if (usernameLower === 'akkilover') {
-        msgDiv.className = 'message akkilover-msg';
-      } else {
-        msgDiv.className = 'message other-msg';
+  /* =====================================================
+     SEND MESSAGE
+  ===================================================== */
+
+  window.sendMessage =
+    function() {
+
+      const input =
+        document.getElementById(
+          "message"
+        );
+
+
+      const text =
+        input.value.trim();
+
+
+      if(!text) {
+        return;
       }
-      
-      const timeFormatted = data.time ? data.time : '';
-      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}<span class="timestamp">${timeFormatted}</span>`;
-      
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-  </script>
+
+
+      const now =
+        new Date();
+
+
+      push(
+
+        ref(
+          database,
+          "messages"
+        ),
+
+        {
+
+          user:
+            currentUser,
+
+          text:
+            text,
+
+          time:
+            now.toLocaleTimeString(
+              [],
+              {
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            ),
+
+          createdAt:
+            serverTimestamp(),
+
+          delivered:
+            false,
+
+          read:
+            false
+
+        }
+
+      );
+
+
+      input.value = "";
+
+
+      document.getElementById(
+        "picker"
+      ).style.display =
+        "none";
+
+
+      set(
+
+        ref(
+          database,
+          "typing"
+        ),
+
+        {
+
+          user:
+            currentUser,
+
+          isTyping:
+            false
+
+        }
+
+      );
+
+    };
+
+
+  /* =====================================================
+     RECEIVE MESSAGES
+  ===================================================== */
+
+  function setupMessages() {
+
+    const messagesRef =
+      ref(
+        database,
+        "messages"
+      );
+
+
+    onChildAdded(
+      messagesRef,
+      snapshot => {
+
+        const data =
+          snapshot.val();
+
+
+        if(!data) {
+          return;
+        }
+
+
+        renderMessage(
+          snapshot.key,
+          data
+        );
+
+
+        /*
+          If message belongs
+          to the other person,
+          mark it delivered.
+        */
+
+        if(
+          data.user ===
+          getOtherUser()
+        ) {
+
+          update(
+
+            ref(
+              database,
+              "messages/" +
+              snapshot.key
+            ),
+
+            {
+              delivered:
+                true
+            }
+
+          );
+
+
+          /*
+            Mark as read if
+            read receipts are ON.
+          */
+
+          const settings =
+            getSettings();
+
+
+          if(
+            settings.read
+          ) {
+
+            update(
+
+              ref(
+                database,
+                "messages/" +
+                snapshot.key
+              ),
+
+              {
+                read:
+                  true
+              }
+
+            );
+
+          }
+
+        }
+
+
+        /*
+          Message notification
+          when tab isn't visible.
+        */
+
+        if(
+          data.user ===
+          getOtherUser()
+        ) {
+
+          const settings =
+            getSettings();
+
+
+          if(
+            settings.messageNotifications &&
+            document.visibilityState !==
+            "visible"
+          ) {
+
+            showBrowserNotification(
+
+              data.user === "akki"
+                ? "Akki"
+                : "Akkilover",
+
+              data.text
+
+            );
+
+
+            playAlertSound(
+              settings.alertSound
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     RENDER MESSAGE
+  ===================================================== */
+
+  function renderMessage(
+    messageId,
+    data
+  ) {
+
+    const chatBox =
+      document.getElementById(
+        "chat-box"
+      );
+
+
+    if(
+      document.querySelector(
+        `[data-message-id="${messageId}"]`
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.dataset.messageId =
+      messageId;
+
+
+    const user =
+      (data.user || "")
+        .toLowerCase();
+
+
+    if(
+      user === "akki"
+    ) {
+
+      div.className =
+        "message akki-msg";
+
+    }
+
+    else if(
+      user === "akkilover"
+    ) {
+
+      div.className =
+        "message akkilover-msg";
+
+    }
+
+    else {
+
+      div.className =
+        "message other-msg";
+
+    }
+
+
+    let nameClass =
+      user === "akki"
+        ? "akki-name"
+        : "akkilover-name";
+
+
+    let displayName =
+      user === "akki"
+        ? "Akki"
+        : "Akkilover";
+
+
+    let status = "";
+
+
+    if(
+      user === currentUser
+    ) {
+
+      if(
+        data.read
+      ) {
+
+        status =
+          " ✓✓";
+
+      }
+
+      else if(
+        data.delivered
+      ) {
+
+        status =
+          " ✓✓";
+
+      }
+
+      else {
+
+        status =
+          " ✓";
+
+      }
+
+    }
+
+
+    const safeText =
+      escapeHTML(
+        data.text || ""
+      );
+
+
+    div.innerHTML =
+
+      `<strong class="${nameClass}">
+        ${displayName}:
+      </strong>
+      ${safeText}
+      <span class="timestamp">
+        ${data.time || ""}
+        <span class="message-status">
+          ${status}
+        </span>
+      </span>`;
+
+
+    chatBox.appendChild(
+      div
+    );
+
+
+    chatBox.scrollTop =
+      chatBox.scrollHeight;
+
+  }
+
+
+  /* =====================================================
+     ESCAPE HTML
+  ===================================================== */
+
+  function escapeHTML(text) {
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.textContent =
+      text;
+
+
+    return div.innerHTML;
+
+  }
+
+
+  /* =====================================================
+     SEND NOTIFICATION
+  ===================================================== */
+
+  window.sendNotify =
+    function() {
+
+      const input =
+        document.getElementById(
+          "notify-text"
+        );
+
+
+      const text =
+        input.value.trim();
+
+
+      if(!text) {
+
+        alert(
+          "Please write something first."
+        );
+
+        return;
+
+      }
+
+
+      const words =
+        text.split(/\s+/);
+
+
+      if(
+        words.length > 50
+      ) {
+
+        alert(
+          "Maximum 50 words allowed."
+        );
+
+        return;
+
+      }
+
+
+      const receiver =
+        getOtherUser();
+
+
+      push(
+
+        ref(
+          database,
+          "notifications"
+        ),
+
+        {
+
+          from:
+            currentUser,
+
+          to:
+            receiver,
+
+          text:
+            text,
+
+          createdAt:
+            serverTimestamp(),
+
+          status:
+            "new"
+
+        }
+
+      );
+
+
+      input.value = "";
+
+
+      document.getElementById(
+        "notify-counter"
+      ).textContent =
+        "0 / 50 words";
+
+
+      alert(
+        "Notification sent!"
+      );
+
+    };
+
+
+  /* =====================================================
+     NOTIFICATION LISTENER
+  ===================================================== */
+
+  function setupNotifications() {
+
+    const notificationsRef =
+      ref(
+        database,
+        "notifications"
+      );
+
+
+    onChildAdded(
+      notificationsRef,
+      snapshot => {
+
+        const data =
+          snapshot.val();
+
+
+        if(!data) {
+          return;
+        }
+
+
+        if(
+          data.to !==
+          currentUser
+        ) {
+
+          return;
+
+        }
+
+
+        const settings =
+          getSettings();
+
+
+        if(
+          !settings.notifications
+        ) {
+
+          return;
+
+        }
+
+
+        /*
+          Show notification popup.
+        */
+
+        showNotifyPopup(
+
+          data.from === "akki"
+            ? "🔔 Akki"
+            : "🔔 Akkilover",
+
+          data.text
+
+        );
+
+
+        /*
+          Play selected alert
+          for 2 seconds.
+        */
+
+        playAlertSound(
+          settings.alertSound
+        );
+
+
+        /*
+          Browser notification.
+        */
+
+        showBrowserNotification(
+
+          data.from === "akki"
+            ? "Akki wants to talk"
+            : "Akkilover wants to talk",
+
+          data.text
+
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     PAGE VISIBILITY
+  ===================================================== */
+
+  document.addEventListener(
+    "visibilitychange",
+    function() {
+
+      if(
+        document.visibilityState ===
+        "visible"
+      ) {
+
+        /*
+          User has returned
+          to the chat.
+        */
+
+        const settings =
+          getSettings();
+
+
+        if(
+          settings.read
+        ) {
+
+          updateReadMessages();
+
+        }
+
+      }
+
+    }
+  );
+
+
+  function updateReadMessages() {
+
+    const messagesRef =
+      ref(
+        database,
+        "messages"
+      );
+
+
+    onValue(
+      messagesRef,
+      snapshot => {
+
+        snapshot.forEach(
+          child => {
+
+            const data =
+              child.val();
+
+
+            if(
+              data.user ===
+              getOtherUser()
+            ) {
+
+              update(
+
+                ref(
+                  database,
+                  "messages/" +
+                  child.key
+                ),
+
+                {
+                  read:
+                    true
+                }
+
+              );
+
+            }
+
+          }
+        );
+
+      },
+      {
+        onlyOnce: true
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     ENTER KEY
+  ===================================================== */
+
+  document
+    .getElementById("message")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if(
+          event.key === "Enter"
+        ) {
+
+          event.preventDefault();
+
+          sendMessage();
+
+        }
+
+      }
+    );
+
+</script>
+
 </body>
 </html>
