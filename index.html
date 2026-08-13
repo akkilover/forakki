@@ -2,227 +2,324 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ambient Video & Custom Alert Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Chat Hub & Ambient Background</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
     }
-    .controls-panel {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+
+    /* Fullscreen Video Background Backdrop */
+    .bg-video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
     }
-    .control-group {
-      margin-bottom: 15px;
+    .bg-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Main Chat App Overlay */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.55); /* Glassmorphism backdrop */
+      backdrop-filter: blur(8px);
+    }
+
+    /* Top Controls Header */
+    .header-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 20px;
+      background: rgba(18, 18, 18, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
+      justify-content: space-between;
+    }
+    .controls-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
     label {
-      display: block;
-      margin-bottom: 5px;
+      font-size: 12px;
       font-weight: bold;
+      color: #ddd;
     }
     select, input[type="file"], button {
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 4px;
       border: 1px solid #444;
-      background: #2a2a2a;
+      background: #222;
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
+      outline: none;
     }
     button {
       cursor: pointer;
       background: #007bff;
       border: none;
+      font-weight: bold;
     }
     button:hover {
       background: #0056b3;
     }
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-      background: #000;
+
+    /* Chat Messages Window */
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .video-container video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .message {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
     }
-    .status-msg {
-      margin-top: 10px;
-      font-size: 13px;
+    .message.received {
+      background: rgba(255, 255, 255, 0.18);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .message.sent {
+      background: #007bff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    /* Chat Message Input Bar */
+    .input-panel {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      background: rgba(18, 18, 18, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .input-panel input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .status-err {
+      font-size: 11px;
       color: #ff5555;
-      text-align: center;
+      margin-left: 10px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Ambient Hub & Custom Alert System</h2>
+  <!-- Background Video Engine -->
+  <div class="bg-video-container">
+    <video id="bgPlayer" autoplay muted loop playsinline></video>
+  </div>
 
-  <div class="controls-panel">
-    <!-- Category Selection (15 videos per section) -->
-    <div class="control-group">
-      <label for="categorySelect">Choose Theme (15 Videos, 5-min auto switch):</label>
-      <select id="categorySelect" onchange="changeCategory()">
-        <option value="space">Space</option>
-        <option value="cinematic">Cinematic</option>
-        <option value="love">Love</option>
-        <option value="rain">Rain</option>
-      </select>
+  <!-- Chat UI -->
+  <div class="app-container">
+    <!-- Header Control Bar -->
+    <div class="header-panel">
+      <div class="controls-group">
+        <label>Theme:</label>
+        <select id="categorySelect" onchange="changeCategory()">
+          <option value="space">Space</option>
+          <option value="cinematic">Cinematic</option>
+          <option value="love">Love</option>
+          <option value="rain">Rain</option>
+        </select>
+      </div>
+
+      <div class="controls-group">
+        <label>Music:</label>
+        <select id="musicSelect" onchange="changeMusic()">
+          <option value="">-- Mute Music --</option>
+          <option value="music1.mp3">1. Soft Piano</option>
+          <option value="music2.mp3">2. Gentle Rain Ambience</option>
+          <option value="music3.mp3">3. Cinematic Strings</option>
+          <option value="music4.mp3">4. Space Soundscape</option>
+          <option value="music5.mp3">5. Romantic Guitar</option>
+          <option value="music6.mp3">6. Deep Chill Lofi</option>
+          <option value="music7.mp3">7. Acoustic Medley</option>
+          <option value="music8.mp3">8. Celestial Waves</option>
+          <option value="music9.mp3">9. Emotional Violin</option>
+          <option value="music10.mp3">10. Peaceful Meditation</option>
+        </select>
+      </div>
+
+      <div class="controls-group">
+        <label>Alert Tone:</label>
+        <select id="toneSelect" onchange="updateAlertTone()">
+          <option value="https://actions.google.com/sounds/v1/notifications/beep_short.ogg">Default Beep</option>
+          <option value="https://actions.google.com/sounds/v1/notifications/ambient_bell.ogg">Ambient Bell</option>
+          <option value="https://actions.google.com/sounds/v1/notifications/chime.ogg">Chime</option>
+          <option value="alert1.mp3">Alert 1</option>
+          <option value="custom">Upload Custom...</option>
+        </select>
+        <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
+        <button onclick="playAlertTone()">Test</button>
+      </div>
+      <span id="statusErr" class="status-err"></span>
     </div>
 
-    <!-- 10 Background Music Track Options -->
-    <div class="control-group">
-      <label for="musicSelect">Background Music (10 Options):</label>
-      <select id="musicSelect" onchange="changeMusic()">
-        <option value="">-- Mute Music --</option>
-        <option value="music1.mp3">1. Soft Piano</option>
-        <option value="music2.mp3">2. Gentle Rain Ambience</option>
-        <option value="music3.mp3">3. Cinematic Strings</option>
-        <option value="music4.mp3">4. Space Soundscape</option>
-        <option value="music5.mp3">5. Romantic Guitar</option>
-        <option value="music6.mp3">6. Deep Chill Lofi</option>
-        <option value="music7.mp3">7. Acoustic Medley</option>
-        <option value="music8.mp3">8. Celestial Waves</option>
-        <option value="music9.mp3">9. Emotional Violin</option>
-        <option value="music10.mp3">10. Peaceful Meditation</option>
-      </select>
+    <!-- Active Chat Messages Area -->
+    <div class="chat-messages" id="chatWindow">
+      <div class="message received">Chat connection active! 5-minute background video rotation enabled.</div>
     </div>
 
-    <!-- Custom Alert Tone Controls -->
-    <div class="control-group">
-      <label for="toneSelect">Select Alert Tone:</label>
-      <select id="toneSelect" onchange="updateAlertTone()">
-        <option value="https://actions.google.com/sounds/v1/notifications/beep_short.ogg">Default Beep</option>
-        <option value="https://actions.google.com/sounds/v1/notifications/ambient_bell.ogg">Ambient Bell</option>
-        <option value="https://actions.google.com/sounds/v1/notifications/chime.ogg">Chime</option>
-        <option value="alert1.mp3">Alert Tone 1</option>
-        <option value="custom">Upload Custom Alert Tone...</option>
-      </select>
-
-      <!-- Hidden File Input for Custom Tone Upload -->
-      <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
-      <button onclick="playAlertTone()">Test Alert Tone</button>
+    <!-- Message Input Box -->
+    <div class="input-panel">
+      <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+      <button onclick="sendMessage()">Send</button>
     </div>
   </div>
 
-  <!-- Main Video Player -->
-  <div class="video-container">
-    <video id="mainPlayer" autoplay muted loop playsinline></video>
-  </div>
-  <div id="statusMsg" class="status-msg"></div>
-</div>
+  <!-- Audio Engine -->
+  <audio id="bgMusicPlayer" loop></audio>
 
-<!-- Audio Player for Background Music -->
-<audio id="bgMusicPlayer" loop></audio>
+  <script>
+    const USERNAME = "akkilover";
+    const REPO = "forakki";
+    const BRANCH = "main";
 
-<script>
-  const USERNAME = "akkilover";
-  const REPO = "forakki";
-  const BRANCH = "main"; 
-
-  function getMediaUrl(filename) {
-    if (filename.startsWith("http://") || filename.startsWith("https://")) {
-      return filename;
+    function getMediaUrl(filename) {
+      if (filename.startsWith("http://") || filename.startsWith("https://")) {
+        return filename;
+      }
+      return `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${filename}`;
     }
-    return `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${filename}`;
-  }
 
-  // Database updated to match your short file names (s1..s15, c1..c15, l1..l15, r1..r15)
-  const videoData = {
-    space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
-    cinematic: Array.from({length: 15}, (_, i) => `c${i + 1}.mp4`),
-    love: Array.from({length: 15}, (_, i) => `l${i + 1}.mp4`),
-    rain: Array.from({length: 15}, (_, i) => `r${i + 1}.mp4`)
-  };
+    // Direct mapping to your short file names (s1..s15, c1..c15, l1..l15, r1..r15)
+    const videoData = {
+      space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
+      cinematic: Array.from({length: 15}, (_, i) => `c${i + 1}.mp4`),
+      love: Array.from({length: 15}, (_, i) => `l${i + 1}.mp4`),
+      rain: Array.from({length: 15}, (_, i) => `r${i + 1}.mp4`)
+    };
 
-  let currentCategory = "space";
-  let currentVideoIndex = 0;
-  let rotationTimer = null;
+    let currentCategory = "space";
+    let currentVideoIndex = 0;
+    let rotationTimer = null;
 
-  const player = document.getElementById("mainPlayer");
-  const bgMusicPlayer = document.getElementById("bgMusicPlayer");
-  const statusMsg = document.getElementById("statusMsg");
-  let alertAudio = new Audio(getMediaUrl("https://actions.google.com/sounds/v1/notifications/beep_short.ogg"));
+    const bgPlayer = document.getElementById("bgPlayer");
+    const bgMusicPlayer = document.getElementById("bgMusicPlayer");
+    const statusErr = document.getElementById("statusErr");
+    let alertAudio = new Audio(getMediaUrl("https://actions.google.com/sounds/v1/notifications/beep_short.ogg"));
 
-  player.onerror = function() {
-    statusMsg.textContent = `⚠️ File not found on GitHub: "${videoData[currentCategory][currentVideoIndex]}". Please verify file extension (case-sensitive)!`;
-  };
+    bgPlayer.onerror = function() {
+      statusErr.textContent = `⚠️ Video load error: ${videoData[currentCategory][currentVideoIndex]}`;
+    };
 
-  function loadVideo() {
-    statusMsg.textContent = "";
-    const videoList = videoData[currentCategory];
-    const fileName = videoList[currentVideoIndex];
-    player.src = getMediaUrl(fileName);
-    player.play().catch(e => console.log("Autoplay check:", e));
-  }
+    function loadVideo() {
+      statusErr.textContent = "";
+      const videoList = videoData[currentCategory];
+      const fileName = videoList[currentVideoIndex];
+      bgPlayer.src = getMediaUrl(fileName);
+      bgPlayer.play().catch(e => console.log("Autoplay waiting for click"));
+    }
 
-  function startVideoRotation() {
-    if (rotationTimer) clearInterval(rotationTimer);
-    
-    rotationTimer = setInterval(() => {
-      currentVideoIndex = (currentVideoIndex + 1) % videoData[currentCategory].length;
+    function startVideoRotation() {
+      if (rotationTimer) clearInterval(rotationTimer);
+      rotationTimer = setInterval(() => {
+        currentVideoIndex = (currentVideoIndex + 1) % videoData[currentCategory].length;
+        loadVideo();
+      }, 5 * 60 * 1000); // 5-minute timer
+    }
+
+    function changeCategory() {
+      currentCategory = document.getElementById("categorySelect").value;
+      currentVideoIndex = 0;
       loadVideo();
-    }, 5 * 60 * 1000); 
-  }
+      startVideoRotation();
+    }
 
-  function changeCategory() {
-    currentCategory = document.getElementById("categorySelect").value;
-    currentVideoIndex = 0;
+    function changeMusic() {
+      const musicSrc = document.getElementById("musicSelect").value;
+      if (musicSrc) {
+        bgMusicPlayer.src = getMediaUrl(musicSrc);
+        bgMusicPlayer.play().catch(e => console.log("Music play deferred/error"));
+      } else {
+        bgMusicPlayer.pause();
+      }
+    }
+
+    function updateAlertTone() {
+      const select = document.getElementById("toneSelect");
+      if (select.value === "custom") {
+        document.getElementById("customToneInput").click();
+      } else {
+        alertAudio.src = getMediaUrl(select.value);
+      }
+    }
+
+    function handleCustomTone(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const customUrl = URL.createObjectURL(file);
+        alertAudio.src = customUrl;
+      }
+    }
+
+    function playAlertTone() {
+      alertAudio.currentTime = 0;
+      alertAudio.play().catch(err => console.log("Audio play deferred"));
+    }
+
+    // Chat Box Actions
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatWindow = document.getElementById("chatWindow");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message sent";
+      msgDiv.textContent = text;
+      chatWindow.appendChild(msgDiv);
+
+      input.value = "";
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      playAlertTone();
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === "Enter") sendMessage();
+    }
+
+    // Start App
     loadVideo();
     startVideoRotation();
-  }
-
-  function changeMusic() {
-    const musicSrc = document.getElementById("musicSelect").value;
-    if (musicSrc) {
-      bgMusicPlayer.src = getMediaUrl(musicSrc);
-      bgMusicPlayer.play().catch(e => alert("Music file '" + musicSrc + "' not found in GitHub repo!"));
-    } else {
-      bgMusicPlayer.pause();
-    }
-  }
-
-  function updateAlertTone() {
-    const select = document.getElementById("toneSelect");
-    if (select.value === "custom") {
-      document.getElementById("customToneInput").click();
-    } else {
-      alertAudio.src = getMediaUrl(select.value);
-    }
-  }
-
-  function handleCustomTone(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const customUrl = URL.createObjectURL(file);
-      alertAudio.src = customUrl;
-    }
-  }
-
-  function playAlertTone() {
-    alertAudio.currentTime = 0;
-    alertAudio.play().catch(err => alert("Could not play audio track. Check if file exists on GitHub."));
-  }
-
-  loadVideo();
-  startVideoRotation();
-</script>
-
+  </script>
 </body>
 </html>
