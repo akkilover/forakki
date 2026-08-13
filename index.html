@@ -47,7 +47,7 @@
     }
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       border-radius: 8px;
@@ -79,7 +79,7 @@
       </select>
     </div>
 
-    <!-- 10 Background Music Track Options -->
+    <!-- Background Music Options -->
     <div class="control-group">
       <label for="musicSelect">Background Music (10 Options):</label>
       <select id="musicSelect" onchange="changeMusic()">
@@ -97,7 +97,7 @@
       </select>
     </div>
 
-    <!-- 5 Downloaded Alert Tones + Custom Audio Upload -->
+    <!-- Alert Tones -->
     <div class="control-group">
       <label for="toneSelect">Select Alert Tone:</label>
       <select id="toneSelect" onchange="updateAlertTone()">
@@ -106,47 +106,28 @@
         <option value="alert3.mp3">Alert Tone 3</option>
         <option value="alert4.mp3">Alert Tone 4</option>
         <option value="alert5.mp3">Alert Tone 5</option>
-        <option value="custom">Upload New Tone...</option>
+        <option value="custom">Upload New Tone File...</option>
       </select>
 
-      <!-- Hidden File Input for Custom Tone Upload -->
       <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
       <button onclick="playAlertTone()">Test Alert Tone</button>
     </div>
   </div>
 
-  <!-- Main Video Player -->
   <div class="video-container">
     <video id="mainPlayer" autoplay muted loop playsinline></video>
   </div>
 </div>
 
-<!-- Audio Player for Background Music -->
 <audio id="bgMusicPlayer" loop></audio>
 
 <script>
-  // Database of 15 videos per category
+  // Videos array structure
   const videoData = {
-    space: [
-      "space1.mp4", "space2.mp4", "space3.mp4", "space4.mp4", "space5.mp4",
-      "space6.mp4", "space7.mp4", "space8.mp4", "space9.mp4", "space10.mp4",
-      "space11.mp4", "space12.mp4", "space13.mp4", "space14.mp4", "space15.mp4"
-    ],
-    cinematic: [
-      "cinematic1.mp4", "cinematic2.mp4", "cinematic3.mp4", "cinematic4.mp4", "cinematic5.mp4",
-      "cinematic6.mp4", "cinematic7.mp4", "cinematic8.mp4", "cinematic9.mp4", "cinematic10.mp4",
-      "cinematic11.mp4", "cinematic12.mp4", "cinematic13.mp4", "cinematic14.mp4", "cinematic15.mp4"
-    ],
-    love: [
-      "love1.mp4", "love2.mp4", "love3.mp4", "love4.mp4", "love5.mp4",
-      "love6.mp4", "love7.mp4", "love8.mp4", "love9.mp4", "love10.mp4",
-      "love11.mp4", "love12.mp4", "love13.mp4", "love14.mp4", "love15.mp4"
-    ],
-    rain: [
-      "rain1.mp4", "rain2.mp4", "rain3.mp4", "rain4.mp4", "rain5.mp4",
-      "rain6.mp4", "rain7.mp4", "rain8.mp4", "rain9.mp4", "rain10.mp4",
-      "rain11.mp4", "rain12.mp4", "rain13.mp4", "rain14.mp4", "rain15.mp4"
-    ]
+    space: Array.from({length: 15}, (_, i) => `space${i + 1}.mp4`),
+    cinematic: Array.from({length: 15}, (_, i) => `cinematic${i + 1}.mp4`),
+    love: Array.from({length: 15}, (_, i) => `love${i + 1}.mp4`),
+    rain: Array.from({length: 15}, (_, i) => `rain${i + 1}.mp4`)
   };
 
   let currentCategory = "space";
@@ -155,21 +136,24 @@
 
   const player = document.getElementById("mainPlayer");
   const bgMusicPlayer = document.getElementById("bgMusicPlayer");
-  
-  // Set default initial tone to your first downloaded file
   let alertAudio = new Audio("alert1.mp3");
 
-  // Load initial video
+  // Error listener for video player
+  player.onerror = function() {
+    console.error("Failed to load video:", player.src);
+  };
+
+  // Load video with fallback error logs
   function loadVideo() {
     const videoList = videoData[currentCategory];
     player.src = videoList[currentVideoIndex];
-    player.play().catch(e => console.log("Autoplay check:", e));
+    player.play().catch(e => {
+      console.warn("Autoplay deferred or video missing:", player.src);
+    });
   }
 
-  // 5-minute auto rotation logic (300,000 ms)
   function startVideoRotation() {
     if (rotationTimer) clearInterval(rotationTimer);
-    
     rotationTimer = setInterval(() => {
       currentVideoIndex = (currentVideoIndex + 1) % videoData[currentCategory].length;
       loadVideo();
@@ -183,18 +167,16 @@
     startVideoRotation();
   }
 
-  // Music Player logic
   function changeMusic() {
     const musicSrc = document.getElementById("musicSelect").value;
     if (musicSrc) {
       bgMusicPlayer.src = musicSrc;
-      bgMusicPlayer.play().catch(e => console.log("Music play blocked:", e));
+      bgMusicPlayer.play().catch(e => console.error("Music play blocked or file not found:", musicSrc));
     } else {
       bgMusicPlayer.pause();
     }
   }
 
-  // Alert Tone Logic
   function updateAlertTone() {
     const select = document.getElementById("toneSelect");
     if (select.value === "custom") {
@@ -207,17 +189,19 @@
   function handleCustomTone(event) {
     const file = event.target.files[0];
     if (file) {
-      const customUrl = URL.createObjectURL(file);
-      alertAudio.src = customUrl;
+      alertAudio.src = URL.createObjectURL(file);
+      alertAudio.play();
     }
   }
 
   function playAlertTone() {
     alertAudio.currentTime = 0;
-    alertAudio.play().catch(err => console.log("Audio play blocked:", err));
+    alertAudio.play().catch(err => {
+      console.error("Alert tone missing or playback blocked by browser:", alertAudio.src);
+      alert("Could not play " + alertAudio.src + ". Please make sure the audio file is in your folder!");
+    });
   }
 
-  // Initialize
   loadVideo();
   startVideoRotation();
 </script>
