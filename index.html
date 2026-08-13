@@ -3,323 +3,455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Private Chat Hub & Ambient Background</title>
+  <title>Private Chat</title>
+  
+  <!-- Emoji Picker Component -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      background: #000;
-      color: #fff;
+    /* DYNAMIC CSS COLOR-CHANGING BACKGROUND (DEFAULT THEME) */
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 520px; 
+      margin: 20px auto; 
+      padding: 15px; 
+      min-height: 90vh;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
     }
 
-    /* Fullscreen Video Background Backdrop */
-    .bg-video-container {
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* BACKGROUND VIDEO STYLES */
+    #bg-video {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .bg-video-container video {
-      width: 100%;
-      height: 100%;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
       object-fit: cover;
+      transition: opacity 1s ease-in-out;
+      display: none;
+      transform: translateZ(0);
+      will-change: transform;
     }
 
-    /* Main Chat App Overlay */
-    .app-container {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.55); /* Glassmorphism backdrop */
-      backdrop-filter: blur(8px);
+    h2 { text-align: center; color: #333; }
+    
+    #login-screen { 
+      background: rgba(255, 255, 255, 0.92); 
+      padding: 20px; 
+      border-radius: 12px; 
+      border: 1px solid #ccc; 
+      text-align: center; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+      backdrop-filter: blur(8px); 
+    }
+    
+    #chat-screen { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.92); 
+      padding: 20px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+      backdrop-filter: blur(8px); 
+    }
+    
+    #chat-box { 
+      height: 350px; 
+      border: 1px solid #ccc; 
+      background: rgba(249, 249, 249, 0.95); 
+      overflow-y: scroll; 
+      padding: 12px; 
+      border-radius: 8px; 
+      margin-bottom: 5px; 
     }
 
-    /* Top Controls Header */
-    .header-panel {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding: 12px 20px;
-      background: rgba(18, 18, 18, 0.85);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      align-items: center;
-      justify-content: space-between;
-    }
-    .controls-group {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    label {
-      font-size: 12px;
-      font-weight: bold;
-      color: #ddd;
-    }
-    select, input[type="file"], button {
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background: #222;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
-    }
-    button {
-      cursor: pointer;
-      background: #007bff;
-      border: none;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-
-    /* Chat Messages Window */
-    .chat-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .message {
-      max-width: 70%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.4;
+    /* MESSAGE STYLES */
+    .message { 
+      margin-bottom: 12px; 
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      width: fit-content; 
+      max-width: 80%; 
       word-wrap: break-word;
+      position: relative;
+      color: #222;
     }
-    .message.received {
-      background: rgba(255, 255, 255, 0.18);
-      align-self: flex-start;
-      border-bottom-left-radius: 2px;
+    
+    /* CUSTOM USER COLOR CLASSES */
+    .akki-msg { 
+      background: #00e5ff; /* Cyan */
+      margin-right: auto;
     }
-    .message.sent {
-      background: #007bff;
-      align-self: flex-end;
-      border-bottom-right-radius: 2px;
+    
+    .akkilover-msg { 
+      background: #ffea00; /* Yellow */
+      margin-left: auto;
     }
 
-    /* Chat Message Input Bar */
-    .input-panel {
+    .other-msg {
+      background: #e9e9eb;
+      margin-right: auto;
+    }
+    
+    .timestamp {
+      font-size: 10px;
+      opacity: 0.75;
+      margin-top: 4px;
+      text-align: right;
+      display: block;
+    }
+
+    /* TYPING INDICATOR */
+    #typing-indicator {
+      font-size: 12px;
+      font-style: italic;
+      color: #666;
+      height: 18px;
+      margin-bottom: 8px;
+    }
+
+    /* INPUT CONTROLS */
+    .input-container {
+      position: relative;
       display: flex;
-      gap: 10px;
-      padding: 15px 20px;
-      background: rgba(18, 18, 18, 0.85);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .input-panel input {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #111;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .status-err {
-      font-size: 11px;
-      color: #ff5555;
-      margin-left: 10px;
+    .input-group { display: flex; gap: 6px; align-items: center; }
+    input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 14px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+
+    /* HEADER CONTROLS */
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .music-btn, .theme-select {
+      background: #6c757d;
+      color: white;
+      font-size: 12px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* EMOJI PICKER POPUP */
+    emoji-picker {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      display: none;
+      z-index: 100;
+      --num-columns: 8;
+      --category-emoji-size: 1.125rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Background Video Engine -->
-  <div class="bg-video-container">
-    <video id="bgPlayer" autoplay muted loop playsinline></video>
-  </div>
+  <!-- BACKGROUND VIDEO ELEMENT -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source id="video-source" src="" type="video/mp4">
+  </video>
 
-  <!-- Chat UI -->
-  <div class="app-container">
-    <!-- Header Control Bar -->
-    <div class="header-panel">
-      <div class="controls-group">
-        <label>Theme:</label>
-        <select id="categorySelect" onchange="changeCategory()">
-          <option value="space">Space</option>
-          <option value="cinematic">Cinematic</option>
-          <option value="love">Love</option>
-          <option value="rain">Rain</option>
-        </select>
-      </div>
+  <!-- BACKGROUND MP4 MUSIC ELEMENT -->
+  <audio id="bg-music">
+    <source id="music-source" src="music1.mp4" type="audio/mp4">
+  </audio>
 
-      <div class="controls-group">
-        <label>Music:</label>
-        <select id="musicSelect" onchange="changeMusic()">
-          <option value="">-- Mute Music --</option>
-          <option value="music1.mp3">1. Soft Piano</option>
-          <option value="music2.mp3">2. Gentle Rain Ambience</option>
-          <option value="music3.mp3">3. Cinematic Strings</option>
-          <option value="music4.mp3">4. Space Soundscape</option>
-          <option value="music5.mp3">5. Romantic Guitar</option>
-          <option value="music6.mp3">6. Deep Chill Lofi</option>
-          <option value="music7.mp3">7. Acoustic Medley</option>
-          <option value="music8.mp3">8. Celestial Waves</option>
-          <option value="music9.mp3">9. Emotional Violin</option>
-          <option value="music10.mp3">10. Peaceful Meditation</option>
-        </select>
-      </div>
-
-      <div class="controls-group">
-        <label>Alert Tone:</label>
-        <select id="toneSelect" onchange="updateAlertTone()">
-          <option value="https://actions.google.com/sounds/v1/notifications/beep_short.ogg">Default Beep</option>
-          <option value="https://actions.google.com/sounds/v1/notifications/ambient_bell.ogg">Ambient Bell</option>
-          <option value="https://actions.google.com/sounds/v1/notifications/chime.ogg">Chime</option>
-          <option value="alert1.mp3">Alert 1</option>
-          <option value="custom">Upload Custom...</option>
-        </select>
-        <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
-        <button onclick="playAlertTone()">Test</button>
-      </div>
-      <span id="statusErr" class="status-err"></span>
-    </div>
-
-    <!-- Active Chat Messages Area -->
-    <div class="chat-messages" id="chatWindow">
-      <div class="message received">Chat connection active! 5-minute background video rotation enabled.</div>
-    </div>
-
-    <!-- Message Input Box -->
-    <div class="input-panel">
-      <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
-      <button onclick="sendMessage()">Send</button>
+  <!-- STEP 1: PASSWORD LOCK SCREEN -->
+  <div id="login-screen">
+    <h2>🔒 Protected Chat</h2>
+    <p>Enter the secret password to join:</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <input type="password" id="pass-input" placeholder="Password...">
+      <button onclick="checkPassword()">Enter</button>
     </div>
   </div>
 
-  <!-- Audio Engine -->
-  <audio id="bgMusicPlayer" loop></audio>
+  <!-- STEP 2: CHAT SCREEN -->
+  <div id="chat-screen">
+    <div class="control-bar">
+      <h3 style="margin: 0; font-size: 16px;">Secret Chat</h3>
+      <div>
+        <!-- THEME SWITCHER DROPDOWN -->
+        <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
+          <option value="default">🎨 Default</option>
+          <option value="space">🌌 Space</option>
+          <option value="cinematic">🎬 Cinematic</option>
+          <option value="love">💖 Love</option>
+          <option value="rain">🌧️ Rain</option>
+        </select>
+        
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute</button>
+      </div>
+    </div>
 
+    <div id="chat-box"></div>
+    <div id="typing-indicator"></div>
+
+    <div class="input-container">
+      <emoji-picker id="picker"></emoji-picker>
+      
+      <div class="input-group">
+        <input type="text" id="username" placeholder="akki or akkilover" style="width: 35%;" value="">
+        <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
+        <button type="button" onclick="toggleEmojiPicker()">😊</button>
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO & MUSIC PLAYER SCRIPT -->
   <script>
-    const USERNAME = "akkilover";
-    const REPO = "forakki";
-    const BRANCH = "main";
-
-    function getMediaUrl(filename) {
-      if (filename.startsWith("http://") || filename.startsWith("https://")) {
-        return filename;
-      }
-      return `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${filename}`;
-    }
-
-    // Direct mapping to your short file names (s1..s15, c1..c15, l1..l15, r1..r15)
-    const videoData = {
-      space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
-      cinematic: Array.from({length: 15}, (_, i) => `c${i + 1}.mp4`),
-      love: Array.from({length: 15}, (_, i) => `l${i + 1}.mp4`),
-      rain: Array.from({length: 15}, (_, i) => `r${i + 1}.mp4`)
+    // VIDEO CATEGORY MAP WITH FILENAMES (1 TO 15)
+    const videoThemes = {
+      default: [],
+      space: [
+        "s1.mp4", "s2.mp4", "s3.mp4", "s4.mp4", "s5.mp4",
+        "s6.mp4", "s7.mp4", "s8.mp4", "s9.mp4", "s10.mp4",
+        "s11.mp4", "s12.mp4", "s13.mp4", "s14.mp4", "s15.mp4"
+      ],
+      cinematic: [
+        "c1.mp4", "c2.mp4", "c3.mp4", "c4.mp4", "c5.mp4",
+        "c6.mp4", "c7.mp4", "c8.mp4", "c9.mp4", "c10.mp4",
+        "c11.mp4", "c12.mp4", "c13.mp4", "c14.mp4", "c15.mp4"
+      ],
+      love: [
+        "l1.mp4", "l2.mp4", "l3.mp4", "l4.mp4", "l5.mp4",
+        "l6.mp4", "l7.mp4", "l8.mp4", "l9.mp4", "l10.mp4",
+        "l11.mp4", "l12.mp4", "l13.mp4", "l14.mp4", "l15.mp4"
+      ],
+      rain: [
+        "r1.mp4", "r2.mp4", "r3.mp4", "r4.mp4", "r5.mp4",
+        "r6.mp4", "r7.mp4", "r8.mp4", "r9.mp4", "r10.mp4",
+        "r11.mp4", "r12.mp4", "r13.mp4", "r14.mp4", "r15.mp4"
+      ]
     };
 
-    let currentCategory = "space";
+    let currentCategory = "default";
     let currentVideoIndex = 0;
-    let rotationTimer = null;
+    let videoTimer = null;
+    const fiveMinutesInMs = 5 * 60 * 1000;
 
-    const bgPlayer = document.getElementById("bgPlayer");
-    const bgMusicPlayer = document.getElementById("bgMusicPlayer");
-    const statusErr = document.getElementById("statusErr");
-    let alertAudio = new Audio(getMediaUrl("https://actions.google.com/sounds/v1/notifications/beep_short.ogg"));
+    function rotateVideo() {
+      const videoList = videoThemes[currentCategory];
+      if (!videoList || videoList.length === 0) return;
 
-    bgPlayer.onerror = function() {
-      statusErr.textContent = `⚠️ Video load error: ${videoData[currentCategory][currentVideoIndex]}`;
+      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
+      const videoPlayer = document.getElementById("bg-video");
+      const videoSource = document.getElementById("video-source");
+
+      videoPlayer.style.opacity = "0";
+
+      setTimeout(() => {
+        videoSource.src = videoList[currentVideoIndex];
+        videoPlayer.load();
+        videoPlayer.play();
+        videoPlayer.style.opacity = "1";
+      }, 1000);
+    }
+
+    function changeThemeCategory(category) {
+      currentCategory = category;
+      clearInterval(videoTimer);
+
+      const videoPlayer = document.getElementById("bg-video");
+      const videoSource = document.getElementById("video-source");
+
+      if (category === "default") {
+        videoPlayer.style.display = "none";
+        videoSource.src = "";
+      } else {
+        videoPlayer.style.display = "block";
+        currentVideoIndex = 0;
+        const videoList = videoThemes[category];
+
+        if (videoList && videoList.length > 0) {
+          videoSource.src = videoList[0];
+          videoPlayer.load();
+          videoPlayer.play();
+          videoPlayer.style.opacity = "1";
+
+          videoTimer = setInterval(rotateVideo, fiveMinutesInMs);
+        }
+      }
+    }
+
+    // FULL-LENGTH MUSIC PLAYLIST LOGIC
+    const musicList = [
+      "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
+      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
+    ];
+
+    let currentMusicIndex = 0;
+
+    window.playMusic = function() {
+      const musicPlayer = document.getElementById("bg-music");
+      musicPlayer.volume = 0.4;
+      musicPlayer.play().catch((err) => {
+        console.log("Autoplay blocked:", err);
+      });
     };
 
-    function loadVideo() {
-      statusErr.textContent = "";
-      const videoList = videoData[currentCategory];
-      const fileName = videoList[currentVideoIndex];
-      bgPlayer.src = getMediaUrl(fileName);
-      bgPlayer.play().catch(e => console.log("Autoplay waiting for click"));
-    }
-
-    function startVideoRotation() {
-      if (rotationTimer) clearInterval(rotationTimer);
-      rotationTimer = setInterval(() => {
-        currentVideoIndex = (currentVideoIndex + 1) % videoData[currentCategory].length;
-        loadVideo();
-      }, 5 * 60 * 1000); // 5-minute timer
-    }
-
-    function changeCategory() {
-      currentCategory = document.getElementById("categorySelect").value;
-      currentVideoIndex = 0;
-      loadVideo();
-      startVideoRotation();
-    }
-
-    function changeMusic() {
-      const musicSrc = document.getElementById("musicSelect").value;
-      if (musicSrc) {
-        bgMusicPlayer.src = getMediaUrl(musicSrc);
-        bgMusicPlayer.play().catch(e => console.log("Music play deferred/error"));
+    window.toggleMusic = function() {
+      const musicPlayer = document.getElementById("bg-music");
+      const musicBtn = document.getElementById("music-toggle");
+      if (musicPlayer.paused) {
+        musicPlayer.play();
+        musicBtn.innerText = "🔊 Mute";
       } else {
-        bgMusicPlayer.pause();
+        musicPlayer.pause();
+        musicBtn.innerText = "📁 Play";
       }
-    }
+    };
 
-    function updateAlertTone() {
-      const select = document.getElementById("toneSelect");
-      if (select.value === "custom") {
-        document.getElementById("customToneInput").click();
+    document.addEventListener("DOMContentLoaded", () => {
+      const musicPlayer = document.getElementById("bg-music");
+      const musicSource = document.getElementById("music-source");
+
+      musicPlayer.addEventListener("ended", () => {
+        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+        musicSource.src = musicList[currentMusicIndex];
+        musicPlayer.load();
+        musicPlayer.play();
+      });
+
+      const picker = document.getElementById('picker');
+      picker.addEventListener('emoji-click', event => {
+        const msgInput = document.getElementById("message");
+        msgInput.value += event.detail.unicode;
+      });
+    });
+
+    function toggleEmojiPicker() {
+      const picker = document.getElementById('picker');
+      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+
+  <!-- FIREBASE CHAT LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
+      authDomain: "privatechat-8f1a8.firebaseapp.com",
+      databaseURL: "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
+      projectId: "privatechat-8f1a8",
+      storageBucket: "privatechat-8f1a8.firebasestorage.app",
+      messagingSenderId: "873702558512",
+      appId: "1:873702558512:web:ee506e3f954d0d9e69d6f5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const messagesRef = ref(db, "messages");
+    const typingRef = ref(db, "typing");
+
+    const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
+    let typingTimeout = null;
+
+    window.checkPassword = function() {
+      const enteredPass = document.getElementById("pass-input").value.trim().toUpperCase();
+      if (enteredPass === SECRET_PASSWORD) {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("chat-screen").style.display = "block";
+        window.playMusic();
       } else {
-        alertAudio.src = getMediaUrl(select.value);
+        alert("Incorrect password!");
       }
-    }
+    };
 
-    function handleCustomTone(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const customUrl = URL.createObjectURL(file);
-        alertAudio.src = customUrl;
+    window.handleTyping = function() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      if (!user) return;
+
+      set(typingRef, { user: user, isTyping: true });
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        set(typingRef, { user: user, isTyping: false });
+      }, 2000);
+    };
+
+    onValue(typingRef, (snapshot) => {
+      const data = snapshot.val();
+      const currentUser = document.getElementById("username").value.trim().toLowerCase();
+      const typingDiv = document.getElementById("typing-indicator");
+
+      if (data && data.isTyping && data.user !== currentUser) {
+        typingDiv.innerText = `${data.user} is typing...`;
+      } else {
+        typingDiv.innerText = "";
       }
-    }
+    });
 
-    function playAlertTone() {
-      alertAudio.currentTime = 0;
-      alertAudio.play().catch(err => console.log("Audio play deferred"));
-    }
+    window.sendMessage = function() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const text = document.getElementById("message").value.trim();
 
-    // Chat Box Actions
-    function sendMessage() {
-      const input = document.getElementById("messageInput");
-      const text = input.value.trim();
-      if (!text) return;
+      // RESTRICT USERNAMES TO ONLY AKKI OR AKKILOVER
+      if (user !== "akki" && user !== "akkilover") {
+        alert("Only 'akki' or 'akkilover' are allowed as secret aliases!");
+        return;
+      }
+      if (!text) {
+        alert("Please enter a message!");
+        return;
+      }
 
-      const chatWindow = document.getElementById("chatWindow");
+      const now = new Date();
+      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      push(messagesRef, {
+        user: user,
+        text: text,
+        time: timeString
+      });
+
+      document.getElementById("message").value = "";
+      document.getElementById('picker').style.display = 'none';
+      set(typingRef, { user: user, isTyping: false });
+    };
+
+    onChildAdded(messagesRef, (snapshot) => {
+      const data = snapshot.val();
+      const usernameLower = data.user ? data.user.toLowerCase() : '';
+
+      const chatBox = document.getElementById("chat-box");
       const msgDiv = document.createElement("div");
-      msgDiv.className = "message sent";
-      msgDiv.textContent = text;
-      chatWindow.appendChild(msgDiv);
-
-      input.value = "";
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-
-      playAlertTone();
-    }
-
-    function handleKeyPress(e) {
-      if (e.key === "Enter") sendMessage();
-    }
-
-    // Start App
-    loadVideo();
-    startVideoRotation();
+      
+      // ASSIGN COLORS ACCORDING TO USERNAME
+      if (usernameLower === 'akki') {
+        msgDiv.className = 'message akki-msg';
+      } else if (usernameLower === 'akkilover') {
+        msgDiv.className = 'message akkilover-msg';
+      } else {
+        msgDiv.className = 'message other-msg';
+      }
+      
+      const timeFormatted = data.time ? data.time : '';
+      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}<span class="timestamp">${timeFormatted}</span>`;
+      
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
   </script>
 </body>
 </html>
