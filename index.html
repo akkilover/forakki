@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Private Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Private Chat & Alert System</title>
   
-  <!-- Emoji Picker Component -->
+  <!-- Emoji Picker -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
   <style>
-    /* DYNAMIC CSS COLOR-CHANGING BACKGROUND (DEFAULT THEME) */
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 520px; 
-      margin: 20px auto; 
-      padding: 15px; 
-      min-height: 90vh;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-theme: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      --chat-bg: rgba(255, 255, 255, 0.88);
+      --bubble-akki: #00e5ff;
+      --bubble-akkilover: #ffea00;
+    }
+
+    html, body {
+      width: 100%; height: 100%; height: 100dvh;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-theme);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
     }
@@ -27,327 +33,213 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* BACKGROUND VIDEO STYLES */
-    #bg-video {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      transition: opacity 1s ease-in-out;
-      display: none;
-      transform: translateZ(0);
-      will-change: transform;
+    /* LOGIN SCREEN */
+    #login-screen {
+      height: 100dvh;
+      display: flex; justify-content: center; align-items: center; padding: 20px;
+    }
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px; border-radius: 16px; text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2); width: 100%; max-width: 360px;
     }
 
-    h2 { text-align: center; color: #333; }
-    
-    #login-screen { 
-      background: rgba(255, 255, 255, 0.92); 
-      padding: 20px; 
-      border-radius: 12px; 
-      border: 1px solid #ccc; 
-      text-align: center; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-      backdrop-filter: blur(8px); 
-    }
-    
-    #chat-screen { 
-      display: none; 
-      background: rgba(255, 255, 255, 0.92); 
-      padding: 20px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-      backdrop-filter: blur(8px); 
-    }
-    
-    #chat-box { 
-      height: 350px; 
-      border: 1px solid #ccc; 
-      background: rgba(249, 249, 249, 0.95); 
-      overflow-y: scroll; 
-      padding: 12px; 
-      border-radius: 8px; 
-      margin-bottom: 5px; 
+    /* CHAT CONTAINER */
+    #chat-screen {
+      display: none; height: 100dvh; width: 100%; max-width: 500px;
+      margin: 0 auto; flex-direction: column; background: var(--chat-bg);
+      backdrop-filter: blur(10px); position: relative;
     }
 
-    /* MESSAGE STYLES */
-    .message { 
-      margin-bottom: 12px; 
-      padding: 8px 12px; 
-      border-radius: 8px; 
-      width: fit-content; 
-      max-width: 80%; 
-      word-wrap: break-word;
-      position: relative;
-      color: #222;
-    }
-    
-    /* CUSTOM USER COLOR CLASSES */
-    .akki-msg { 
-      background: #00e5ff; /* Cyan */
-      margin-right: auto;
-    }
-    
-    .akkilover-msg { 
-      background: #ffea00; /* Yellow */
-      margin-left: auto;
-    }
-
-    .other-msg {
-      background: #e9e9eb;
-      margin-right: auto;
-    }
-    
-    .timestamp {
-      font-size: 10px;
-      opacity: 0.75;
-      margin-top: 4px;
-      text-align: right;
-      display: block;
-    }
-
-    /* TYPING INDICATOR */
-    #typing-indicator {
-      font-size: 12px;
-      font-style: italic;
-      color: #666;
-      height: 18px;
-      margin-bottom: 8px;
-    }
-
-    /* INPUT CONTROLS */
-    .input-container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .input-group { display: flex; gap: 6px; align-items: center; }
-    input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
-    button { padding: 10px 14px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-    button:hover { background: #0056b3; }
-
-    /* HEADER CONTROLS */
+    /* TOP BAR */
     .control-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 10;
     }
-    .music-btn, .theme-select {
-      background: #6c757d;
-      color: white;
-      font-size: 12px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+    .user-status-head { display: flex; flex-direction: column; }
+    .status-badge { font-size: 11px; color: #28a745; font-weight: bold; }
+    
+    .btn-icon {
+      background: #4a5568; color: white; border: none; padding: 6px 12px;
+      border-radius: 8px; font-size: 13px; cursor: pointer;
     }
 
-    /* EMOJI PICKER POPUP */
-    emoji-picker {
-      position: absolute;
-      bottom: 50px;
-      right: 0;
-      display: none;
-      z-index: 100;
-      --num-columns: 8;
-      --category-emoji-size: 1.125rem;
+    /* SETTINGS MODAL */
+    #settings-modal {
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,0.98); z-index: 200; padding: 20px;
+      overflow-y: auto; flex-direction: column; gap: 15px;
     }
+    .settings-group { background: #f7fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .settings-title { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #2d3748; }
+
+    /* CHAT BOX */
+    #chat-box {
+      flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .message {
+      padding: 10px 14px; border-radius: 16px; max-width: 80%; word-wrap: break-word;
+      font-size: 15px; line-height: 1.35; position: relative; color: #111;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .akki-msg { background: var(--bubble-akki); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .akkilover-msg { background: var(--bubble-akkilover); align-self: flex-end; border-bottom-right-radius: 4px; }
+    .other-msg { background: #fff; align-self: flex-start; }
+
+    .msg-media { max-width: 100%; border-radius: 8px; margin-top: 5px; }
+    .msg-audio { width: 100%; margin-top: 5px; }
+    .timestamp { font-size: 10px; opacity: 0.6; text-align: right; display: block; margin-top: 4px; }
+
+    #typing-indicator { font-size: 12px; font-style: italic; color: #555; padding: 0 16px 4px; height: 16px; }
+
+    /* INPUT BAR */
+    .input-container {
+      padding: 10px 12px; background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 6px;
+    }
+    .input-row { display: flex; gap: 6px; align-items: center; }
+    input[type="text"], input[type="password"], textarea {
+      padding: 10px 14px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-size: 14px;
+    }
+    #message { flex: 1; }
+    .send-btn { background: #007bff; color: white; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    
+    .media-btn { background: #edf2f7; border: none; font-size: 18px; padding: 8px 10px; border-radius: 50%; cursor: pointer; }
+    .rec-active { background: #e53e3e !important; color: white; }
+
+    /* TOAST ALERT BANNER */
+    #alert-toast {
+      display: none; position: absolute; top: 55px; left: 50%; transform: translateX(-50%);
+      background: #ff8c00; color: white; padding: 12px 20px; border-radius: 25px;
+      font-size: 14px; font-weight: bold; z-index: 150; box-shadow: 0 4px 15px rgba(0,0,0,0.25); text-align: center;
+      width: 85%;
+    }
+
+    emoji-picker { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 360px; height: 280px; display: none; z-index: 100; }
   </style>
 </head>
 <body>
 
-  <!-- BACKGROUND VIDEO ELEMENT -->
-  <video autoplay muted loop playsinline id="bg-video">
-    <source id="video-source" src="" type="video/mp4">
-  </video>
-
-  <!-- BACKGROUND MP4 MUSIC ELEMENT -->
-  <audio id="bg-music">
-    <source id="music-source" src="music1.mp4" type="audio/mp4">
-  </audio>
-
-  <!-- STEP 1: PASSWORD LOCK SCREEN -->
+  <!-- LOGIN SCREEN -->
   <div id="login-screen">
-    <h2>🔒 Protected Chat</h2>
-    <p>Enter the secret password to join:</p>
-    <div style="display: flex; gap: 8px; justify-content: center;">
-      <input type="password" id="pass-input" placeholder="Password...">
-      <button onclick="checkPassword()">Enter</button>
+    <div class="login-box">
+      <h2 style="margin-bottom: 10px;">🔒 Private Chat</h2>
+      <input type="password" id="pass-input" placeholder="Enter Password..." style="width: 100%; margin-bottom: 12px;">
+      <button class="send-btn" style="width: 100%;" onclick="checkPassword()">Enter Chat</button>
     </div>
   </div>
 
-  <!-- STEP 2: CHAT SCREEN -->
+  <!-- CHAT SCREEN -->
   <div id="chat-screen">
     <div class="control-bar">
-      <h3 style="margin: 0; font-size: 16px;">Secret Chat</h3>
+      <div class="user-status-head">
+        <strong>Private Channel</strong>
+        <span class="status-badge" id="presence-text">Offline</span>
+      </div>
       <div>
-        <!-- THEME SWITCHER DROPDOWN -->
-        <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
-          <option value="default">🎨 Default</option>
-          <option value="space">🌌 Space</option>
-          <option value="cinematic">🎬 Cinematic</option>
-          <option value="love">💖 Love</option>
-          <option value="rain">🌧️ Rain</option>
-        </select>
-        
-        <button class="music-btn" id="music-toggle" onclick="toggleMusic()">🔊 Mute</button>
+        <button class="btn-icon" onclick="toggleSettings()">⚙️ Settings</button>
       </div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
+    <div id="alert-toast">🔔 Nudge received!</div>
+
+    <!-- SETTINGS PANEL OVERLAY -->
+    <div id="settings-modal">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>⚙️ Settings & Nudge</h2>
+        <button class="btn-icon" onclick="toggleSettings()">Close ✖</button>
+      </div>
+
+      <!-- 1. ALERT NUDGE (MAX 50 WORDS) -->
+      <div class="settings-group">
+        <div class="settings-title">🚨 Send Talk Alert (Max 50 Words)</div>
+        <textarea id="nudge-text" rows="2" style="width:100%; border-radius:10px; margin-bottom:6px;" placeholder="Hey! Time to chat..."></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span id="word-count" style="font-size: 11px; color: #718096;">0 / 50 words</span>
+          <button class="send-btn" style="background: #ff8c00; font-size: 12px;" onclick="sendTalkAlert()">Send Alert Nudge</button>
+        </div>
+      </div>
+
+      <!-- 2. NOTIFICATIONS & ALERT INBOX -->
+      <div class="settings-group">
+        <div class="settings-title">📬 Alert Inbox</div>
+        <div id="alert-inbox" style="max-height: 100px; overflow-y: auto; font-size: 12px; color: #4a5568;">
+          No alerts received yet.
+        </div>
+      </div>
+
+      <!-- 3. VISIBILITY TOGGLES -->
+      <div class="settings-group">
+        <div class="settings-title">👁️ Presence Privacy</div>
+        <label style="display: block; font-size: 13px; margin-bottom: 6px;">
+          <input type="checkbox" id="toggle-online" checked onchange="updatePrivacySettings()"> Show My Online Status
+        </label>
+        <label style="display: block; font-size: 13px; margin-bottom: 6px;">
+          <input type="checkbox" id="toggle-lastseen" checked onchange="updatePrivacySettings()"> Show My Last Seen
+        </label>
+        <label style="display: block; font-size: 13px;">
+          <input type="checkbox" id="toggle-typing" checked onchange="updatePrivacySettings()"> Show Typing Indicator
+        </label>
+      </div>
+
+      <!-- 4. ALERT SOUND PICKER -->
+      <div class="settings-group">
+        <div class="settings-title">🔔 Alert Sound Tone</div>
+        <div style="display: flex; gap: 8px;">
+          <select id="sound-select" style="flex:1; padding: 6px; border-radius: 8px;">
+            <option value="chime">Gentle Chime</option>
+            <option value="bell">Digital Bell</option>
+            <option value="buzz">Soft Buzz</option>
+          </select>
+          <button class="btn-icon" onclick="previewSelectedSound()">▶ Test</button>
+        </div>
+      </div>
+
+      <!-- 5. CUSTOM CHAT WALLPAPER -->
+      <div class="settings-group">
+        <div class="settings-title">🎨 Chat Theme & Background</div>
+        <select id="theme-select" style="width:100%; padding: 6px; border-radius: 8px;" onchange="applyCustomTheme(this.value)">
+          <option value="default">Sunset Gradient (Default)</option>
+          <option value="dark">Dark Slate</option>
+          <option value="rose">Rose Romance</option>
+          <option value="ocean">Ocean Blue</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- CHAT MESSAGES -->
     <div id="chat-box"></div>
     <div id="typing-indicator"></div>
 
+    <!-- INPUT PANEL -->
     <div class="input-container">
       <emoji-picker id="picker"></emoji-picker>
       
-      <div class="input-group">
-        <input type="text" id="username" placeholder="akki or akkilover" style="width: 35%;" value="">
+      <div class="input-row">
+        <input type="text" id="username" placeholder="Secret Alias (akki or akkilover)..." style="width:100%;">
+      </div>
+
+      <div class="input-row">
+        <button class="media-btn" onclick="toggleEmojiPicker()">😊</button>
+        
+        <!-- FILE & PHOTO ATTACHMENT -->
+        <input type="file" id="file-input" style="display:none;" onchange="handleFileUpload(this)">
+        <button class="media-btn" onclick="document.getElementById('file-input').click()">📎</button>
+        
+        <!-- AUDIO VOICE NOTE -->
+        <button class="media-btn" id="record-btn" onclick="toggleAudioRecording()">🎙️</button>
+
         <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
-        <button type="button" onclick="toggleEmojiPicker()">😊</button>
-        <button onclick="sendMessage()">Send</button>
+        <button class="send-btn" onclick="sendMessage()">Send</button>
       </div>
     </div>
   </div>
 
-  <!-- VIDEO & MUSIC PLAYER SCRIPT -->
-  <script>
-    // VIDEO CATEGORY MAP WITH FILENAMES (1 TO 15)
-    const videoThemes = {
-      default: [],
-      space: [
-        "s1.mp4", "s2.mp4", "s3.mp4", "s4.mp4", "s5.mp4",
-        "s6.mp4", "s7.mp4", "s8.mp4", "s9.mp4", "s10.mp4",
-        "s11.mp4", "s12.mp4", "s13.mp4", "s14.mp4", "s15.mp4"
-      ],
-      cinematic: [
-        "c1.mp4", "c2.mp4", "c3.mp4", "c4.mp4", "c5.mp4",
-        "c6.mp4", "c7.mp4", "c8.mp4", "c9.mp4", "c10.mp4",
-        "c11.mp4", "c12.mp4", "c13.mp4", "c14.mp4", "c15.mp4"
-      ],
-      love: [
-        "l1.mp4", "l2.mp4", "l3.mp4", "l4.mp4", "l5.mp4",
-        "l6.mp4", "l7.mp4", "l8.mp4", "l9.mp4", "l10.mp4",
-        "l11.mp4", "l12.mp4", "l13.mp4", "l14.mp4", "l15.mp4"
-      ],
-      rain: [
-        "r1.mp4", "r2.mp4", "r3.mp4", "r4.mp4", "r5.mp4",
-        "r6.mp4", "r7.mp4", "r8.mp4", "r9.mp4", "r10.mp4",
-        "r11.mp4", "r12.mp4", "r13.mp4", "r14.mp4", "r15.mp4"
-      ]
-    };
-
-    let currentCategory = "default";
-    let currentVideoIndex = 0;
-    let videoTimer = null;
-    const fiveMinutesInMs = 5 * 60 * 1000;
-
-    function rotateVideo() {
-      const videoList = videoThemes[currentCategory];
-      if (!videoList || videoList.length === 0) return;
-
-      currentVideoIndex = (currentVideoIndex + 1) % videoList.length;
-      const videoPlayer = document.getElementById("bg-video");
-      const videoSource = document.getElementById("video-source");
-
-      videoPlayer.style.opacity = "0";
-
-      setTimeout(() => {
-        videoSource.src = videoList[currentVideoIndex];
-        videoPlayer.load();
-        videoPlayer.play();
-        videoPlayer.style.opacity = "1";
-      }, 1000);
-    }
-
-    function changeThemeCategory(category) {
-      currentCategory = category;
-      clearInterval(videoTimer);
-
-      const videoPlayer = document.getElementById("bg-video");
-      const videoSource = document.getElementById("video-source");
-
-      if (category === "default") {
-        videoPlayer.style.display = "none";
-        videoSource.src = "";
-      } else {
-        videoPlayer.style.display = "block";
-        currentVideoIndex = 0;
-        const videoList = videoThemes[category];
-
-        if (videoList && videoList.length > 0) {
-          videoSource.src = videoList[0];
-          videoPlayer.load();
-          videoPlayer.play();
-          videoPlayer.style.opacity = "1";
-
-          videoTimer = setInterval(rotateVideo, fiveMinutesInMs);
-        }
-      }
-    }
-
-    // FULL-LENGTH MUSIC PLAYLIST LOGIC
-    const musicList = [
-      "music1.mp4", "music2.mp4", "music3.mp4", "music4.mp4", "music5.mp4",
-      "music6.mp4", "music7.mp4", "music8.mp4", "music9.mp4", "music10.mp4"
-    ];
-
-    let currentMusicIndex = 0;
-
-    window.playMusic = function() {
-      const musicPlayer = document.getElementById("bg-music");
-      musicPlayer.volume = 0.4;
-      musicPlayer.play().catch((err) => {
-        console.log("Autoplay blocked:", err);
-      });
-    };
-
-    window.toggleMusic = function() {
-      const musicPlayer = document.getElementById("bg-music");
-      const musicBtn = document.getElementById("music-toggle");
-      if (musicPlayer.paused) {
-        musicPlayer.play();
-        musicBtn.innerText = "🔊 Mute";
-      } else {
-        musicPlayer.pause();
-        musicBtn.innerText = "📁 Play";
-      }
-    };
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const musicPlayer = document.getElementById("bg-music");
-      const musicSource = document.getElementById("music-source");
-
-      musicPlayer.addEventListener("ended", () => {
-        currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
-        musicSource.src = musicList[currentMusicIndex];
-        musicPlayer.load();
-        musicPlayer.play();
-      });
-
-      const picker = document.getElementById('picker');
-      picker.addEventListener('emoji-click', event => {
-        const msgInput = document.getElementById("message");
-        msgInput.value += event.detail.unicode;
-      });
-    });
-
-    function toggleEmojiPicker() {
-      const picker = document.getElementById('picker');
-      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
-    }
-  </script>
-
-  <!-- FIREBASE CHAT LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
@@ -361,33 +253,235 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
     const messagesRef = ref(db, "messages");
     const typingRef = ref(db, "typing");
+    const alertRef = ref(db, "talkAlerts");
+    const presenceRef = ref(db, "presence");
 
     const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
     let typingTimeout = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
 
+    // PASSWORD
     window.checkPassword = function() {
       const enteredPass = document.getElementById("pass-input").value.trim().toUpperCase();
       if (enteredPass === SECRET_PASSWORD) {
         document.getElementById("login-screen").style.display = "none";
-        document.getElementById("chat-screen").style.display = "block";
-        window.playMusic();
+        document.getElementById("chat-screen").style.display = "flex";
+        setupPresence();
       } else {
         alert("Incorrect password!");
       }
     };
 
-    window.handleTyping = function() {
+    // SETTINGS MODAL TOGGLE
+    window.toggleSettings = function() {
+      const modal = document.getElementById("settings-modal");
+      modal.style.display = modal.style.display === "flex" ? "none" : "flex";
+    };
+
+    // PRIVACY & PRESENCE
+    function setupPresence() {
       const user = document.getElementById("username").value.trim().toLowerCase();
       if (!user) return;
 
-      set(typingRef, { user: user, isTyping: true });
+      const userPresenceRef = ref(db, `presence/${user}`);
+      set(userPresenceRef, { state: "online", lastSeen: Date.now() });
+      onDisconnect(userPresenceRef).set({ state: "offline", lastSeen: Date.now() });
+    }
 
+    onValue(presenceRef, (snapshot) => {
+      const data = snapshot.val();
+      const currentUser = document.getElementById("username").value.trim().toLowerCase();
+      const presenceText = document.getElementById("presence-text");
+
+      if (!data) return;
+      const otherUser = currentUser === "akki" ? "akkilover" : "akki";
+      
+      if (data[otherUser]) {
+        const info = data[otherUser];
+        if (info.state === "online") {
+          presenceText.innerText = `${otherUser} is Online`;
+          presenceText.style.color = "#28a745";
+        } else {
+          const time = new Date(info.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          presenceText.innerText = `${otherUser} Last seen at ${time}`;
+          presenceText.style.color = "#718096";
+        }
+      }
+    });
+
+    window.updatePrivacySettings = function() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const showOnline = document.getElementById("toggle-online").checked;
+      if (user) {
+        set(ref(db, `presence/${user}/state`), showOnline ? "online" : "hidden");
+      }
+    };
+
+    // TALK ALERT NUDGE (MAX 50 WORDS)
+    const nudgeInput = document.getElementById("nudge-text");
+    nudgeInput.addEventListener("input", () => {
+      const words = nudgeInput.value.trim().split(/\s+/).filter(w => w.length > 0);
+      document.getElementById("word-count").innerText = `${words.length} / 50 words`;
+      if (words.length > 50) {
+        alert("Alert message cannot exceed 50 words!");
+      }
+    });
+
+    window.sendTalkAlert = function() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const text = nudgeInput.value.trim();
+      const words = text.split(/\s+/).filter(w => w.length > 0);
+
+      if (user !== "akki" && user !== "akkilover") {
+        alert("Please set your secret alias first!");
+        return;
+      }
+      if (words.length > 50) {
+        alert("Please keep your alert under 50 words.");
+        return;
+      }
+
+      push(alertRef, {
+        sender: user,
+        message: text || "Time to chat!",
+        timestamp: Date.now()
+      });
+
+      nudgeInput.value = "";
+      alert("Talk alert sent successfully!");
+    };
+
+    // LISTEN FOR TALK ALERTS
+    onChildAdded(alertRef, (snapshot) => {
+      const data = snapshot.val();
+      const currentUser = document.getElementById("username").value.trim().toLowerCase();
+
+      // Add to Inbox Feed
+      const inbox = document.getElementById("alert-inbox");
+      const alertItem = document.createElement("div");
+      alertItem.style.margin = "4px 0";
+      alertItem.innerText = `🔔 [${new Date(data.timestamp).toLocaleTimeString()}] ${data.sender}: ${data.message}`;
+      inbox.prepend(alertItem);
+
+      if (data.sender !== currentUser && currentUser !== "") {
+        playAlertSound();
+        const toast = document.getElementById("alert-toast");
+        toast.innerText = `🔔 Alert from ${data.sender}: ${data.message}`;
+        toast.style.display = "block";
+        setTimeout(() => toast.style.display = "none", 4000);
+      }
+    });
+
+    // SOUND GENERATOR
+    window.previewSelectedSound = function() { playAlertSound(); };
+
+    function playAlertSound() {
+      const soundType = document.getElementById("sound-select").value;
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        let freq1 = 587.33, freq2 = 880;
+        if (soundType === "bell") { freq1 = 800; freq2 = 1200; }
+        if (soundType === "buzz") { freq1 = 300; freq2 = 450; osc.type = 'sawtooth'; }
+
+        osc.frequency.setValueAtTime(freq1, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+      } catch (e) { console.log(e); }
+    }
+
+    // THEME SELECTION
+    window.applyCustomTheme = function(theme) {
+      if (theme === "dark") {
+        document.body.style.background = "#1a202c";
+        document.documentElement.style.setProperty('--chat-bg', 'rgba(45, 55, 72, 0.95)');
+      } else if (theme === "rose") {
+        document.body.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
+        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.9)');
+      } else if (theme === "ocean") {
+        document.body.style.background = "linear-gradient(135deg, #2b5876 0%, #4e4376 100%)";
+        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.9)');
+      } else {
+        document.body.style.background = "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)";
+        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.88)');
+      }
+    };
+
+    // AUDIO VOICE NOTES
+    window.toggleAudioRecording = async function() {
+      const recBtn = document.getElementById("record-btn");
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = () => sendMediaMessage(reader.result, "audio");
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          recBtn.classList.add("rec-active");
+        } catch (err) { alert("Microphone access denied!"); }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        recBtn.classList.remove("rec-active");
+      }
+    };
+
+    // FILE ATTACHMENTS
+    window.handleFileUpload = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 3 * 1024 * 1024) {
+        alert("Please select files under 3MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const type = file.type.startsWith("image/") ? "image" : "file";
+        sendMediaMessage(reader.result, type, file.name);
+      };
+    };
+
+    function sendMediaMessage(dataUrl, mediaType, fileName = "") {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      if (!user) { alert("Enter alias first!"); return; }
+
+      push(messagesRef, {
+        user: user,
+        media: dataUrl,
+        mediaType: mediaType,
+        fileName: fileName,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }
+
+    // TEXT MESSAGING & TYPING
+    window.handleTyping = function() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const allowTyping = document.getElementById("toggle-typing").checked;
+      if (!user || !allowTyping) return;
+
+      set(typingRef, { user: user, isTyping: true });
       clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => {
-        set(typingRef, { user: user, isTyping: false });
-      }, 2000);
+      typingTimeout = setTimeout(() => set(typingRef, { user: user, isTyping: false }), 2000);
     };
 
     onValue(typingRef, (snapshot) => {
@@ -397,32 +491,22 @@
 
       if (data && data.isTyping && data.user !== currentUser) {
         typingDiv.innerText = `${data.user} is typing...`;
-      } else {
-        typingDiv.innerText = "";
-      }
+      } else { typingDiv.innerText = ""; }
     });
 
     window.sendMessage = function() {
       const user = document.getElementById("username").value.trim().toLowerCase();
       const text = document.getElementById("message").value.trim();
 
-      // RESTRICT USERNAMES TO ONLY AKKI OR AKKILOVER
       if (user !== "akki" && user !== "akkilover") {
-        alert("Only 'akki' or 'akkilover' are allowed as secret aliases!");
-        return;
+        alert("Alias must be 'akki' or 'akkilover'"); return;
       }
-      if (!text) {
-        alert("Please enter a message!");
-        return;
-      }
-
-      const now = new Date();
-      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (!text) return;
 
       push(messagesRef, {
         user: user,
         text: text,
-        time: timeString
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
       document.getElementById("message").value = "";
@@ -432,26 +516,38 @@
 
     onChildAdded(messagesRef, (snapshot) => {
       const data = snapshot.val();
-      const usernameLower = data.user ? data.user.toLowerCase() : '';
-
+      const userLower = data.user ? data.user.toLowerCase() : '';
       const chatBox = document.getElementById("chat-box");
       const msgDiv = document.createElement("div");
+
+      msgDiv.className = `message ${userLower}-msg`;
+
+      let content = `<strong>${data.user}:</strong> `;
+      if (data.text) content += data.text;
       
-      // ASSIGN COLORS ACCORDING TO USERNAME
-      if (usernameLower === 'akki') {
-        msgDiv.className = 'message akki-msg';
-      } else if (usernameLower === 'akkilover') {
-        msgDiv.className = 'message akkilover-msg';
-      } else {
-        msgDiv.className = 'message other-msg';
+      if (data.mediaType === "image") {
+        content += `<br><img src="${data.media}" class="msg-media">`;
+      } else if (data.mediaType === "audio") {
+        content += `<br><audio controls src="${data.media}" class="msg-audio"></audio>`;
+      } else if (data.mediaType === "file") {
+        content += `<br><a href="${data.media}" download="${data.fileName}" style="color:#007bff;">📁 ${data.fileName}</a>`;
       }
-      
-      const timeFormatted = data.time ? data.time : '';
-      msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text}<span class="timestamp">${timeFormatted}</span>`;
-      
+
+      content += `<span class="timestamp">${data.time || ''}</span>`;
+      msgDiv.innerHTML = content;
+
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
     });
+
+    // EMOJI PICKER TOGGLE
+    const picker = document.getElementById('picker');
+    picker.addEventListener('emoji-click', event => {
+      document.getElementById("message").value += event.detail.unicode;
+    });
+    window.toggleEmojiPicker = function() {
+      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    };
   </script>
 </body>
 </html>
