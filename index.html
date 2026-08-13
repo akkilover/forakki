@@ -6,13 +6,9 @@
   <title>Private Chat</title>
 
   <!-- Emoji Picker -->
-  <script
-    type="module"
-    src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js">
-  </script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -23,2986 +19,916 @@
       margin: 20px auto;
       padding: 15px;
       min-height: 90vh;
-
-      background:
-        linear-gradient(
-          -45deg,
-          #ee7752,
-          #e73c7e,
-          #23a6d5,
-          #23d5ab
-        );
-
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
     }
 
     @keyframes gradientBG {
-
-      0% {
-        background-position: 0% 50%;
-      }
-
-      50% {
-        background-position: 100% 50%;
-      }
-
-      100% {
-        background-position: 0% 50%;
-      }
-
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-
-    /* ==============================
-       BACKGROUND VIDEO
-    ============================== */
-
+    /* BACKGROUND VIDEO */
     #bg-video {
       position: fixed;
       right: 0;
       bottom: 0;
-
       min-width: 100%;
       min-height: 100%;
-
       z-index: -1;
-
       object-fit: cover;
-
       transition: opacity 1s ease-in-out;
-
       display: none;
-
-      transform: translateZ(0);
-
-      will-change: transform;
     }
 
-
-    h2 {
+    /* LOGIN SCREEN */
+    #login-screen {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
       text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    /* CHAT SCREEN */
+    #chat-screen {
+      display: none;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .control-buttons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .theme-select {
+      background: #6c757d;
+      color: white;
+      font-size: 12px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .settings-btn {
+      background: #343a40;
+      color: white;
+      padding: 7px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #status-line {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      height: 18px;
+      margin-bottom: 5px;
+    }
+
+    #chat-box {
+      height: 350px;
+      border: 1px solid #ccc;
+      background: rgba(249, 249, 249, 0.95);
+      overflow-y: scroll;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      width: fit-content;
+      max-width: 80%;
+      word-wrap: break-word;
+      position: relative;
+      color: #222;
+    }
+
+    .akki-msg {
+      background: #dff5ff;
+      margin-right: auto;
+    }
+
+    .akkilover-msg {
+      background: #fff4a3;
+      margin-left: auto;
+    }
+
+    .other-msg {
+      background: #e9e9eb;
+      margin-right: auto;
+    }
+
+    .akki-name {
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .akkilover-name {
+      color: #d4a900;
+      font-weight: bold;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      opacity: 0.75;
+      margin-top: 4px;
+      text-align: right;
+      display: block;
+    }
+
+    .message-status {
+      font-size: 10px;
+      margin-left: 5px;
+    }
+
+    #typing-indicator {
+      font-size: 12px;
+      font-style: italic;
+      color: #666;
+      height: 18px;
+      margin-bottom: 8px;
+    }
+
+    .input-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    input, textarea, select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: Arial, sans-serif;
+    }
+
+    #message {
+      flex: 1;
+    }
+
+    button {
+      padding: 10px 14px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .gray-button {
+      background: #6c757d;
+    }
+
+    .gray-button:hover {
+      background: #545b62;
+    }
+
+    .notify-section {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid #ddd;
+    }
+
+    .notify-section textarea {
+      width: 100%;
+      min-height: 65px;
+      resize: vertical;
+      margin-top: 7px;
+    }
+
+    .notify-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 5px;
+    }
+
+    .word-counter {
+      font-size: 11px;
+      color: #666;
+    }
+
+    emoji-picker {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      display: none;
+      z-index: 100;
+      --num-columns: 8;
+      --category-emoji-size: 1.125rem;
+    }
+
+    /* SETTINGS MODAL */
+    #settings-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 15px;
+    }
+
+    .settings-box {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .settings-header h2 {
+      margin: 0;
+    }
+
+    .settings-group-title {
+      font-size: 15px;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 5px;
       color: #333;
     }
 
-
-    /* ==============================
-       LOGIN
-    ============================== */
-
-    #login-screen {
-
-      background: rgba(255,255,255,0.92);
-
-      padding: 20px;
-
-      border-radius: 12px;
-
-      border: 1px solid #ccc;
-
-      text-align: center;
-
-      box-shadow:
-        0 4px 15px rgba(0,0,0,0.3);
-
-      backdrop-filter: blur(8px);
-
-    }
-
-
-    /* ==============================
-       CHAT SCREEN
-    ============================== */
-
-    #chat-screen {
-
-      display: none;
-
-      background: rgba(255,255,255,0.92);
-
-      padding: 20px;
-
-      border-radius: 12px;
-
-      box-shadow:
-        0 4px 15px rgba(0,0,0,0.3);
-
-      backdrop-filter: blur(8px);
-
-    }
-
-
-    /* ==============================
-       TOP BAR
-    ============================== */
-
-    .control-bar {
-
+    .setting-row {
       display: flex;
-
       justify-content: space-between;
-
       align-items: center;
-
-      gap: 6px;
-
-      margin-bottom: 5px;
-
-    }
-
-    .control-right {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 5px;
-
-    }
-
-
-    .theme-select,
-    .music-btn,
-    .settings-btn {
-
-      color: white;
-
-      font-size: 12px;
-
-      padding: 6px 10px;
-
-      border: none;
-
-      border-radius: 6px;
-
-      cursor: pointer;
-
-    }
-
-    .theme-select,
-    .music-btn {
-
-      background: #6c757d;
-
-    }
-
-    .settings-btn {
-
-      background: #343a40;
-
-      font-size: 16px;
-
-      padding: 5px 9px;
-
-    }
-
-
-    /* ==============================
-       STATUS LINE
-    ============================== */
-
-    #status-line {
-
-      font-size: 12px;
-
-      color: #666;
-
-      min-height: 17px;
-
-      margin-bottom: 8px;
-
-    }
-
-
-    /* ==============================
-       CHAT BOX
-    ============================== */
-
-    #chat-box {
-
-      height: 350px;
-
-      border: 1px solid #ccc;
-
-      background: rgba(249,249,249,0.95);
-
-      overflow-y: scroll;
-
-      padding: 12px;
-
-      border-radius: 8px;
-
-      margin-bottom: 5px;
-
-    }
-
-
-    /* ==============================
-       MESSAGES
-    ============================== */
-
-    .message {
-
-      margin-bottom: 12px;
-
-      padding: 8px 12px;
-
-      border-radius: 8px;
-
-      width: fit-content;
-
-      max-width: 80%;
-
-      word-wrap: break-word;
-
-      position: relative;
-
-      color: #222;
-
-    }
-
-
-    .akki-msg {
-
-      background: #00e5ff;
-
-      margin-right: auto;
-
-    }
-
-
-    .akkilover-msg {
-
-      background: #ffea00;
-
-      margin-left: auto;
-
-    }
-
-
-    .other-msg {
-
-      background: #e9e9eb;
-
-      margin-right: auto;
-
-    }
-
-
-    /* USERNAME COLORS */
-
-    .akki-name {
-
-      color: #00bcd4;
-
-      font-weight: bold;
-
-    }
-
-
-    .akkilover-name {
-
-      color: #c5a900;
-
-      font-weight: bold;
-
-    }
-
-
-    .timestamp {
-
-      font-size: 10px;
-
-      opacity: 0.75;
-
-      margin-top: 4px;
-
-      text-align: right;
-
-      display: block;
-
-    }
-
-
-    .message-status {
-
-      font-size: 10px;
-
-      margin-left: 4px;
-
-    }
-
-
-    /* ==============================
-       TYPING
-    ============================== */
-
-    #typing-indicator {
-
-      font-size: 12px;
-
-      font-style: italic;
-
-      color: #666;
-
-      height: 18px;
-
-      margin-bottom: 8px;
-
-    }
-
-
-    /* ==============================
-       INPUT
-    ============================== */
-
-    .input-container {
-
-      position: relative;
-
-      display: flex;
-
-      flex-direction: column;
-
-      gap: 8px;
-
-    }
-
-
-    .input-group {
-
-      display: flex;
-
-      gap: 6px;
-
-      align-items: center;
-
-    }
-
-
-    input {
-
-      padding: 10px;
-
-      border: 1px solid #ccc;
-
-      border-radius: 6px;
-
-    }
-
-
-    #username {
-
-      width: 35%;
-
-    }
-
-
-    #message {
-
-      flex: 1;
-
-    }
-
-
-    button {
-
-      padding: 10px 14px;
-
-      background: #007bff;
-
-      color: white;
-
-      border: none;
-
-      border-radius: 6px;
-
-      cursor: pointer;
-
-    }
-
-
-    button:hover {
-
-      background: #0056b3;
-
-    }
-
-
-    /* ==============================
-       EMOJI
-    ============================== */
-
-    emoji-picker {
-
-      position: absolute;
-
-      bottom: 50px;
-
-      right: 0;
-
-      display: none;
-
-      z-index: 100;
-
-      --num-columns: 8;
-
-      --category-emoji-size: 1.125rem;
-
-    }
-
-
-    /* ==============================
-       SETTINGS MODAL
-    ============================== */
-
-    #settings-modal {
-
-      display: none;
-
-      position: fixed;
-
-      inset: 0;
-
-      background: rgba(0,0,0,0.55);
-
-      z-index: 1000;
-
-      align-items: center;
-
-      justify-content: center;
-
-      padding: 15px;
-
-    }
-
-
-    .settings-box {
-
-      background: white;
-
-      width: 100%;
-
-      max-width: 480px;
-
-      max-height: 90vh;
-
-      overflow-y: auto;
-
-      border-radius: 12px;
-
-      padding: 20px;
-
-      box-shadow:
-        0 5px 25px rgba(0,0,0,0.4);
-
-    }
-
-
-    .settings-header {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: center;
-
-      margin-bottom: 15px;
-
-    }
-
-
-    .settings-header h2 {
-
-      margin: 0;
-
-    }
-
-
-    .settings-row {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: center;
-
       gap: 10px;
-
-      padding: 14px 0;
-
+      padding: 12px 0;
       border-bottom: 1px solid #eee;
-
     }
 
-
-    .settings-info {
-
+    .setting-info {
       flex: 1;
-
     }
 
-
-    .settings-name {
-
+    .setting-name {
       font-weight: bold;
-
       font-size: 14px;
-
     }
 
-
-    .settings-description {
-
-      color: #777;
-
+    .setting-description {
       font-size: 11px;
-
+      color: #777;
       margin-top: 3px;
-
-      line-height: 1.4;
-
     }
 
-
-    .settings-row input[type="checkbox"] {
-
+    .setting-row input[type="checkbox"] {
       width: 20px;
-
       height: 20px;
-
-      cursor: pointer;
-
     }
-
 
     .close-settings {
-
       background: #dc3545;
-
     }
 
-
-    .close-settings:hover {
-
-      background: #b02a37;
-
+    /* NOTIFICATION POPUP */
+    #notify-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      max-width: 330px;
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      display: none;
+      z-index: 2000;
+      animation: notificationSlide 0.3s ease;
     }
 
+    @keyframes notificationSlide {
+      from { transform: translateX(120%); }
+      to { transform: translateX(0); }
+    }
+
+    .popup-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .popup-message {
+      font-size: 14px;
+      color: #444;
+    }
   </style>
 </head>
 
-
 <body>
 
-
-  <!-- ======================================
-       BACKGROUND VIDEO
-  ======================================= -->
-
-  <video
-    autoplay
-    muted
-    loop
-    playsinline
-    id="bg-video">
-
-    <source
-      id="video-source"
-      src=""
-      type="video/mp4">
-
+  <!-- BACKGROUND VIDEO -->
+  <video autoplay muted playsinline id="bg-video">
+    <source id="video-source" src="" type="video/mp4">
   </video>
 
-
-  <!-- ======================================
-       BACKGROUND MUSIC
-  ======================================= -->
-
+  <!-- MUSIC -->
   <audio id="bg-music">
-
-    <source
-      id="music-source"
-      src="music1.mp4"
-      type="audio/mp4">
-
+    <source id="music-source" src="music1.mp4" type="audio/mp4">
   </audio>
 
+  <!-- ALERT SOUND -->
+  <audio id="alert-audio"></audio>
 
-  <!-- ======================================
-       LOGIN
-  ======================================= -->
-
+  <!-- LOGIN SCREEN -->
   <div id="login-screen">
-
     <h2>🔒 Protected Chat</h2>
-
-    <p>
-      Enter the secret password to join:
-    </p>
-
-    <div
-      style="
-        display:flex;
-        gap:8px;
-        justify-content:center;
-      ">
-
-      <input
-        type="password"
-        id="pass-input"
-        placeholder="Password...">
-
-      <button onclick="checkPassword()">
-        Enter
-      </button>
-
+    <p>Enter the secret password to join:</p>
+    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+      <input type="password" id="pass-input" placeholder="Password...">
+      <button onclick="checkPassword()">Enter</button>
     </div>
-
   </div>
 
-
-  <!-- ======================================
-       CHAT
-  ======================================= -->
-
+  <!-- CHAT SCREEN -->
   <div id="chat-screen">
-
-
     <div class="control-bar">
-
-      <h3
-        style="
-          margin:0;
-          font-size:16px;
-        ">
-
-        Secret Chat
-
-      </h3>
-
-
-      <div class="control-right">
-
-
-        <!-- THEME -->
-
-        <select
-          id="theme-select"
-          class="theme-select"
-          onchange="changeThemeCategory(this.value)">
-
-          <option value="default">
-            🎨 Default
-          </option>
-
-          <option value="space">
-            🌌 Space
-          </option>
-
-          <option value="cinematic">
-            🎬 Cinematic
-          </option>
-
-          <option value="love">
-            💖 Love
-          </option>
-
-          <option value="rain">
-            🌧️ Rain
-          </option>
-
-        </select>
-
-
-        <!-- MUSIC -->
-
-        <button
-          class="music-btn"
-          id="music-toggle"
-          onclick="toggleMusic()">
-
-          🔊 Mute
-
-        </button>
-
-
-        <!-- SETTINGS -->
-
-        <button
-          class="settings-btn"
-          onclick="openSettings()">
-
-          ⚙️
-
-        </button>
-
+      <div>
+        <h3 style="margin:0;">💬 Secret Chat</h3>
+        <div id="status-line">Offline</div>
       </div>
 
+      <div class="control-buttons">
+        <select id="theme-select" class="theme-select" onchange="changeThemeCategory(this.value)">
+          <option value="default">🎨 Default</option>
+          <option value="space">🌌 Space</option>
+          <option value="cinematic">🎬 Cinematic</option>
+          <option value="love">💖 Love</option>
+          <option value="rain">🌧️ Rain</option>
+        </select>
+        <button class="settings-btn" onclick="openSettings()">⚙️</button>
+      </div>
     </div>
-
-
-    <!-- ONLINE / LAST SEEN -->
-
-    <div id="status-line"></div>
-
 
     <!-- CHAT BOX -->
-
     <div id="chat-box"></div>
-
-
-    <!-- TYPING -->
-
     <div id="typing-indicator"></div>
 
+    <!-- NOTIFY SECTION -->
+    <div class="notify-section">
+      <strong>🔔 Notify</strong>
+      <textarea id="notify-text" maxlength="500" placeholder="Write something to notify the other person..."></textarea>
+      <div class="notify-bottom">
+        <span class="word-counter" id="notify-counter">0 / 50 words</span>
+        <button onclick="sendNotify()">Send Notify</button>
+      </div>
+    </div>
 
-    <!-- INPUT -->
-
+    <!-- MESSAGE INPUT -->
     <div class="input-container">
-
       <emoji-picker id="picker"></emoji-picker>
 
-
       <div class="input-group">
-
-
-        <input
-          type="text"
-          id="username"
-          placeholder="akki or akkilover"
-          value="">
-
-
-        <input
-          type="text"
-          id="message"
-          placeholder="Type a message..."
-          oninput="handleTyping()">
-
-
-
-        <button
-          type="button"
-          onclick="toggleEmojiPicker()">
-
-          😊
-
-        </button>
-
-
-        <button
-          onclick="sendMessage()">
-
-          Send
-
-        </button>
-
+        <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
+        <button type="button" onclick="toggleEmojiPicker()">😊</button>
+        <button onclick="sendMessage()">Send</button>
       </div>
 
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px;">You are: <strong id="current-user"></strong></span>
+        <button class="gray-button" onclick="toggleMusic()">🎵 Music</button>
+      </div>
     </div>
-
   </div>
 
-
-  <!-- ======================================
-       SETTINGS
-       EXACTLY 5 OPTIONS
-  ======================================= -->
-
+  <!-- SETTINGS MODAL -->
   <div id="settings-modal">
-
-
     <div class="settings-box">
-
-
       <div class="settings-header">
-
-        <h2>
-          ⚙️ Settings
-        </h2>
-
-        <button
-          class="close-settings"
-          onclick="closeSettings()">
-
-          Close
-
-        </button>
-
+        <h2>⚙️ Settings</h2>
+        <button class="close-settings" onclick="closeSettings()">Close</button>
       </div>
 
-
-      <!-- 1. LAST SEEN -->
-
-      <div class="settings-row">
-
-        <div class="settings-info">
-
-          <div class="settings-name">
-            👁️ Last Seen
-          </div>
-
-          <div class="settings-description">
-
-            Allow the other person to see
-            when you were last active.
-
-          </div>
-
+      <div class="settings-group-title">👁️ Privacy & Status</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Last Seen</div>
+          <div class="setting-description">Allow the other person to see your last active time.</div>
         </div>
-
-
-        <input
-          type="checkbox"
-          id="setting-last-seen"
-          checked
-          onchange="
-            changeSetting(
-              'lastSeen',
-              this.checked
-            )
-          ">
-
+        <input type="checkbox" id="setting-last-seen" onchange="changeSetting('lastSeen', this.checked)">
       </div>
 
-
-      <!-- 2. ONLINE STATUS -->
-
-      <div class="settings-row">
-
-        <div class="settings-info">
-
-          <div class="settings-name">
-            🟢 Online Status
-          </div>
-
-          <div class="settings-description">
-
-            Show the other person when
-            you are currently online.
-
-          </div>
-
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Online Status</div>
+          <div class="setting-description">Show when you are currently online.</div>
         </div>
-
-
-        <input
-          type="checkbox"
-          id="setting-online"
-          checked
-          onchange="
-            changeSetting(
-              'online',
-              this.checked
-            )
-          ">
-
+        <input type="checkbox" id="setting-online" onchange="changeSetting('online', this.checked)">
       </div>
 
-
-      <!-- 3. TYPING -->
-
-      <div class="settings-row">
-
-        <div class="settings-info">
-
-          <div class="settings-name">
-            ✍️ Typing Indicator
-          </div>
-
-          <div class="settings-description">
-
-            Allow the other person to see
-            when you are typing.
-
-          </div>
-
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Typing Indicator</div>
+          <div class="setting-description">Show the other person when you are typing.</div>
         </div>
-
-
-        <input
-          type="checkbox"
-          id="setting-typing"
-          checked
-          onchange="
-            changeSetting(
-              'typing',
-              this.checked
-            )
-          ">
-
+        <input type="checkbox" id="setting-typing" onchange="changeSetting('typing', this.checked)">
       </div>
 
-
-      <!-- 4. READ RECEIPTS -->
-
-      <div class="settings-row">
-
-        <div class="settings-info">
-
-          <div class="settings-name">
-            ✓✓ Read Receipts
-          </div>
-
-          <div class="settings-description">
-
-            Allow the other person to know
-            when you have read their message.
-
-          </div>
-
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Read Receipts</div>
+          <div class="setting-description">Show whether messages have been read.</div>
         </div>
-
-
-        <input
-          type="checkbox"
-          id="setting-read"
-          checked
-          onchange="
-            changeSetting(
-              'read',
-              this.checked
-            )
-          ">
-
+        <input type="checkbox" id="setting-read" onchange="changeSetting('read', this.checked)">
       </div>
 
-
-      <!-- 5. MESSAGE STATUS -->
-
-      <div class="settings-row">
-
-        <div class="settings-info">
-
-          <div class="settings-name">
-            💬 Message Status
-          </div>
-
-          <div class="settings-description">
-
-            Show sent, delivered and read
-            status for your messages.
-
-          </div>
-
+      <div class="settings-group-title">🔔 Notifications</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Notifications</div>
+          <div class="setting-description">Allow browser notifications.</div>
         </div>
-
-
-        <input
-          type="checkbox"
-          id="setting-message-status"
-          checked
-          onchange="
-            changeSetting(
-              'messageStatus',
-              this.checked
-            )
-          ">
-
+        <input type="checkbox" id="setting-notifications" onchange="notificationPermission()">
       </div>
 
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Message Notifications</div>
+          <div class="setting-description">Notify you when a new message arrives.</div>
+        </div>
+        <input type="checkbox" id="setting-message-notifications" onchange="changeSetting('messageNotifications', this.checked)">
+      </div>
 
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Notification Sound</div>
+          <div class="setting-description">Select the sound used for notifications.</div>
+        </div>
+        <select id="alert-sound" onchange="changeSetting('alertSound', this.value)">
+          <option value="alert1.mp3">Alert 1</option>
+          <option value="alert2.mp3">Alert 2</option>
+          <option value="alert3.mp3">Alert 3</option>
+          <option value="alert4.mp3">Alert 4</option>
+          <option value="alert5.mp3">Alert 5</option>
+        </select>
+      </div>
+
+      <div style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button onclick="enableNotifications()">🔔 Enable Notifications</button>
+        <button class="gray-button" onclick="testAlertSound()">🔊 Test Sound</button>
+      </div>
     </div>
-
   </div>
 
+  <!-- NOTIFICATION POPUP -->
+  <div id="notify-popup">
+    <div class="popup-title" id="popup-title"></div>
+    <div class="popup-message" id="popup-message"></div>
+  </div>
 
-  <!-- ======================================
-       VIDEO + MUSIC
-  ======================================= -->
-
+  <!-- NON-MODULE JAVASCRIPT HELPERS -->
   <script>
-
-
-    /* ================================
-       VIDEO LIST
-    ================================= */
-
     const videoThemes = {
-
-
       default: [],
-
-
-      space: [
-
-        "s1.mp4",
-        "s2.mp4",
-        "s3.mp4",
-        "s4.mp4",
-        "s5.mp4",
-
-        "s6.mp4",
-        "s7.mp4",
-        "s8.mp4",
-        "s9.mp4",
-        "s10.mp4",
-
-        "s11.mp4",
-        "s12.mp4",
-        "s13.mp4",
-        "s14.mp4",
-        "s15.mp4"
-
-      ],
-
-
-      cinematic: [
-
-        "c1.mp4",
-        "c2.mp4",
-        "c3.mp4",
-        "c4.mp4",
-        "c5.mp4",
-
-        "c6.mp4",
-        "c7.mp4",
-        "c8.mp4",
-        "c9.mp4",
-        "c10.mp4",
-
-        "c11.mp4",
-        "c12.mp4",
-        "c13.mp4",
-        "c14.mp4",
-        "c15.mp4"
-
-      ],
-
-
-      love: [
-
-        "l1.mp4",
-        "l2.mp4",
-        "l3.mp4",
-        "l4.mp4",
-        "l5.mp4",
-
-        "l6.mp4",
-        "l7.mp4",
-        "l8.mp4",
-        "l9.mp4",
-        "l10.mp4",
-
-        "l11.mp4",
-        "l12.mp4",
-        "l13.mp4",
-        "l14.mp4",
-        "l15.mp4"
-
-      ],
-
-
-      rain: [
-
-        "r1.mp4",
-        "r2.mp4",
-        "r3.mp4",
-        "r4.mp4",
-        "r5.mp4",
-
-        "r6.mp4",
-        "r7.mp4",
-        "r8.mp4",
-        "r9.mp4",
-        "r10.mp4",
-
-        "r11.mp4",
-        "r12.mp4",
-        "r13.mp4",
-        "r14.mp4",
-        "r15.mp4"
-
-      ]
-
+      space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
+      love: Array.from({length: 15}, (_, i) => `l${i + 1}.mp4`),
+      rain: Array.from({length: 15}, (_, i) => `r${i + 1}.mp4`),
+      cinematic: Array.from({length: 15}, (_, i) => `c${i + 1}.mp4`)
     };
-
 
     let currentCategory = "default";
-
     let currentVideoIndex = 0;
-
     let videoTimer = null;
-
-    const fiveMinutesInMs =
-      5 * 60 * 1000;
-
-
-    /* ================================
-       CHANGE VIDEO
-    ================================= */
+    const fiveMinutes = 5 * 60 * 1000;
 
     function rotateVideo() {
+      const list = videoThemes[currentCategory];
+      if (!list || list.length === 0) return;
 
-      const videoList =
-        videoThemes[currentCategory];
+      currentVideoIndex = (currentVideoIndex + 1) % list.length;
+      const video = document.getElementById("bg-video");
+      const source = document.getElementById("video-source");
 
-
-      if (
-        !videoList ||
-        videoList.length === 0
-      ) {
-
-        return;
-
-      }
-
-
-      currentVideoIndex =
-        (
-          currentVideoIndex + 1
-        ) %
-        videoList.length;
-
-
-      const videoPlayer =
-        document.getElementById(
-          "bg-video"
-        );
-
-
-      const videoSource =
-        document.getElementById(
-          "video-source"
-        );
-
-
-      videoPlayer.style.opacity = "0";
-
-
+      video.style.opacity = "0";
       setTimeout(() => {
-
-        videoSource.src =
-          videoList[currentVideoIndex];
-
-
-        videoPlayer.load();
-
-
-        videoPlayer.play()
-          .catch(() => {});
-
-
-        videoPlayer.style.opacity =
-          "1";
-
+        source.src = list[currentVideoIndex];
+        video.load();
+        video.play().catch(() => {});
+        video.style.opacity = "1";
       }, 1000);
-
     }
 
+    function changeThemeCategory(category) {
+      currentCategory = category;
+      clearInterval(videoTimer);
+      const video = document.getElementById("bg-video");
+      const source = document.getElementById("video-source");
 
-    /* ================================
-       THEME
-    ================================= */
+      if (category === "default") {
+        video.pause();
+        video.style.display = "none";
+        source.src = "";
+        return;
+      }
 
-    window.changeThemeCategory =
-      function(category) {
+      video.style.display = "block";
+      currentVideoIndex = 0;
+      source.src = videoThemes[category][0];
+      video.load();
+      video.play().catch(() => {});
+      video.style.opacity = "1";
 
-        currentCategory =
-          category;
+      videoTimer = setInterval(rotateVideo, fiveMinutes);
+    }
 
-
-        clearInterval(
-          videoTimer
-        );
-
-
-        const videoPlayer =
-          document.getElementById(
-            "bg-video"
-          );
-
-
-        const videoSource =
-          document.getElementById(
-            "video-source"
-          );
-
-
-        if (
-          category === "default"
-        ) {
-
-          videoPlayer.pause();
-
-          videoPlayer.style.display =
-            "none";
-
-          videoSource.src = "";
-
-          return;
-
-        }
-
-
-        videoPlayer.style.display =
-          "block";
-
-
-        currentVideoIndex = 0;
-
-
-        const videoList =
-          videoThemes[category];
-
-
-        if (
-          videoList &&
-          videoList.length > 0
-        ) {
-
-          videoSource.src =
-            videoList[0];
-
-
-          videoPlayer.load();
-
-
-          videoPlayer.play()
-            .catch(() => {});
-
-
-          videoPlayer.style.opacity =
-            "1";
-
-
-          videoTimer =
-            setInterval(
-              rotateVideo,
-              fiveMinutesInMs
-            );
-
-        }
-
-      };
-
-
-    /* ================================
-       MUSIC
-    ================================= */
-
-    const musicList = [
-
-      "music1.mp4",
-      "music2.mp4",
-      "music3.mp4",
-      "music4.mp4",
-      "music5.mp4",
-
-      "music6.mp4",
-      "music7.mp4",
-      "music8.mp4",
-      "music9.mp4",
-      "music10.mp4"
-
-    ];
-
-
+    const musicList = Array.from({length: 10}, (_, i) => `music${i + 1}.mp4`);
     let currentMusicIndex = 0;
 
-
-    window.playMusic =
-      function() {
-
-        const musicPlayer =
-          document.getElementById(
-            "bg-music"
-          );
-
-
-        musicPlayer.volume =
-          0.4;
-
-
-        musicPlayer.play()
-          .catch(
-            err =>
-              console.log(
-                "Autoplay blocked:",
-                err
-              )
-          );
-
-      };
-
-
-    window.toggleMusic =
-      function() {
-
-        const musicPlayer =
-          document.getElementById(
-            "bg-music"
-          );
-
-
-        const musicBtn =
-          document.getElementById(
-            "music-toggle"
-          );
-
-
-        if (
-          musicPlayer.paused
-        ) {
-
-          musicPlayer.play()
-            .catch(() => {});
-
-
-          musicBtn.innerText =
-            "🔊 Mute";
-
-        }
-
-        else {
-
-          musicPlayer.pause();
-
-
-          musicBtn.innerText =
-            "📁 Play";
-
-        }
-
-      };
-
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
-
-
-        const musicPlayer =
-          document.getElementById(
-            "bg-music"
-          );
-
-
-        const musicSource =
-          document.getElementById(
-            "music-source"
-          );
-
-
-        musicPlayer.addEventListener(
-          "ended",
-          () => {
-
-
-            currentMusicIndex =
-              (
-                currentMusicIndex + 1
-              ) %
-              musicList.length;
-
-
-            musicSource.src =
-              musicList[
-                currentMusicIndex
-              ];
-
-
-            musicPlayer.load();
-
-
-            musicPlayer.play()
-              .catch(() => {});
-
-          }
-        );
-
-
-        /* EMOJI */
-
-        const picker =
-          document.getElementById(
-            "picker"
-          );
-
-
-        picker.addEventListener(
-          "emoji-click",
-          event => {
-
-
-            const msgInput =
-              document.getElementById(
-                "message"
-              );
-
-
-            msgInput.value +=
-              event.detail.unicode;
-
-
-            msgInput.focus();
-
-          }
-        );
-
+    function toggleMusic() {
+      const music = document.getElementById("bg-music");
+      if (music.paused) {
+        music.play().catch(() => {});
+      } else {
+        music.pause();
       }
-    );
-
-
-    window.toggleEmojiPicker =
-      function() {
-
-
-        const picker =
-          document.getElementById(
-            "picker"
-          );
-
-
-        picker.style.display =
-          picker.style.display ===
-          "block"
-            ? "none"
-            : "block";
-
-      };
-
-  </script>
-
-
-  <!-- ======================================
-       FIREBASE
-  ======================================= -->
-
-  <script type="module">
-
-
-    import {
-      initializeApp
     }
 
-    from
-    "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    document.getElementById("bg-music").addEventListener("ended", function() {
+      currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+      const source = document.getElementById("music-source");
+      source.src = musicList[currentMusicIndex];
+      this.load();
+      this.play().catch(() => {});
+    });
 
-
-    import {
-
-      getDatabase,
-
-      ref,
-
-      push,
-
-      onChildAdded,
-
-      set,
-
-      onValue,
-
-      update,
-
-      onDisconnect,
-
-      serverTimestamp
-
+    function toggleEmojiPicker() {
+      const picker = document.getElementById("picker");
+      picker.style.display = picker.style.display === "block" ? "none" : "block";
     }
 
-    from
-    "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    document.getElementById("picker").addEventListener("emoji-click", function(event) {
+      document.getElementById("message").value += event.detail.unicode;
+    });
 
-
-    /* ================================
-       FIREBASE CONFIG
-    ================================= */
-
-    const firebaseConfig = {
-
-      apiKey:
-        "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
-
-      authDomain:
-        "privatechat-8f1a8.firebaseapp.com",
-
-      databaseURL:
-        "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
-
-      projectId:
-        "privatechat-8f1a8",
-
-      storageBucket:
-        "privatechat-8f1a8.firebasestorage.app",
-
-      messagingSenderId:
-        "873702558512",
-
-      appId:
-        "1:873702558512:web:ee506e3f954d0d9e69d6f5"
-
-    };
-
-
-    const app =
-      initializeApp(
-        firebaseConfig
-      );
-
-
-    const db =
-      getDatabase(app);
-
-
-    const messagesRef =
-      ref(
-        db,
-        "messages"
-      );
-
-
-    const typingRef =
-      ref(
-        db,
-        "typing"
-      );
-
-
-    /* ================================
-       PASSWORD
-    ================================= */
-
-    const SECRET_PASSWORD =
-      "AKKISOMEONELOVESYOU";
-
-
-    let typingTimeout = null;
-
-
-    let currentUser = "";
-
-
-    let initialMessageLoad = true;
-
-
-    /* ================================
-       SETTINGS
-    ================================= */
+    document.getElementById("notify-text").addEventListener("input", function() {
+      let text = this.value.trim();
+      let words = text ? text.split(/\s+/) : [];
+      if (words.length > 50) {
+        words = words.slice(0, 50);
+        this.value = words.join(" ");
+      }
+      document.getElementById("notify-counter").textContent = words.length + " / 50 words";
+    });
 
     const defaultSettings = {
-
       lastSeen: true,
-
       online: true,
-
       typing: true,
-
       read: true,
-
-      messageStatus: true
-
+      notifications: true,
+      messageNotifications: true,
+      alertSound: "alert1.mp3"
     };
 
-
-    function settingsKey() {
-
-      return (
-        "chatSettings_" +
-        currentUser
-      );
-
-    }
-
-
     function getSettings() {
-
-      if (!currentUser) {
-
-        return {
-          ...defaultSettings
-        };
-
-      }
-
-
-      const saved =
-        localStorage.getItem(
-          settingsKey()
-        );
-
-
-      if (!saved) {
-
-        return {
-          ...defaultSettings
-        };
-
-      }
-
-
-      try {
-
-        return {
-          ...defaultSettings,
-          ...JSON.parse(saved)
-        };
-
-      }
-
-      catch {
-
-        return {
-          ...defaultSettings
-        };
-
-      }
-
+      const saved = localStorage.getItem("chatSettings_" + window.currentUser);
+      if (!saved) return { ...defaultSettings };
+      return { ...defaultSettings, ...JSON.parse(saved) };
     }
 
-
-    function saveSettings(
-      settings
-    ) {
-
-      localStorage.setItem(
-        settingsKey(),
-        JSON.stringify(settings)
-      );
-
+    function saveSettings(settings) {
+      localStorage.setItem("chatSettings_" + window.currentUser, JSON.stringify(settings));
     }
 
-
-    window.changeSetting =
-      function(
-        setting,
-        value
-      ) {
-
-
-        const settings =
-          getSettings();
-
-
-        settings[setting] =
-          value;
-
-
-        saveSettings(
-          settings
-        );
-
-
-        update(
-          ref(
-            db,
-            "users/" +
-            currentUser +
-            "/settings"
-          ),
-          settings
-        );
-
-
-        updateStatusDisplay();
-
-      };
-
-
-    /* ================================
-       SETTINGS OPEN
-    ================================= */
-
-    window.openSettings =
-      function() {
-
-
-        const settings =
-          getSettings();
-
-
-        document.getElementById(
-          "setting-last-seen"
-        ).checked =
-          settings.lastSeen;
-
-
-        document.getElementById(
-          "setting-online"
-        ).checked =
-          settings.online;
-
-
-        document.getElementById(
-          "setting-typing"
-        ).checked =
-          settings.typing;
-
-
-        document.getElementById(
-          "setting-read"
-        ).checked =
-          settings.read;
-
-
-        document.getElementById(
-          "setting-message-status"
-        ).checked =
-          settings.messageStatus;
-
-
-        document.getElementById(
-          "settings-modal"
-        ).style.display =
-          "flex";
-
-      };
-
-
-    window.closeSettings =
-      function() {
-
-
-        document.getElementById(
-          "settings-modal"
-        ).style.display =
-          "none";
-
-      };
-
-
-    /* ================================
-       OTHER USER
-    ================================= */
-
-    function getOtherUser() {
-
-      if (
-        currentUser ===
-        "akki"
-      ) {
-
-        return "akkilover";
-
-      }
-
-
-      return "akki";
-
+    function openSettings() {
+      const settings = getSettings();
+      document.getElementById("setting-last-seen").checked = settings.lastSeen;
+      document.getElementById("setting-online").checked = settings.online;
+      document.getElementById("setting-typing").checked = settings.typing;
+      document.getElementById("setting-read").checked = settings.read;
+      document.getElementById("setting-notifications").checked = settings.notifications;
+      document.getElementById("setting-message-notifications").checked = settings.messageNotifications;
+      document.getElementById("alert-sound").value = settings.alertSound;
+      document.getElementById("settings-modal").style.display = "flex";
     }
 
-
-    /* ================================
-       PASSWORD LOGIN
-    ================================= */
-
-    window.checkPassword =
-      function() {
-
-
-        const enteredPass =
-          document
-            .getElementById(
-              "pass-input"
-            )
-            .value
-            .trim()
-            .toUpperCase();
-
-
-        if (
-          enteredPass !==
-          SECRET_PASSWORD
-        ) {
-
-          alert(
-            "Incorrect password!"
-          );
-
-          return;
-
-        }
-
-
-        let username =
-          prompt(
-            "Enter your username:\n\nAkki\nor\nAkkilover"
-          );
-
-
-        username =
-          (
-            username || ""
-          )
-          .trim()
-          .toLowerCase();
-
-
-        if (
-          username !== "akki" &&
-          username !== "akkilover"
-        ) {
-
-          alert(
-            "Only 'akki' or 'akkilover' are allowed."
-          );
-
-          return;
-
-        }
-
-
-        currentUser =
-          username;
-
-
-        document.getElementById(
-          "username"
-        ).value =
-          currentUser;
-
-
-        document.getElementById(
-          "username"
-        ).disabled =
-          true;
-
-
-        document.getElementById(
-          "login-screen"
-        ).style.display =
-          "none";
-
-
-        document.getElementById(
-          "chat-screen"
-        ).style.display =
-          "block";
-
-
-        window.playMusic();
-
-
-        startPresence();
-
-        startTypingListener();
-
-        startMessageListener();
-
-        loadRemoteSettings();
-
-      };
-
-
-    /* ================================
-       PRESENCE
-    ================================= */
-
-    function startPresence() {
-
-
-      const presenceRef =
-        ref(
-          db,
-          "presence/" +
-          currentUser
-        );
-
-
-      set(
-        presenceRef,
-        {
-
-          online: true,
-
-          lastSeen:
-            serverTimestamp()
-
-        }
-      );
-
-
-      onDisconnect(
-        presenceRef
-      ).set({
-
-        online: false,
-
-        lastSeen:
-          serverTimestamp()
-
-      });
-
-
-      listenToOtherPresence();
-
+    function closeSettings() {
+      document.getElementById("settings-modal").style.display = "none";
     }
 
+    function playAlertSound(filename) {
+      const audio = document.getElementById("alert-audio");
+      audio.src = filename;
+      audio.currentTime = 0;
+      audio.volume = 1;
+      audio.play().catch(error => console.log("Audio blocked:", error));
 
-    /* ================================
-       OTHER USER PRESENCE
-    ================================= */
-
-    function listenToOtherPresence() {
-
-
-      const otherRef =
-        ref(
-          db,
-          "presence/" +
-          getOtherUser()
-        );
-
-
-      onValue(
-        otherRef,
-        snapshot => {
-
-
-          const data =
-            snapshot.val();
-
-
-          const settings =
-            getSettings();
-
-
-          const statusLine =
-            document.getElementById(
-              "status-line"
-            );
-
-
-          if (!data) {
-
-            statusLine.innerText =
-              "";
-
-            return;
-
-          }
-
-
-          if (
-            data.online &&
-            settings.online
-          ) {
-
-            statusLine.innerText =
-              "🟢 Online";
-
-          }
-
-          else if (
-            !data.online &&
-            settings.lastSeen &&
-            data.lastSeen
-          ) {
-
-
-            const date =
-              new Date(
-                data.lastSeen
-              );
-
-
-            statusLine.innerText =
-              "Last seen " +
-              date.toLocaleTimeString(
-                [],
-                {
-                  hour:
-                    "2-digit",
-
-                  minute:
-                    "2-digit"
-                }
-              );
-
-          }
-
-          else {
-
-            statusLine.innerText =
-              "";
-
-          }
-
-        }
-      );
-
+      setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+      }, 2000);
     }
 
-
-    function updateStatusDisplay() {
-
-      const otherRef =
-        ref(
-          db,
-          "presence/" +
-          getOtherUser()
-        );
-
-
-      onValue(
-        otherRef,
-        snapshot => {
-
-
-          const data =
-            snapshot.val();
-
-
-          if (!data) {
-            return;
-          }
-
-
-          const settings =
-            getSettings();
-
-
-          const statusLine =
-            document.getElementById(
-              "status-line"
-            );
-
-
-          if (
-            data.online &&
-            settings.online
-          ) {
-
-            statusLine.innerText =
-              "🟢 Online";
-
-          }
-
-          else if (
-            !data.online &&
-            settings.lastSeen &&
-            data.lastSeen
-          ) {
-
-
-            const date =
-              new Date(
-                data.lastSeen
-              );
-
-
-            statusLine.innerText =
-              "Last seen " +
-              date.toLocaleTimeString(
-                [],
-                {
-                  hour:
-                    "2-digit",
-
-                  minute:
-                    "2-digit"
-                }
-              );
-
-          }
-
-          else {
-
-            statusLine.innerText =
-              "";
-
-          }
-
-        },
-        {
-          onlyOnce: true
-        }
-      );
-
+    function testAlertSound() {
+      const settings = getSettings();
+      playAlertSound(settings.alertSound);
     }
 
-
-    /* ================================
-       TYPING
-    ================================= */
-
-    window.handleTyping =
-      function() {
-
-
-        const settings =
-          getSettings();
-
-
-        if (
-          !settings.typing
-        ) {
-
-          return;
-
-        }
-
-
-        const user =
-          currentUser;
-
-
-        if (!user) {
-
-          return;
-
-        }
-
-
-        set(
-          typingRef,
-          {
-
-            user:
-              user,
-
-            isTyping:
-              true
-
-          }
-        );
-
-
-        clearTimeout(
-          typingTimeout
-        );
-
-
-        typingTimeout =
-          setTimeout(
-            () => {
-
-
-              set(
-                typingRef,
-                {
-
-                  user:
-                    currentUser,
-
-                  isTyping:
-                    false
-
-                }
-              );
-
-
-            },
-            2000
-          );
-
-      };
-
-
-    function startTypingListener() {
-
-
-      onValue(
-        typingRef,
-        snapshot => {
-
-
-          const data =
-            snapshot.val();
-
-
-          const typingDiv =
-            document.getElementById(
-              "typing-indicator"
-            );
-
-
-          const settings =
-            getSettings();
-
-
-          if (
-            settings.typing &&
-            data &&
-            data.isTyping &&
-            data.user !==
-              currentUser
-          ) {
-
-
-            const displayName =
-              data.user === "akki"
-                ? "Akki"
-                : "Akkilover";
-
-
-            typingDiv.innerText =
-              displayName +
-              " is typing...";
-
-          }
-
-          else {
-
-            typingDiv.innerText =
-              "";
-
-          }
-
-        }
-      );
-
-    }
-
-
-    /* ================================
-       SEND MESSAGE
-    ================================= */
-
-    window.sendMessage =
-      function() {
-
-
-        const user =
-          currentUser;
-
-
-        const text =
-          document
-            .getElementById(
-              "message"
-            )
-            .value
-            .trim();
-
-
-        if (
-          user !== "akki" &&
-          user !== "akkilover"
-        ) {
-
-          alert(
-            "Please login correctly first."
-          );
-
-          return;
-
-        }
-
-
-        if (!text) {
-
-          alert(
-            "Please enter a message!"
-          );
-
-          return;
-
-        }
-
-
-        const now =
-          new Date();
-
-
-        const timeString =
-          now.toLocaleTimeString(
-            [],
-            {
-              hour:
-                "2-digit",
-
-              minute:
-                "2-digit"
-            }
-          );
-
-
-        push(
-          messagesRef,
-          {
-
-            user:
-              user,
-
-            text:
-              text,
-
-            time:
-              timeString,
-
-            delivered:
-              false,
-
-            read:
-              false,
-
-            createdAt:
-              serverTimestamp()
-
-          }
-        );
-
-
-        document.getElementById(
-          "message"
-        ).value =
-          "";
-
-
-        document.getElementById(
-          "picker"
-        ).style.display =
-          "none";
-
-
-        set(
-          typingRef,
-          {
-
-            user:
-              user,
-
-            isTyping:
-              false
-
-          }
-        );
-
-      };
-
-
-    /* ================================
-       MESSAGE LISTENER
-    ================================= */
-
-    function startMessageListener() {
-
-
-      onChildAdded(
-        messagesRef,
-        snapshot => {
-
-
-          const data =
-            snapshot.val();
-
-
-          const messageId =
-            snapshot.key;
-
-
-          if (!data) {
-
-            return;
-
-          }
-
-
-          renderMessage(
-            messageId,
-            data
-          );
-
-
-          /*
-            If this message belongs
-            to the other person,
-            mark it delivered.
-          */
-
-          if (
-            data.user ===
-            getOtherUser()
-          ) {
-
-
-            update(
-              ref(
-                db,
-                "messages/" +
-                messageId
-              ),
-              {
-                delivered:
-                  true
-              }
-            );
-
-
-            /*
-              If read receipts are enabled,
-              mark the message read.
-            */
-
-            const settings =
-              getSettings();
-
-
-            if (
-              settings.read
-            ) {
-
-
-              update(
-                ref(
-                  db,
-                  "messages/" +
-                  messageId
-                ),
-                {
-                  read:
-                    true
-                }
-              );
-
-            }
-
-          }
-
-
-          /*
-            Refresh message statuses.
-          */
-
-          refreshMessageStatus(
-            messageId
-          );
-
-        }
-      );
-
-    }
-
-
-    /* ================================
-       RENDER MESSAGE
-    ================================= */
-
-    function renderMessage(
-      messageId,
-      data
-    ) {
-
-
-      if (
-        document.querySelector(
-          '[data-message-id="' +
-          messageId +
-          '"]'
-        )
-      ) {
-
+    async function enableNotifications() {
+      if (!("Notification" in window)) {
+        alert("Your browser does not support notifications.");
         return;
-
       }
-
-
-      const chatBox =
-        document.getElementById(
-          "chat-box"
-        );
-
-
-      const msgDiv =
-        document.createElement(
-          "div"
-        );
-
-
-      msgDiv.dataset.messageId =
-        messageId;
-
-
-      const username =
-        (
-          data.user ||
-          ""
-        )
-        .toLowerCase();
-
-
-      if (
-        username ===
-        "akki"
-      ) {
-
-        msgDiv.className =
-          "message akki-msg";
-
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        const settings = getSettings();
+        settings.notifications = true;
+        saveSettings(settings);
+        document.getElementById("setting-notifications").checked = true;
+        alert("Notifications enabled.");
       }
-
-      else if (
-        username ===
-        "akkilover"
-      ) {
-
-        msgDiv.className =
-          "message akkilover-msg";
-
-      }
-
-      else {
-
-        msgDiv.className =
-          "message other-msg";
-
-      }
-
-
-      let displayName =
-        username ===
-        "akki"
-          ? "Akki"
-          : "Akkilover";
-
-
-      let nameClass =
-        username ===
-        "akki"
-          ? "akki-name"
-          : "akkilover-name";
-
-
-      const safeText =
-        escapeHTML(
-          data.text || ""
-        );
-
-
-      const statusHTML =
-        username ===
-        currentUser
-          ? getStatusHTML(
-              data
-            )
-          : "";
-
-
-      msgDiv.innerHTML =
-
-        '<strong class="' +
-        nameClass +
-        '">' +
-
-        displayName +
-
-        ':</strong> ' +
-
-        safeText +
-
-        '<span class="timestamp">' +
-
-        (data.time || "") +
-
-        statusHTML +
-
-        '</span>';
-
-
-      chatBox.appendChild(
-        msgDiv
-      );
-
-
-      chatBox.scrollTop =
-        chatBox.scrollHeight;
-
     }
 
-
-    /* ================================
-       MESSAGE STATUS
-    ================================= */
-
-    function getStatusHTML(
-      data
-    ) {
-
-
-      const settings =
-        getSettings();
-
-
-      if (
-        !settings.messageStatus
-      ) {
-
-        return "";
-
+    async function notificationPermission() {
+      const checked = document.getElementById("setting-notifications").checked;
+      if (checked) {
+        await enableNotifications();
+      } else {
+        window.changeSetting("notifications", false);
       }
-
-
-      if (
-        data.read
-      ) {
-
-        return (
-          '<span ' +
-          'class="message-status" ' +
-          'title="Read">' +
-          '✓✓' +
-          '</span>'
-        );
-
-      }
-
-
-      if (
-        data.delivered
-      ) {
-
-        return (
-          '<span ' +
-          'class="message-status" ' +
-          'title="Delivered">' +
-          '✓✓' +
-          '</span>'
-        );
-
-      }
-
-
-      return (
-        '<span ' +
-        'class="message-status" ' +
-        'title="Sent">' +
-        '✓' +
-        '</span>'
-      );
-
     }
 
-
-    function refreshMessageStatus(
-      messageId
-    ) {
-
-
-      onValue(
-        ref(
-          db,
-          "messages/" +
-          messageId
-        ),
-        snapshot => {
-
-
-          const data =
-            snapshot.val();
-
-
-          if (!data) {
-            return;
-          }
-
-
-          const element =
-            document.querySelector(
-              '[data-message-id="' +
-              messageId +
-              '"]'
-            );
-
-
-          if (!element) {
-            return;
-          }
-
-
-          if (
-            data.user !==
-            currentUser
-          ) {
-
-            return;
-
-          }
-
-
-          const timestamp =
-            element.querySelector(
-              ".timestamp"
-            );
-
-
-          if (!timestamp) {
-            return;
-          }
-
-
-          const oldStatus =
-            timestamp.querySelector(
-              ".message-status"
-            );
-
-
-          if (oldStatus) {
-
-            oldStatus.remove();
-
-          }
-
-
-          timestamp.insertAdjacentHTML(
-            "beforeend",
-            getStatusHTML(
-              data
-            )
-          );
-
-        }
-      );
-
+    function showBrowserNotification(title, body) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const notification = new Notification(title, { body: body });
+      notification.onclick = function() {
+        window.focus();
+        notification.close();
+      };
     }
 
-
-    /* ================================
-       READ ALL OTHER MESSAGES
-    ================================= */
-
-    function markMessagesAsRead() {
-
-
-      const settings =
-        getSettings();
-
-
-      if (
-        !settings.read
-      ) {
-
-        return;
-
-      }
-
-
-      onValue(
-        messagesRef,
-        snapshot => {
-
-
-          snapshot.forEach(
-            child => {
-
-
-              const data =
-                child.val();
-
-
-              if (
-                data.user ===
-                getOtherUser() &&
-                !data.read
-              ) {
-
-
-                update(
-                  ref(
-                    db,
-                    "messages/" +
-                    child.key
-                  ),
-                  {
-                    read:
-                      true
-                  }
-                );
-
-              }
-
-            }
-          );
-
-        },
-        {
-          onlyOnce: true
-        }
-      );
-
+    function showNotifyPopup(title, message) {
+      document.getElementById("popup-title").textContent = title;
+      document.getElementById("popup-message").textContent = message;
+      const popup = document.getElementById("notify-popup");
+      popup.style.display = "block";
+      setTimeout(() => { popup.style.display = "none"; }, 5000);
     }
-
-
-    /* ================================
-       PAGE VISIBILITY
-    ================================= */
-
-    document.addEventListener(
-      "visibilitychange",
-      () => {
-
-
-        if (
-          document.visibilityState ===
-          "visible"
-        ) {
-
-          markMessagesAsRead();
-
-        }
-
-      }
-    );
-
-
-    /* ================================
-       REMEMBER SETTINGS FROM FIREBASE
-    ================================= */
-
-    function loadRemoteSettings() {
-
-
-      const settingsRef =
-        ref(
-          db,
-          "users/" +
-          currentUser +
-          "/settings"
-        );
-
-
-      onValue(
-        settingsRef,
-        snapshot => {
-
-
-          const remote =
-            snapshot.val();
-
-
-          if (!remote) {
-
-            saveSettings(
-              getSettings()
-            );
-
-            return;
-
-          }
-
-
-          const merged = {
-
-            ...defaultSettings,
-
-            ...remote
-
-          };
-
-
-          saveSettings(
-            merged
-          );
-
-
-          document.getElementById(
-            "setting-last-seen"
-          ).checked =
-            merged.lastSeen;
-
-
-          document.getElementById(
-            "setting-online"
-          ).checked =
-            merged.online;
-
-
-          document.getElementById(
-            "setting-typing"
-          ).checked =
-            merged.typing;
-
-
-          document.getElementById(
-            "setting-read"
-          ).checked =
-            merged.read;
-
-
-          document.getElementById(
-            "setting-message-status"
-          ).checked =
-            merged.messageStatus;
-
-
-        }
-      );
-
-    }
-
-
-    /* ================================
-       ESCAPE HTML
-    ================================= */
-
-    function escapeHTML(
-      text
-    ) {
-
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.textContent =
-        text;
-
-
-      return div.innerHTML;
-
-    }
-
-
-    /* ================================
-       ENTER TO SEND
-    ================================= */
-
-    document.addEventListener(
-      "keydown",
-      event => {
-
-
-        if (
-          event.key ===
-          "Enter" &&
-          document.activeElement.id ===
-          "message"
-        ) {
-
-
-          event.preventDefault();
-
-
-          window.sendMessage();
-
-        }
-
-      }
-    );
-
-
-    /* ================================
-       CLOSE SETTINGS WHEN CLICKING
-       OUTSIDE THE SETTINGS BOX
-    ================================= */
-
-    document
-      .getElementById(
-        "settings-modal"
-      )
-      .addEventListener(
-        "click",
-        event => {
-
-
-          if (
-            event.target.id ===
-            "settings-modal"
-          ) {
-
-            closeSettings();
-
-          }
-
-        }
-      );
-
-
   </script>
 
+  <!-- FIREBASE ENGINE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, onValue, set, update, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
+      authDomain: "privatechat-8f1a8.firebaseapp.com",
+      databaseURL: "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
+      projectId: "privatechat-8f1a8",
+      storageBucket: "privatechat-8f1a8.firebasestorage.app",
+      messagingSenderId: "873702558512",
+      appId: "1:873702558512:web:ee506e3f954d0d9e69d6f5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
+    window.currentUser = "";
+    let typingTimeout = null;
+
+    function getOtherUser() {
+      return window.currentUser === "akki" ? "akkilover" : "akki";
+    }
+
+    window.changeSetting = function(name, value) {
+      const settings = getSettings();
+      settings[name] = value;
+      saveSettings(settings);
+
+      if (window.currentUser) {
+        set(ref(database, "users/" + window.currentUser + "/settings/" + name), value);
+      }
+    };
+
+    window.checkPassword = function() {
+      const entered = document.getElementById("pass-input").value.trim().toUpperCase();
+
+      if (entered !== SECRET_PASSWORD) {
+        alert("Incorrect password!");
+        return;
+      }
+
+      let username = prompt("Enter your username:\n\nAkki\nor\nAkkilover");
+      username = (username || "").trim().toLowerCase();
+
+      if (username !== "akki" && username !== "akkilover") {
+        alert("Only Akki or Akkilover are allowed.");
+        return;
+      }
+
+      window.currentUser = username;
+
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("chat-screen").style.display = "block";
+
+      const userLabel = document.getElementById("current-user");
+      userLabel.textContent = window.currentUser === "akki" ? "Akki" : "Akkilover";
+      userLabel.className = window.currentUser === "akki" ? "akki-name" : "akkilover-name";
+
+      loadSettingsFromFirebase();
+      startPresence();
+      setupMessages();
+      setupTyping();
+      setupNotifications();
+
+      document.getElementById("bg-music").play().catch(() => {});
+    };
+
+    function loadSettingsFromFirebase() {
+      const settingsRef = ref(database, "users/" + window.currentUser + "/settings");
+      onValue(settingsRef, snapshot => {
+        const remote = snapshot.val();
+        if (remote) {
+          const local = getSettings();
+          saveSettings({ ...local, ...remote });
+        }
+      });
+    }
+
+    function startPresence() {
+      const presenceRef = ref(database, "presence/" + window.currentUser);
+      set(presenceRef, { online: true, lastSeen: serverTimestamp() });
+      onDisconnect(presenceRef).set({ online: false, lastSeen: serverTimestamp() });
+
+      const otherPresence = ref(database, "presence/" + getOtherUser());
+      onValue(otherPresence, snapshot => {
+        const data = snapshot.val();
+        const status = document.getElementById("status-line");
+        if (data && data.online) {
+          status.textContent = "🟢 Online";
+          status.style.color = "#28a745";
+        } else if (data && data.lastSeen) {
+          const time = new Date(data.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          status.textContent = "Last seen at " + time;
+          status.style.color = "#666";
+        } else {
+          status.textContent = "Offline";
+          status.style.color = "#666";
+        }
+      });
+    }
+
+    function setupMessages() {
+      const messagesRef = ref(database, "messages");
+      onChildAdded(messagesRef, snapshot => {
+        const data = snapshot.val();
+        displayMessage(data);
+      });
+    }
+
+    function displayMessage(data) {
+      const chatBox = document.getElementById("chat-box");
+      const msgDiv = document.createElement("div");
+      
+      let classType = "other-msg";
+      if (data.sender === window.currentUser) {
+        classType = window.currentUser === "akki" ? "akki-msg" : "akkilover-msg";
+      } else {
+        classType = data.sender === "akki" ? "akki-msg" : "akkilover-msg";
+      }
+
+      msgDiv.className = "message " + classType;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = data.sender === "akki" ? "akki-name" : "akkilover-name";
+      nameSpan.textContent = (data.sender === "akki" ? "Akki" : "Akkilover") + ": ";
+
+      const textNode = document.createTextNode(data.text);
+      
+      const timeSpan = document.createElement("span");
+      timeSpan.className = "timestamp";
+      const timeStr = new Date(data.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      timeSpan.textContent = timeStr;
+
+      msgDiv.appendChild(nameSpan);
+      msgDiv.appendChild(textNode);
+      msgDiv.appendChild(timeSpan);
+
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      if (data.sender !== window.currentUser) {
+        const settings = getSettings();
+        if (settings.messageNotifications) {
+          playAlertSound(settings.alertSound);
+          showBrowserNotification(data.sender, data.text);
+        }
+      }
+    }
+
+    window.sendMessage = function() {
+      const input = document.getElementById("message");
+      const text = input.value.trim();
+      if (!text) return;
+
+      push(ref(database, "messages"), {
+        sender: window.currentUser,
+        text: text,
+        timestamp: serverTimestamp()
+      });
+
+      input.value = "";
+      set(ref(database, "typing/" + window.currentUser), false);
+    };
+
+    window.handleTyping = function() {
+      set(ref(database, "typing/" + window.currentUser), true);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        set(ref(database, "typing/" + window.currentUser), false);
+      }, 2000);
+    };
+
+    function setupTyping() {
+      const otherTyping = ref(database, "typing/" + getOtherUser());
+      onValue(otherTyping, snapshot => {
+        const isTyping = snapshot.val();
+        const indicator = document.getElementById("typing-indicator");
+        indicator.textContent = isTyping ? (getOtherUser() === "akki" ? "Akki" : "Akkilover") + " is typing..." : "";
+      });
+    }
+
+    window.sendNotify = function() {
+      const textarea = document.getElementById("notify-text");
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      set(ref(database, "notifications/" + getOtherUser()), {
+        sender: window.currentUser,
+        text: text,
+        timestamp: serverTimestamp()
+      });
+
+      textarea.value = "";
+      document.getElementById("notify-counter").textContent = "0 / 50 words";
+      alert("Notification sent!");
+    };
+
+    function setupNotifications() {
+      const myNotifyRef = ref(database, "notifications/" + window.currentUser);
+      onValue(myNotifyRef, snapshot => {
+        const data = snapshot.val();
+        if (data && data.text) {
+          const senderName = data.sender === "akki" ? "Akki" : "Akkilover";
+          showNotifyPopup("🔔 " + senderName, data.text);
+          const settings = getSettings();
+          playAlertSound(settings.alertSound);
+          showBrowserNotification("🔔 " + senderName, data.text);
+        }
+      });
+    }
+
+    document.getElementById("message").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") window.sendMessage();
+    });
+  </script>
 </body>
 </html>
