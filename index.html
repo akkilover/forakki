@@ -6,11 +6,13 @@
   <title>Private Chat</title>
 
   <!-- Emoji Picker -->
-  <script type="module"
+  <script
+    type="module"
     src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js">
   </script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -36,6 +38,7 @@
     }
 
     @keyframes gradientBG {
+
       0% {
         background-position: 0% 50%;
       }
@@ -47,11 +50,13 @@
       100% {
         background-position: 0% 50%;
       }
+
     }
 
-    /* =========================
+
+    /* ==============================
        BACKGROUND VIDEO
-    ========================= */
+    ============================== */
 
     #bg-video {
       position: fixed;
@@ -62,18 +67,31 @@
       min-height: 100%;
 
       z-index: -1;
+
       object-fit: cover;
 
       transition: opacity 1s ease-in-out;
 
       display: none;
+
+      transform: translateZ(0);
+
+      will-change: transform;
     }
 
-    /* =========================
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+
+    /* ==============================
        LOGIN
-    ========================= */
+    ============================== */
 
     #login-screen {
+
       background: rgba(255,255,255,0.92);
 
       padding: 20px;
@@ -84,16 +102,20 @@
 
       text-align: center;
 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow:
+        0 4px 15px rgba(0,0,0,0.3);
 
       backdrop-filter: blur(8px);
+
     }
 
-    /* =========================
-       CHAT
-    ========================= */
+
+    /* ==============================
+       CHAT SCREEN
+    ============================== */
 
     #chat-screen {
+
       display: none;
 
       background: rgba(255,255,255,0.92);
@@ -102,16 +124,20 @@
 
       border-radius: 12px;
 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow:
+        0 4px 15px rgba(0,0,0,0.3);
 
       backdrop-filter: blur(8px);
+
     }
 
-    /* =========================
+
+    /* ==============================
        TOP BAR
-    ========================= */
+    ============================== */
 
     .control-bar {
+
       display: flex;
 
       justify-content: space-between;
@@ -120,19 +146,24 @@
 
       gap: 6px;
 
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+
     }
 
-    .control-buttons {
+    .control-right {
+
       display: flex;
+
+      align-items: center;
 
       gap: 5px;
 
-      align-items: center;
     }
 
-    .theme-select {
-      background: #6c757d;
+
+    .theme-select,
+    .music-btn,
+    .settings-btn {
 
       color: white;
 
@@ -145,39 +176,50 @@
       border-radius: 6px;
 
       cursor: pointer;
+
+    }
+
+    .theme-select,
+    .music-btn {
+
+      background: #6c757d;
+
     }
 
     .settings-btn {
+
       background: #343a40;
 
-      color: white;
+      font-size: 16px;
 
-      padding: 7px 10px;
+      padding: 5px 9px;
 
-      border-radius: 6px;
     }
 
-    /* =========================
-       STATUS
-    ========================= */
+
+    /* ==============================
+       STATUS LINE
+    ============================== */
 
     #status-line {
-      text-align: center;
 
       font-size: 12px;
 
       color: #666;
 
-      height: 18px;
+      min-height: 17px;
 
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+
     }
 
-    /* =========================
+
+    /* ==============================
        CHAT BOX
-    ========================= */
+    ============================== */
 
     #chat-box {
+
       height: 350px;
 
       border: 1px solid #ccc;
@@ -191,13 +233,16 @@
       border-radius: 8px;
 
       margin-bottom: 5px;
+
     }
 
-    /* =========================
+
+    /* ==============================
        MESSAGES
-    ========================= */
+    ============================== */
 
     .message {
+
       margin-bottom: 12px;
 
       padding: 8px 12px;
@@ -213,41 +258,59 @@
       position: relative;
 
       color: #222;
+
     }
+
 
     .akki-msg {
-      background: #dff5ff;
+
+      background: #00e5ff;
 
       margin-right: auto;
+
     }
+
 
     .akkilover-msg {
-      background: #fff4a3;
+
+      background: #ffea00;
 
       margin-left: auto;
+
     }
 
+
     .other-msg {
+
       background: #e9e9eb;
 
       margin-right: auto;
+
     }
+
 
     /* USERNAME COLORS */
 
     .akki-name {
-      color: #007bff;
+
+      color: #00bcd4;
 
       font-weight: bold;
+
     }
+
 
     .akkilover-name {
-      color: #d4a900;
+
+      color: #c5a900;
 
       font-weight: bold;
+
     }
 
+
     .timestamp {
+
       font-size: 10px;
 
       opacity: 0.75;
@@ -257,19 +320,25 @@
       text-align: right;
 
       display: block;
+
     }
+
 
     .message-status {
+
       font-size: 10px;
 
-      margin-left: 5px;
+      margin-left: 4px;
+
     }
 
-    /* =========================
+
+    /* ==============================
        TYPING
-    ========================= */
+    ============================== */
 
     #typing-indicator {
+
       font-size: 12px;
 
       font-style: italic;
@@ -279,13 +348,16 @@
       height: 18px;
 
       margin-bottom: 8px;
+
     }
 
-    /* =========================
+
+    /* ==============================
        INPUT
-    ========================= */
+    ============================== */
 
     .input-container {
+
       position: relative;
 
       display: flex;
@@ -293,33 +365,48 @@
       flex-direction: column;
 
       gap: 8px;
+
     }
 
+
     .input-group {
+
       display: flex;
 
       gap: 6px;
 
       align-items: center;
+
     }
 
-    input,
-    textarea,
-    select {
+
+    input {
+
       padding: 10px;
 
       border: 1px solid #ccc;
 
       border-radius: 6px;
 
-      font-family: Arial, sans-serif;
     }
+
+
+    #username {
+
+      width: 35%;
+
+    }
+
 
     #message {
+
       flex: 1;
+
     }
 
+
     button {
+
       padding: 10px 14px;
 
       background: #007bff;
@@ -331,67 +418,23 @@
       border-radius: 6px;
 
       cursor: pointer;
+
     }
+
 
     button:hover {
+
       background: #0056b3;
+
     }
 
-    .gray-button {
-      background: #6c757d;
-    }
 
-    .gray-button:hover {
-      background: #545b62;
-    }
-
-    /* =========================
-       NOTIFY
-    ========================= */
-
-    .notify-section {
-      margin-top: 10px;
-
-      padding: 10px;
-
-      border-radius: 8px;
-
-      background: rgba(255,255,255,0.75);
-
-      border: 1px solid #ddd;
-    }
-
-    .notify-section textarea {
-      width: 100%;
-
-      min-height: 65px;
-
-      resize: vertical;
-
-      margin-top: 7px;
-    }
-
-    .notify-bottom {
-      display: flex;
-
-      justify-content: space-between;
-
-      align-items: center;
-
-      margin-top: 5px;
-    }
-
-    .word-counter {
-      font-size: 11px;
-
-      color: #666;
-    }
-
-    /* =========================
+    /* ==============================
        EMOJI
-    ========================= */
+    ============================== */
 
     emoji-picker {
+
       position: absolute;
 
       bottom: 50px;
@@ -405,36 +448,42 @@
       --num-columns: 8;
 
       --category-emoji-size: 1.125rem;
+
     }
 
-    /* =========================
+
+    /* ==============================
        SETTINGS MODAL
-    ========================= */
+    ============================== */
 
     #settings-modal {
+
+      display: none;
+
       position: fixed;
 
       inset: 0;
 
       background: rgba(0,0,0,0.55);
 
-      display: none;
+      z-index: 1000;
 
       align-items: center;
 
       justify-content: center;
 
-      z-index: 999;
-
       padding: 15px;
+
     }
 
+
     .settings-box {
+
       background: white;
 
       width: 100%;
 
-      max-width: 500px;
+      max-width: 480px;
 
       max-height: 90vh;
 
@@ -444,10 +493,14 @@
 
       padding: 20px;
 
-      box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+      box-shadow:
+        0 5px 25px rgba(0,0,0,0.4);
+
     }
 
+
     .settings-header {
+
       display: flex;
 
       justify-content: space-between;
@@ -455,25 +508,19 @@
       align-items: center;
 
       margin-bottom: 15px;
+
     }
+
 
     .settings-header h2 {
+
       margin: 0;
+
     }
 
-    .settings-group-title {
-      font-size: 15px;
 
-      font-weight: bold;
+    .settings-row {
 
-      margin-top: 15px;
-
-      margin-bottom: 5px;
-
-      color: #333;
-    }
-
-    .setting-row {
       display: flex;
 
       justify-content: space-between;
@@ -482,140 +529,129 @@
 
       gap: 10px;
 
-      padding: 12px 0;
+      padding: 14px 0;
 
       border-bottom: 1px solid #eee;
+
     }
 
-    .setting-info {
+
+    .settings-info {
+
       flex: 1;
+
     }
 
-    .setting-name {
+
+    .settings-name {
+
       font-weight: bold;
 
       font-size: 14px;
+
     }
 
-    .setting-description {
-      font-size: 11px;
+
+    .settings-description {
 
       color: #777;
 
+      font-size: 11px;
+
       margin-top: 3px;
+
+      line-height: 1.4;
+
     }
 
-    .setting-row input[type="checkbox"] {
+
+    .settings-row input[type="checkbox"] {
+
       width: 20px;
 
       height: 20px;
+
+      cursor: pointer;
+
     }
+
 
     .close-settings {
+
       background: #dc3545;
+
     }
 
-    /* =========================
-       NOTIFICATION POPUP
-    ========================= */
 
-    #notify-popup {
-      position: fixed;
+    .close-settings:hover {
 
-      top: 20px;
+      background: #b02a37;
 
-      right: 20px;
-
-      max-width: 330px;
-
-      background: white;
-
-      border-radius: 10px;
-
-      padding: 15px;
-
-      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
-
-      display: none;
-
-      z-index: 2000;
-
-      animation: notificationSlide 0.3s ease;
     }
 
-    @keyframes notificationSlide {
-      from {
-        transform: translateX(120%);
-      }
-
-      to {
-        transform: translateX(0);
-      }
-    }
-
-    .popup-title {
-      font-weight: bold;
-
-      margin-bottom: 5px;
-    }
-
-    .popup-message {
-      font-size: 14px;
-
-      color: #444;
-    }
   </style>
 </head>
 
+
 <body>
 
-  <!-- =========================
-       BACKGROUND VIDEO
-  ========================= -->
 
-  <video autoplay muted playsinline id="bg-video">
-    <source id="video-source" src="" type="video/mp4">
+  <!-- ======================================
+       BACKGROUND VIDEO
+  ======================================= -->
+
+  <video
+    autoplay
+    muted
+    loop
+    playsinline
+    id="bg-video">
+
+    <source
+      id="video-source"
+      src=""
+      type="video/mp4">
+
   </video>
 
 
-  <!-- =========================
-       MUSIC
-  ========================= -->
+  <!-- ======================================
+       BACKGROUND MUSIC
+  ======================================= -->
 
   <audio id="bg-music">
-    <source id="music-source" src="music1.mp4" type="audio/mp4">
+
+    <source
+      id="music-source"
+      src="music1.mp4"
+      type="audio/mp4">
+
   </audio>
 
 
-  <!-- =========================
-       ALERT SOUND
-  ========================= -->
-
-  <audio id="alert-audio"></audio>
-
-
-  <!-- =========================
+  <!-- ======================================
        LOGIN
-  ========================= -->
+  ======================================= -->
 
   <div id="login-screen">
 
     <h2>🔒 Protected Chat</h2>
 
-    <p>Enter the secret password to join:</p>
+    <p>
+      Enter the secret password to join:
+    </p>
 
-    <div style="
-      display:flex;
-      gap:8px;
-      justify-content:center;
-      flex-wrap:wrap;
-    ">
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        justify-content:center;
+      ">
 
       <input
         type="password"
         id="pass-input"
-        placeholder="Password..."
-      >
+        placeholder="Password...">
 
       <button onclick="checkPassword()">
         Enter
@@ -626,29 +662,35 @@
   </div>
 
 
-  <!-- =========================
+  <!-- ======================================
        CHAT
-  ========================= -->
+  ======================================= -->
 
   <div id="chat-screen">
 
+
     <div class="control-bar">
 
-      <div>
-        <h3 style="margin:0;">
-          💬 Secret Chat
-        </h3>
+      <h3
+        style="
+          margin:0;
+          font-size:16px;
+        ">
 
-        <div id="status-line"></div>
-      </div>
+        Secret Chat
 
-      <div class="control-buttons">
+      </h3>
+
+
+      <div class="control-right">
+
+
+        <!-- THEME -->
 
         <select
           id="theme-select"
           class="theme-select"
-          onchange="changeThemeCategory(this.value)"
-        >
+          onchange="changeThemeCategory(this.value)">
 
           <option value="default">
             🎨 Default
@@ -672,11 +714,27 @@
 
         </select>
 
+
+        <!-- MUSIC -->
+
+        <button
+          class="music-btn"
+          id="music-toggle"
+          onclick="toggleMusic()">
+
+          🔊 Mute
+
+        </button>
+
+
+        <!-- SETTINGS -->
+
         <button
           class="settings-btn"
-          onclick="openSettings()"
-        >
+          onclick="openSettings()">
+
           ⚙️
+
         </button>
 
       </div>
@@ -684,93 +742,60 @@
     </div>
 
 
-    <!-- CHAT -->
+    <!-- ONLINE / LAST SEEN -->
+
+    <div id="status-line"></div>
+
+
+    <!-- CHAT BOX -->
 
     <div id="chat-box"></div>
+
+
+    <!-- TYPING -->
 
     <div id="typing-indicator"></div>
 
 
-    <!-- =========================
-         NOTIFY SECTION
-    ========================= -->
-
-    <div class="notify-section">
-
-      <strong>
-        🔔 Notify
-      </strong>
-
-      <textarea
-        id="notify-text"
-        maxlength="500"
-        placeholder="Write something to notify the other person..."
-      ></textarea>
-
-      <div class="notify-bottom">
-
-        <span
-          class="word-counter"
-          id="notify-counter"
-        >
-          0 / 50 words
-        </span>
-
-        <button onclick="sendNotify()">
-          Send Notify
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- =========================
-         MESSAGE INPUT
-    ========================= -->
+    <!-- INPUT -->
 
     <div class="input-container">
 
       <emoji-picker id="picker"></emoji-picker>
 
+
       <div class="input-group">
+
+
+        <input
+          type="text"
+          id="username"
+          placeholder="akki or akkilover"
+          value="">
+
 
         <input
           type="text"
           id="message"
           placeholder="Type a message..."
-          oninput="handleTyping()"
-        >
+          oninput="handleTyping()">
+
+
 
         <button
           type="button"
-          onclick="toggleEmojiPicker()"
-        >
+          onclick="toggleEmojiPicker()">
+
           😊
+
         </button>
 
-        <button onclick="sendMessage()">
-          Send
-        </button>
-
-      </div>
-
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      ">
-
-        <span style="font-size:12px;">
-          You are:
-          <strong id="current-user"></strong>
-        </span>
 
         <button
-          class="gray-button"
-          onclick="toggleMusic()"
-        >
-          🎵 Music
+          onclick="sendMessage()">
+
+          Send
+
         </button>
 
       </div>
@@ -780,13 +805,16 @@
   </div>
 
 
-  <!-- =========================
+  <!-- ======================================
        SETTINGS
-  ========================= -->
+       EXACTLY 5 OPTIONS
+  ======================================= -->
 
   <div id="settings-modal">
 
+
     <div class="settings-box">
+
 
       <div class="settings-header">
 
@@ -796,2171 +824,2185 @@
 
         <button
           class="close-settings"
-          onclick="closeSettings()"
-        >
+          onclick="closeSettings()">
+
           Close
+
         </button>
 
       </div>
 
 
-      <!-- PRIVACY -->
+      <!-- 1. LAST SEEN -->
 
-      <div class="settings-group-title">
-        👁️ Privacy & Status
-      </div>
+      <div class="settings-row">
 
+        <div class="settings-info">
 
-      <div class="setting-row">
-
-        <div class="setting-info">
-
-          <div class="setting-name">
-            Last Seen
+          <div class="settings-name">
+            👁️ Last Seen
           </div>
 
-          <div class="setting-description">
-            Allow the other person to see your last active time.
+          <div class="settings-description">
+
+            Allow the other person to see
+            when you were last active.
+
           </div>
 
         </div>
+
 
         <input
           type="checkbox"
           id="setting-last-seen"
-          onchange="changeSetting('lastSeen',this.checked)"
-        >
+          checked
+          onchange="
+            changeSetting(
+              'lastSeen',
+              this.checked
+            )
+          ">
 
       </div>
 
 
-      <div class="setting-row">
+      <!-- 2. ONLINE STATUS -->
 
-        <div class="setting-info">
+      <div class="settings-row">
 
-          <div class="setting-name">
-            Online Status
+        <div class="settings-info">
+
+          <div class="settings-name">
+            🟢 Online Status
           </div>
 
-          <div class="setting-description">
-            Show when you are currently online.
+          <div class="settings-description">
+
+            Show the other person when
+            you are currently online.
+
           </div>
 
         </div>
+
 
         <input
           type="checkbox"
           id="setting-online"
-          onchange="changeSetting('online',this.checked)"
-        >
+          checked
+          onchange="
+            changeSetting(
+              'online',
+              this.checked
+            )
+          ">
 
       </div>
 
 
-      <div class="setting-row">
+      <!-- 3. TYPING -->
 
-        <div class="setting-info">
+      <div class="settings-row">
 
-          <div class="setting-name">
-            Typing Indicator
+        <div class="settings-info">
+
+          <div class="settings-name">
+            ✍️ Typing Indicator
           </div>
 
-          <div class="setting-description">
-            Show the other person when you are typing.
+          <div class="settings-description">
+
+            Allow the other person to see
+            when you are typing.
+
           </div>
 
         </div>
+
 
         <input
           type="checkbox"
           id="setting-typing"
-          onchange="changeSetting('typing',this.checked)"
-        >
+          checked
+          onchange="
+            changeSetting(
+              'typing',
+              this.checked
+            )
+          ">
 
       </div>
 
 
-      <div class="setting-row">
+      <!-- 4. READ RECEIPTS -->
 
-        <div class="setting-info">
+      <div class="settings-row">
 
-          <div class="setting-name">
-            Read Receipts
+        <div class="settings-info">
+
+          <div class="settings-name">
+            ✓✓ Read Receipts
           </div>
 
-          <div class="setting-description">
-            Show whether messages have been read.
+          <div class="settings-description">
+
+            Allow the other person to know
+            when you have read their message.
+
           </div>
 
         </div>
+
 
         <input
           type="checkbox"
           id="setting-read"
-          onchange="changeSetting('read',this.checked)"
-        >
+          checked
+          onchange="
+            changeSetting(
+              'read',
+              this.checked
+            )
+          ">
 
       </div>
 
 
-      <!-- NOTIFICATIONS -->
+      <!-- 5. MESSAGE STATUS -->
 
-      <div class="settings-group-title">
-        🔔 Notifications
-      </div>
+      <div class="settings-row">
 
+        <div class="settings-info">
 
-      <div class="setting-row">
-
-        <div class="setting-info">
-
-          <div class="setting-name">
-            Notifications
+          <div class="settings-name">
+            💬 Message Status
           </div>
 
-          <div class="setting-description">
-            Allow browser notifications.
+          <div class="settings-description">
+
+            Show sent, delivered and read
+            status for your messages.
+
           </div>
 
         </div>
+
 
         <input
           type="checkbox"
-          id="setting-notifications"
-          onchange="notificationPermission()"
-        >
+          id="setting-message-status"
+          checked
+          onchange="
+            changeSetting(
+              'messageStatus',
+              this.checked
+            )
+          ">
 
       </div>
 
-
-      <div class="setting-row">
-
-        <div class="setting-info">
-
-          <div class="setting-name">
-            Message Notifications
-          </div>
-
-          <div class="setting-description">
-            Notify you when a new message arrives.
-          </div>
-
-        </div>
-
-        <input
-          type="checkbox"
-          id="setting-message-notifications"
-          onchange="changeSetting(
-            'messageNotifications',
-            this.checked
-          )"
-        >
-
-      </div>
-
-
-      <!-- ALERT SOUND -->
-
-      <div class="setting-row">
-
-        <div class="setting-info">
-
-          <div class="setting-name">
-            Notification Sound
-          </div>
-
-          <div class="setting-description">
-            Select the sound used for notifications.
-          </div>
-
-        </div>
-
-        <select
-          id="alert-sound"
-          onchange="changeSetting(
-            'alertSound',
-            this.value
-          )"
-        >
-
-          <option value="alert1.mp3">
-            Alert 1
-          </option>
-
-          <option value="alert2.mp3">
-            Alert 2
-          </option>
-
-          <option value="alert3.mp3">
-            Alert 3
-          </option>
-
-          <option value="alert4.mp3">
-            Alert 4
-          </option>
-
-          <option value="alert5.mp3">
-            Alert 5
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div style="
-        margin-top:15px;
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-      ">
-
-        <button onclick="enableNotifications()">
-          🔔 Enable Notifications
-        </button>
-
-        <button
-          class="gray-button"
-          onclick="testAlertSound()"
-        >
-          🔊 Test Sound
-        </button>
-
-      </div>
 
     </div>
 
   </div>
 
 
-  <!-- =========================
-       CUSTOM NOTIFICATION POPUP
-  ========================= -->
-
-  <div id="notify-popup">
-
-    <div
-      class="popup-title"
-      id="popup-title"
-    ></div>
-
-    <div
-      class="popup-message"
-      id="popup-message"
-    ></div>
-
-  </div>
-
-
-<script>
-
-  /* =====================================================
-     VIDEO THEMES
-  ===================================================== */
-
-  const videoThemes = {
-
-    default: [],
-
-    space: [
-      "s1.mp4",
-      "s2.mp4",
-      "s3.mp4",
-      "s4.mp4",
-      "s5.mp4",
-      "s6.mp4",
-      "s7.mp4",
-      "s8.mp4",
-      "s9.mp4",
-      "s10.mp4",
-      "s11.mp4",
-      "s12.mp4",
-      "s13.mp4",
-      "s14.mp4",
-      "s15.mp4"
-    ],
-
-    love: [
-      "l1.mp4",
-      "l2.mp4",
-      "l3.mp4",
-      "l4.mp4",
-      "l5.mp4",
-      "l6.mp4",
-      "l7.mp4",
-      "l8.mp4",
-      "l9.mp4",
-      "l10.mp4",
-      "l11.mp4",
-      "l12.mp4",
-      "l13.mp4",
-      "l14.mp4",
-      "l15.mp4"
-    ],
-
-    rain: [
-      "r1.mp4",
-      "r2.mp4",
-      "r3.mp4",
-      "r4.mp4",
-      "r5.mp4",
-      "r6.mp4",
-      "r7.mp4",
-      "r8.mp4",
-      "r9.mp4",
-      "r10.mp4",
-      "r11.mp4",
-      "r12.mp4",
-      "r13.mp4",
-      "r14.mp4",
-      "r15.mp4"
-    ],
+  <!-- ======================================
+       VIDEO + MUSIC
+  ======================================= -->
 
-    cinematic: [
-      "c1.mp4",
-      "c2.mp4",
-      "c3.mp4",
-      "c4.mp4",
-      "c5.mp4",
-      "c6.mp4",
-      "c7.mp4",
-      "c8.mp4",
-      "c9.mp4",
-      "c10.mp4",
-      "c11.mp4",
-      "c12.mp4",
-      "c13.mp4",
-      "c14.mp4",
-      "c15.mp4"
-    ]
+  <script>
 
-  };
 
+    /* ================================
+       VIDEO LIST
+    ================================= */
 
-  let currentCategory = "default";
+    const videoThemes = {
 
-  let currentVideoIndex = 0;
 
-  let videoTimer = null;
+      default: [],
 
-  const fiveMinutes =
-    5 * 60 * 1000;
 
+      space: [
 
-  /* =====================================================
-     CHANGE VIDEO
-  ===================================================== */
+        "s1.mp4",
+        "s2.mp4",
+        "s3.mp4",
+        "s4.mp4",
+        "s5.mp4",
 
-  function rotateVideo() {
+        "s6.mp4",
+        "s7.mp4",
+        "s8.mp4",
+        "s9.mp4",
+        "s10.mp4",
 
-    const list =
-      videoThemes[currentCategory];
+        "s11.mp4",
+        "s12.mp4",
+        "s13.mp4",
+        "s14.mp4",
+        "s15.mp4"
 
-    if (!list || list.length === 0) {
-      return;
-    }
+      ],
 
-    currentVideoIndex =
-      (currentVideoIndex + 1) %
-      list.length;
 
-    const video =
-      document.getElementById("bg-video");
+      cinematic: [
 
-    const source =
-      document.getElementById("video-source");
+        "c1.mp4",
+        "c2.mp4",
+        "c3.mp4",
+        "c4.mp4",
+        "c5.mp4",
 
-    video.style.opacity = "0";
+        "c6.mp4",
+        "c7.mp4",
+        "c8.mp4",
+        "c9.mp4",
+        "c10.mp4",
 
-    setTimeout(() => {
+        "c11.mp4",
+        "c12.mp4",
+        "c13.mp4",
+        "c14.mp4",
+        "c15.mp4"
 
-      source.src =
-        list[currentVideoIndex];
+      ],
 
-      video.load();
 
-      video.play().catch(() => {});
+      love: [
 
-      video.style.opacity = "1";
+        "l1.mp4",
+        "l2.mp4",
+        "l3.mp4",
+        "l4.mp4",
+        "l5.mp4",
 
-    },1000);
+        "l6.mp4",
+        "l7.mp4",
+        "l8.mp4",
+        "l9.mp4",
+        "l10.mp4",
 
-  }
+        "l11.mp4",
+        "l12.mp4",
+        "l13.mp4",
+        "l14.mp4",
+        "l15.mp4"
 
+      ],
 
-  /* =====================================================
-     CHANGE THEME
-  ===================================================== */
 
-  function changeThemeCategory(category) {
+      rain: [
 
-    currentCategory = category;
+        "r1.mp4",
+        "r2.mp4",
+        "r3.mp4",
+        "r4.mp4",
+        "r5.mp4",
 
-    clearInterval(videoTimer);
+        "r6.mp4",
+        "r7.mp4",
+        "r8.mp4",
+        "r9.mp4",
+        "r10.mp4",
 
-    const video =
-      document.getElementById("bg-video");
+        "r11.mp4",
+        "r12.mp4",
+        "r13.mp4",
+        "r14.mp4",
+        "r15.mp4"
 
-    const source =
-      document.getElementById("video-source");
+      ]
 
+    };
 
-    if(category === "default") {
 
-      video.pause();
+    let currentCategory = "default";
 
-      video.style.display = "none";
+    let currentVideoIndex = 0;
 
-      source.src = "";
+    let videoTimer = null;
 
-      return;
+    const fiveMinutesInMs =
+      5 * 60 * 1000;
 
-    }
 
+    /* ================================
+       CHANGE VIDEO
+    ================================= */
 
-    video.style.display = "block";
+    function rotateVideo() {
 
-    currentVideoIndex = 0;
+      const videoList =
+        videoThemes[currentCategory];
 
-    source.src =
-      videoThemes[category][0];
 
-    video.load();
+      if (
+        !videoList ||
+        videoList.length === 0
+      ) {
 
-    video.play().catch(() => {});
+        return;
 
-    video.style.opacity = "1";
+      }
 
 
-    videoTimer =
-      setInterval(
-        rotateVideo,
-        fiveMinutes
-      );
+      currentVideoIndex =
+        (
+          currentVideoIndex + 1
+        ) %
+        videoList.length;
 
-  }
 
+      const videoPlayer =
+        document.getElementById(
+          "bg-video"
+        );
 
-  /* =====================================================
-     MUSIC
-  ===================================================== */
 
-  const musicList = [
+      const videoSource =
+        document.getElementById(
+          "video-source"
+        );
 
-    "music1.mp4",
-    "music2.mp4",
-    "music3.mp4",
-    "music4.mp4",
-    "music5.mp4",
-    "music6.mp4",
-    "music7.mp4",
-    "music8.mp4",
-    "music9.mp4",
-    "music10.mp4"
 
-  ];
+      videoPlayer.style.opacity = "0";
 
 
-  let currentMusicIndex = 0;
+      setTimeout(() => {
 
+        videoSource.src =
+          videoList[currentVideoIndex];
 
-  function toggleMusic() {
 
-    const music =
-      document.getElementById("bg-music");
+        videoPlayer.load();
 
-    if(music.paused) {
 
-      music.play().catch(() => {});
+        videoPlayer.play()
+          .catch(() => {});
 
-    } else {
 
-      music.pause();
+        videoPlayer.style.opacity =
+          "1";
+
+      }, 1000);
 
     }
 
-  }
+
+    /* ================================
+       THEME
+    ================================= */
+
+    window.changeThemeCategory =
+      function(category) {
+
+        currentCategory =
+          category;
 
 
-  document
-    .getElementById("bg-music")
-    .addEventListener(
-      "ended",
+        clearInterval(
+          videoTimer
+        );
+
+
+        const videoPlayer =
+          document.getElementById(
+            "bg-video"
+          );
+
+
+        const videoSource =
+          document.getElementById(
+            "video-source"
+          );
+
+
+        if (
+          category === "default"
+        ) {
+
+          videoPlayer.pause();
+
+          videoPlayer.style.display =
+            "none";
+
+          videoSource.src = "";
+
+          return;
+
+        }
+
+
+        videoPlayer.style.display =
+          "block";
+
+
+        currentVideoIndex = 0;
+
+
+        const videoList =
+          videoThemes[category];
+
+
+        if (
+          videoList &&
+          videoList.length > 0
+        ) {
+
+          videoSource.src =
+            videoList[0];
+
+
+          videoPlayer.load();
+
+
+          videoPlayer.play()
+            .catch(() => {});
+
+
+          videoPlayer.style.opacity =
+            "1";
+
+
+          videoTimer =
+            setInterval(
+              rotateVideo,
+              fiveMinutesInMs
+            );
+
+        }
+
+      };
+
+
+    /* ================================
+       MUSIC
+    ================================= */
+
+    const musicList = [
+
+      "music1.mp4",
+      "music2.mp4",
+      "music3.mp4",
+      "music4.mp4",
+      "music5.mp4",
+
+      "music6.mp4",
+      "music7.mp4",
+      "music8.mp4",
+      "music9.mp4",
+      "music10.mp4"
+
+    ];
+
+
+    let currentMusicIndex = 0;
+
+
+    window.playMusic =
       function() {
 
-        currentMusicIndex =
-          (currentMusicIndex + 1) %
-          musicList.length;
+        const musicPlayer =
+          document.getElementById(
+            "bg-music"
+          );
 
-        const source =
+
+        musicPlayer.volume =
+          0.4;
+
+
+        musicPlayer.play()
+          .catch(
+            err =>
+              console.log(
+                "Autoplay blocked:",
+                err
+              )
+          );
+
+      };
+
+
+    window.toggleMusic =
+      function() {
+
+        const musicPlayer =
+          document.getElementById(
+            "bg-music"
+          );
+
+
+        const musicBtn =
+          document.getElementById(
+            "music-toggle"
+          );
+
+
+        if (
+          musicPlayer.paused
+        ) {
+
+          musicPlayer.play()
+            .catch(() => {});
+
+
+          musicBtn.innerText =
+            "🔊 Mute";
+
+        }
+
+        else {
+
+          musicPlayer.pause();
+
+
+          musicBtn.innerText =
+            "📁 Play";
+
+        }
+
+      };
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+
+        const musicPlayer =
+          document.getElementById(
+            "bg-music"
+          );
+
+
+        const musicSource =
           document.getElementById(
             "music-source"
           );
 
-        source.src =
-          musicList[currentMusicIndex];
 
-        this.load();
+        musicPlayer.addEventListener(
+          "ended",
+          () => {
 
-        this.play().catch(() => {});
+
+            currentMusicIndex =
+              (
+                currentMusicIndex + 1
+              ) %
+              musicList.length;
+
+
+            musicSource.src =
+              musicList[
+                currentMusicIndex
+              ];
+
+
+            musicPlayer.load();
+
+
+            musicPlayer.play()
+              .catch(() => {});
+
+          }
+        );
+
+
+        /* EMOJI */
+
+        const picker =
+          document.getElementById(
+            "picker"
+          );
+
+
+        picker.addEventListener(
+          "emoji-click",
+          event => {
+
+
+            const msgInput =
+              document.getElementById(
+                "message"
+              );
+
+
+            msgInput.value +=
+              event.detail.unicode;
+
+
+            msgInput.focus();
+
+          }
+        );
 
       }
     );
 
 
-  /* =====================================================
-     EMOJI
-  ===================================================== */
-
-  function toggleEmojiPicker() {
-
-    const picker =
-      document.getElementById("picker");
-
-    picker.style.display =
-      picker.style.display === "block"
-        ? "none"
-        : "block";
-
-  }
-
-
-  document
-    .getElementById("picker")
-    .addEventListener(
-      "emoji-click",
-      function(event) {
-
-        document.getElementById("message")
-          .value += event.detail.unicode;
-
-      }
-    );
-
-
-  /* =====================================================
-     NOTIFY WORD COUNTER
-  ===================================================== */
-
-  document
-    .getElementById("notify-text")
-    .addEventListener(
-      "input",
+    window.toggleEmojiPicker =
       function() {
 
-        let text =
-          this.value.trim();
 
-        let words =
-          text
-            ? text.split(/\s+/)
-            : [];
-
-        if(words.length > 50) {
-
-          words =
-            words.slice(0,50);
-
-          this.value =
-            words.join(" ");
-
-        }
-
-        document.getElementById(
-          "notify-counter"
-        ).textContent =
-          words.length +
-          " / 50 words";
-
-      }
-    );
+        const picker =
+          document.getElementById(
+            "picker"
+          );
 
 
-  /* =====================================================
-     SETTINGS
-  ===================================================== */
+        picker.style.display =
+          picker.style.display ===
+          "block"
+            ? "none"
+            : "block";
 
-  const defaultSettings = {
+      };
 
-    lastSeen: true,
-
-    online: true,
-
-    typing: true,
-
-    read: true,
-
-    notifications: true,
-
-    messageNotifications: true,
-
-    alertSound: "alert1.mp3"
-
-  };
+  </script>
 
 
-  function getSettings() {
+  <!-- ======================================
+       FIREBASE
+  ======================================= -->
 
-    const saved =
-      localStorage.getItem(
+  <script type="module">
+
+
+    import {
+      initializeApp
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+
+    import {
+
+      getDatabase,
+
+      ref,
+
+      push,
+
+      onChildAdded,
+
+      set,
+
+      onValue,
+
+      update,
+
+      onDisconnect,
+
+      serverTimestamp
+
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+
+    /* ================================
+       FIREBASE CONFIG
+    ================================= */
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
+
+      authDomain:
+        "privatechat-8f1a8.firebaseapp.com",
+
+      databaseURL:
+        "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
+
+      projectId:
+        "privatechat-8f1a8",
+
+      storageBucket:
+        "privatechat-8f1a8.firebasestorage.app",
+
+      messagingSenderId:
+        "873702558512",
+
+      appId:
+        "1:873702558512:web:ee506e3f954d0d9e69d6f5"
+
+    };
+
+
+    const app =
+      initializeApp(
+        firebaseConfig
+      );
+
+
+    const db =
+      getDatabase(app);
+
+
+    const messagesRef =
+      ref(
+        db,
+        "messages"
+      );
+
+
+    const typingRef =
+      ref(
+        db,
+        "typing"
+      );
+
+
+    /* ================================
+       PASSWORD
+    ================================= */
+
+    const SECRET_PASSWORD =
+      "AKKISOMEONELOVESYOU";
+
+
+    let typingTimeout = null;
+
+
+    let currentUser = "";
+
+
+    let initialMessageLoad = true;
+
+
+    /* ================================
+       SETTINGS
+    ================================= */
+
+    const defaultSettings = {
+
+      lastSeen: true,
+
+      online: true,
+
+      typing: true,
+
+      read: true,
+
+      messageStatus: true
+
+    };
+
+
+    function settingsKey() {
+
+      return (
         "chatSettings_" +
         currentUser
       );
 
-    if(!saved) {
-
-      return {
-        ...defaultSettings
-      };
-
     }
 
-    return {
-      ...defaultSettings,
-      ...JSON.parse(saved)
-    };
 
-  }
+    function getSettings() {
 
+      if (!currentUser) {
 
-  function saveSettings(settings) {
+        return {
+          ...defaultSettings
+        };
 
-    localStorage.setItem(
-
-      "chatSettings_" +
-      currentUser,
-
-      JSON.stringify(settings)
-
-    );
-
-  }
-
-
-  function changeSetting(
-    name,
-    value
-  ) {
-
-    const settings =
-      getSettings();
-
-    settings[name] =
-      value;
-
-    saveSettings(settings);
-
-
-    /*
-      Save settings in Firebase too.
-    */
-
-    if(currentUser) {
-
-      set(
-
-        ref(
-          database,
-          "users/" +
-          currentUser +
-          "/settings/" +
-          name
-        ),
-
-        value
-
-      );
-
-    }
-
-  }
-
-
-  function openSettings() {
-
-    const settings =
-      getSettings();
-
-
-    document.getElementById(
-      "setting-last-seen"
-    ).checked =
-      settings.lastSeen;
-
-
-    document.getElementById(
-      "setting-online"
-    ).checked =
-      settings.online;
-
-
-    document.getElementById(
-      "setting-typing"
-    ).checked =
-      settings.typing;
-
-
-    document.getElementById(
-      "setting-read"
-    ).checked =
-      settings.read;
-
-
-    document.getElementById(
-      "setting-notifications"
-    ).checked =
-      settings.notifications;
-
-
-    document.getElementById(
-      "setting-message-notifications"
-    ).checked =
-      settings.messageNotifications;
-
-
-    document.getElementById(
-      "alert-sound"
-    ).value =
-      settings.alertSound;
-
-
-    document.getElementById(
-      "settings-modal"
-    ).style.display =
-      "flex";
-
-  }
-
-
-  function closeSettings() {
-
-    document.getElementById(
-      "settings-modal"
-    ).style.display =
-      "none";
-
-  }
-
-
-  /* =====================================================
-     ALERT SOUND
-  ===================================================== */
-
-  function playAlertSound(
-    filename
-  ) {
-
-    const audio =
-      document.getElementById(
-        "alert-audio"
-      );
-
-    audio.src =
-      filename;
-
-    audio.currentTime = 0;
-
-    audio.volume = 1;
-
-    audio.play().catch(
-      error => {
-        console.log(
-          "Audio blocked:",
-          error
-        );
       }
-    );
 
 
-    /*
-      Play for maximum 2 seconds.
-    */
-
-    setTimeout(
-      function() {
-
-        audio.pause();
-
-        audio.currentTime = 0;
-
-      },
-      2000
-    );
-
-  }
+      const saved =
+        localStorage.getItem(
+          settingsKey()
+        );
 
 
-  function testAlertSound() {
+      if (!saved) {
 
-    const settings =
-      getSettings();
+        return {
+          ...defaultSettings
+        };
 
-    playAlertSound(
-      settings.alertSound
-    );
-
-  }
+      }
 
 
-  /* =====================================================
-     BROWSER NOTIFICATION
-  ===================================================== */
+      try {
 
-  async function enableNotifications() {
+        return {
+          ...defaultSettings,
+          ...JSON.parse(saved)
+        };
 
-    if(!("Notification" in window)) {
+      }
 
-      alert(
-        "Your browser does not support notifications."
-      );
+      catch {
 
-      return;
+        return {
+          ...defaultSettings
+        };
+
+      }
 
     }
 
 
-    const permission =
-      await Notification.requestPermission();
-
-
-    if(permission === "granted") {
-
-      const settings =
-        getSettings();
-
-      settings.notifications =
-        true;
-
-      saveSettings(settings);
-
-      document.getElementById(
-        "setting-notifications"
-      ).checked = true;
-
-      alert(
-        "Notifications enabled."
-      );
-
-    }
-
-  }
-
-
-  async function notificationPermission() {
-
-    const checked =
-      document.getElementById(
-        "setting-notifications"
-      ).checked;
-
-
-    if(checked) {
-
-      await enableNotifications();
-
-    } else {
-
-      changeSetting(
-        "notifications",
-        false
-      );
-
-    }
-
-  }
-
-
-  function showBrowserNotification(
-    title,
-    body
-  ) {
-
-    if(
-      !("Notification" in window)
+    function saveSettings(
+      settings
     ) {
-      return;
+
+      localStorage.setItem(
+        settingsKey(),
+        JSON.stringify(settings)
+      );
+
     }
 
 
-    if(
-      Notification.permission !==
-      "granted"
-    ) {
-      return;
-    }
-
-
-    const notification =
-      new Notification(
-        title,
-        {
-          body: body
-        }
-      );
-
-
-    notification.onclick =
-      function() {
-
-        window.focus();
-
-        notification.close();
-
-      };
-
-  }
-
-
-  /* =====================================================
-     CUSTOM NOTIFICATION POPUP
-  ===================================================== */
-
-  function showNotifyPopup(
-    title,
-    message
-  ) {
-
-    document.getElementById(
-      "popup-title"
-    ).textContent =
-      title;
-
-
-    document.getElementById(
-      "popup-message"
-    ).textContent =
-      message;
-
-
-    const popup =
-      document.getElementById(
-        "notify-popup"
-      );
-
-
-    popup.style.display =
-      "block";
-
-
-    setTimeout(
-      function() {
-
-        popup.style.display =
-          "none";
-
-      },
-      5000
-    );
-
-  }
-
-</script>
-
-
-<!-- =====================================================
-     FIREBASE
-===================================================== -->
-
-<script type="module">
-
-  import {
-    initializeApp
-  }
-
-  from
-  "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-
-  import {
-    getDatabase,
-    ref,
-    push,
-    onChildAdded,
-    onValue,
-    set,
-    update,
-    onDisconnect,
-    serverTimestamp
-  }
-
-  from
-  "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-
-  /* =====================================================
-     FIREBASE CONFIG
-  ===================================================== */
-
-  const firebaseConfig = {
-
-    apiKey:
-      "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
-
-    authDomain:
-      "privatechat-8f1a8.firebaseapp.com",
-
-    databaseURL:
-      "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
-
-    projectId:
-      "privatechat-8f1a8",
-
-    storageBucket:
-      "privatechat-8f1a8.firebasestorage.app",
-
-    messagingSenderId:
-      "873702558512",
-
-    appId:
-      "1:873702558512:web:ee506e3f954d0d9e69d6f5"
-
-  };
-
-
-  const app =
-    initializeApp(
-      firebaseConfig
-    );
-
-
-  const database =
-    getDatabase(app);
-
-
-  /* =====================================================
-     PASSWORD
-  ===================================================== */
-
-  const SECRET_PASSWORD =
-    "AKKISOMEONELOVESYOU";
-
-
-  let currentUser = "";
-
-  let typingTimeout = null;
-
-
-  /* =====================================================
-     GET OTHER USER
-  ===================================================== */
-
-  function getOtherUser() {
-
-    return currentUser === "akki"
-      ? "akkilover"
-      : "akki";
-
-  }
-
-
-  /* =====================================================
-     LOGIN
-  ===================================================== */
-
-  window.checkPassword =
-    function() {
-
-      const entered =
-        document
-          .getElementById(
-            "pass-input"
-          )
-          .value
-          .trim()
-          .toUpperCase();
-
-
-      if(
-        entered !==
-        SECRET_PASSWORD
+    window.changeSetting =
+      function(
+        setting,
+        value
       ) {
 
-        alert(
-          "Incorrect password!"
+
+        const settings =
+          getSettings();
+
+
+        settings[setting] =
+          value;
+
+
+        saveSettings(
+          settings
         );
 
-        return;
+
+        update(
+          ref(
+            db,
+            "users/" +
+            currentUser +
+            "/settings"
+          ),
+          settings
+        );
+
+
+        updateStatusDisplay();
+
+      };
+
+
+    /* ================================
+       SETTINGS OPEN
+    ================================= */
+
+    window.openSettings =
+      function() {
+
+
+        const settings =
+          getSettings();
+
+
+        document.getElementById(
+          "setting-last-seen"
+        ).checked =
+          settings.lastSeen;
+
+
+        document.getElementById(
+          "setting-online"
+        ).checked =
+          settings.online;
+
+
+        document.getElementById(
+          "setting-typing"
+        ).checked =
+          settings.typing;
+
+
+        document.getElementById(
+          "setting-read"
+        ).checked =
+          settings.read;
+
+
+        document.getElementById(
+          "setting-message-status"
+        ).checked =
+          settings.messageStatus;
+
+
+        document.getElementById(
+          "settings-modal"
+        ).style.display =
+          "flex";
+
+      };
+
+
+    window.closeSettings =
+      function() {
+
+
+        document.getElementById(
+          "settings-modal"
+        ).style.display =
+          "none";
+
+      };
+
+
+    /* ================================
+       OTHER USER
+    ================================= */
+
+    function getOtherUser() {
+
+      if (
+        currentUser ===
+        "akki"
+      ) {
+
+        return "akkilover";
 
       }
 
 
-      let username =
-        prompt(
-          "Enter your username:\n\nAkki\nor\nAkkilover"
-        );
+      return "akki";
+
+    }
 
 
-      username =
-        (username || "")
+    /* ================================
+       PASSWORD LOGIN
+    ================================= */
+
+    window.checkPassword =
+      function() {
+
+
+        const enteredPass =
+          document
+            .getElementById(
+              "pass-input"
+            )
+            .value
+            .trim()
+            .toUpperCase();
+
+
+        if (
+          enteredPass !==
+          SECRET_PASSWORD
+        ) {
+
+          alert(
+            "Incorrect password!"
+          );
+
+          return;
+
+        }
+
+
+        let username =
+          prompt(
+            "Enter your username:\n\nAkki\nor\nAkkilover"
+          );
+
+
+        username =
+          (
+            username || ""
+          )
           .trim()
           .toLowerCase();
 
 
-      if(
-        username !== "akki" &&
-        username !== "akkilover"
-      ) {
+        if (
+          username !== "akki" &&
+          username !== "akkilover"
+        ) {
 
-        alert(
-          "Only Akki or Akkilover are allowed."
+          alert(
+            "Only 'akki' or 'akkilover' are allowed."
+          );
+
+          return;
+
+        }
+
+
+        currentUser =
+          username;
+
+
+        document.getElementById(
+          "username"
+        ).value =
+          currentUser;
+
+
+        document.getElementById(
+          "username"
+        ).disabled =
+          true;
+
+
+        document.getElementById(
+          "login-screen"
+        ).style.display =
+          "none";
+
+
+        document.getElementById(
+          "chat-screen"
+        ).style.display =
+          "block";
+
+
+        window.playMusic();
+
+
+        startPresence();
+
+        startTypingListener();
+
+        startMessageListener();
+
+        loadRemoteSettings();
+
+      };
+
+
+    /* ================================
+       PRESENCE
+    ================================= */
+
+    function startPresence() {
+
+
+      const presenceRef =
+        ref(
+          db,
+          "presence/" +
+          currentUser
         );
+
+
+      set(
+        presenceRef,
+        {
+
+          online: true,
+
+          lastSeen:
+            serverTimestamp()
+
+        }
+      );
+
+
+      onDisconnect(
+        presenceRef
+      ).set({
+
+        online: false,
+
+        lastSeen:
+          serverTimestamp()
+
+      });
+
+
+      listenToOtherPresence();
+
+    }
+
+
+    /* ================================
+       OTHER USER PRESENCE
+    ================================= */
+
+    function listenToOtherPresence() {
+
+
+      const otherRef =
+        ref(
+          db,
+          "presence/" +
+          getOtherUser()
+        );
+
+
+      onValue(
+        otherRef,
+        snapshot => {
+
+
+          const data =
+            snapshot.val();
+
+
+          const settings =
+            getSettings();
+
+
+          const statusLine =
+            document.getElementById(
+              "status-line"
+            );
+
+
+          if (!data) {
+
+            statusLine.innerText =
+              "";
+
+            return;
+
+          }
+
+
+          if (
+            data.online &&
+            settings.online
+          ) {
+
+            statusLine.innerText =
+              "🟢 Online";
+
+          }
+
+          else if (
+            !data.online &&
+            settings.lastSeen &&
+            data.lastSeen
+          ) {
+
+
+            const date =
+              new Date(
+                data.lastSeen
+              );
+
+
+            statusLine.innerText =
+              "Last seen " +
+              date.toLocaleTimeString(
+                [],
+                {
+                  hour:
+                    "2-digit",
+
+                  minute:
+                    "2-digit"
+                }
+              );
+
+          }
+
+          else {
+
+            statusLine.innerText =
+              "";
+
+          }
+
+        }
+      );
+
+    }
+
+
+    function updateStatusDisplay() {
+
+      const otherRef =
+        ref(
+          db,
+          "presence/" +
+          getOtherUser()
+        );
+
+
+      onValue(
+        otherRef,
+        snapshot => {
+
+
+          const data =
+            snapshot.val();
+
+
+          if (!data) {
+            return;
+          }
+
+
+          const settings =
+            getSettings();
+
+
+          const statusLine =
+            document.getElementById(
+              "status-line"
+            );
+
+
+          if (
+            data.online &&
+            settings.online
+          ) {
+
+            statusLine.innerText =
+              "🟢 Online";
+
+          }
+
+          else if (
+            !data.online &&
+            settings.lastSeen &&
+            data.lastSeen
+          ) {
+
+
+            const date =
+              new Date(
+                data.lastSeen
+              );
+
+
+            statusLine.innerText =
+              "Last seen " +
+              date.toLocaleTimeString(
+                [],
+                {
+                  hour:
+                    "2-digit",
+
+                  minute:
+                    "2-digit"
+                }
+              );
+
+          }
+
+          else {
+
+            statusLine.innerText =
+              "";
+
+          }
+
+        },
+        {
+          onlyOnce: true
+        }
+      );
+
+    }
+
+
+    /* ================================
+       TYPING
+    ================================= */
+
+    window.handleTyping =
+      function() {
+
+
+        const settings =
+          getSettings();
+
+
+        if (
+          !settings.typing
+        ) {
+
+          return;
+
+        }
+
+
+        const user =
+          currentUser;
+
+
+        if (!user) {
+
+          return;
+
+        }
+
+
+        set(
+          typingRef,
+          {
+
+            user:
+              user,
+
+            isTyping:
+              true
+
+          }
+        );
+
+
+        clearTimeout(
+          typingTimeout
+        );
+
+
+        typingTimeout =
+          setTimeout(
+            () => {
+
+
+              set(
+                typingRef,
+                {
+
+                  user:
+                    currentUser,
+
+                  isTyping:
+                    false
+
+                }
+              );
+
+
+            },
+            2000
+          );
+
+      };
+
+
+    function startTypingListener() {
+
+
+      onValue(
+        typingRef,
+        snapshot => {
+
+
+          const data =
+            snapshot.val();
+
+
+          const typingDiv =
+            document.getElementById(
+              "typing-indicator"
+            );
+
+
+          const settings =
+            getSettings();
+
+
+          if (
+            settings.typing &&
+            data &&
+            data.isTyping &&
+            data.user !==
+              currentUser
+          ) {
+
+
+            const displayName =
+              data.user === "akki"
+                ? "Akki"
+                : "Akkilover";
+
+
+            typingDiv.innerText =
+              displayName +
+              " is typing...";
+
+          }
+
+          else {
+
+            typingDiv.innerText =
+              "";
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* ================================
+       SEND MESSAGE
+    ================================= */
+
+    window.sendMessage =
+      function() {
+
+
+        const user =
+          currentUser;
+
+
+        const text =
+          document
+            .getElementById(
+              "message"
+            )
+            .value
+            .trim();
+
+
+        if (
+          user !== "akki" &&
+          user !== "akkilover"
+        ) {
+
+          alert(
+            "Please login correctly first."
+          );
+
+          return;
+
+        }
+
+
+        if (!text) {
+
+          alert(
+            "Please enter a message!"
+          );
+
+          return;
+
+        }
+
+
+        const now =
+          new Date();
+
+
+        const timeString =
+          now.toLocaleTimeString(
+            [],
+            {
+              hour:
+                "2-digit",
+
+              minute:
+                "2-digit"
+            }
+          );
+
+
+        push(
+          messagesRef,
+          {
+
+            user:
+              user,
+
+            text:
+              text,
+
+            time:
+              timeString,
+
+            delivered:
+              false,
+
+            read:
+              false,
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        document.getElementById(
+          "message"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "picker"
+        ).style.display =
+          "none";
+
+
+        set(
+          typingRef,
+          {
+
+            user:
+              user,
+
+            isTyping:
+              false
+
+          }
+        );
+
+      };
+
+
+    /* ================================
+       MESSAGE LISTENER
+    ================================= */
+
+    function startMessageListener() {
+
+
+      onChildAdded(
+        messagesRef,
+        snapshot => {
+
+
+          const data =
+            snapshot.val();
+
+
+          const messageId =
+            snapshot.key;
+
+
+          if (!data) {
+
+            return;
+
+          }
+
+
+          renderMessage(
+            messageId,
+            data
+          );
+
+
+          /*
+            If this message belongs
+            to the other person,
+            mark it delivered.
+          */
+
+          if (
+            data.user ===
+            getOtherUser()
+          ) {
+
+
+            update(
+              ref(
+                db,
+                "messages/" +
+                messageId
+              ),
+              {
+                delivered:
+                  true
+              }
+            );
+
+
+            /*
+              If read receipts are enabled,
+              mark the message read.
+            */
+
+            const settings =
+              getSettings();
+
+
+            if (
+              settings.read
+            ) {
+
+
+              update(
+                ref(
+                  db,
+                  "messages/" +
+                  messageId
+                ),
+                {
+                  read:
+                    true
+                }
+              );
+
+            }
+
+          }
+
+
+          /*
+            Refresh message statuses.
+          */
+
+          refreshMessageStatus(
+            messageId
+          );
+
+        }
+      );
+
+    }
+
+
+    /* ================================
+       RENDER MESSAGE
+    ================================= */
+
+    function renderMessage(
+      messageId,
+      data
+    ) {
+
+
+      if (
+        document.querySelector(
+          '[data-message-id="' +
+          messageId +
+          '"]'
+        )
+      ) {
 
         return;
 
       }
 
 
-      currentUser =
-        username;
-
-
-      document.getElementById(
-        "login-screen"
-      ).style.display =
-        "none";
-
-
-      document.getElementById(
-        "chat-screen"
-      ).style.display =
-        "block";
-
-
-      const userLabel =
+      const chatBox =
         document.getElementById(
-          "current-user"
+          "chat-box"
         );
 
 
-      userLabel.textContent =
-        currentUser === "akki"
+      const msgDiv =
+        document.createElement(
+          "div"
+        );
+
+
+      msgDiv.dataset.messageId =
+        messageId;
+
+
+      const username =
+        (
+          data.user ||
+          ""
+        )
+        .toLowerCase();
+
+
+      if (
+        username ===
+        "akki"
+      ) {
+
+        msgDiv.className =
+          "message akki-msg";
+
+      }
+
+      else if (
+        username ===
+        "akkilover"
+      ) {
+
+        msgDiv.className =
+          "message akkilover-msg";
+
+      }
+
+      else {
+
+        msgDiv.className =
+          "message other-msg";
+
+      }
+
+
+      let displayName =
+        username ===
+        "akki"
           ? "Akki"
           : "Akkilover";
 
 
-      userLabel.className =
-        currentUser === "akki"
+      let nameClass =
+        username ===
+        "akki"
           ? "akki-name"
           : "akkilover-name";
 
 
-      loadSettingsFromFirebase();
+      const safeText =
+        escapeHTML(
+          data.text || ""
+        );
 
 
-      startPresence();
+      const statusHTML =
+        username ===
+        currentUser
+          ? getStatusHTML(
+              data
+            )
+          : "";
 
 
-      setupMessages();
+      msgDiv.innerHTML =
+
+        '<strong class="' +
+        nameClass +
+        '">' +
+
+        displayName +
+
+        ':</strong> ' +
+
+        safeText +
+
+        '<span class="timestamp">' +
+
+        (data.time || "") +
+
+        statusHTML +
+
+        '</span>';
 
 
-      setupTyping();
-
-
-      setupNotifications();
-
-
-      /*
-        Start music after the user
-        interacts with the site.
-      */
-
-      document
-        .getElementById("bg-music")
-        .play()
-        .catch(() => {});
-
-    };
-
-
-  /* =====================================================
-     LOAD SETTINGS
-  ===================================================== */
-
-  function loadSettingsFromFirebase() {
-
-    const settingsRef =
-      ref(
-        database,
-        "users/" +
-        currentUser +
-        "/settings"
+      chatBox.appendChild(
+        msgDiv
       );
 
 
-    onValue(
-      settingsRef,
-      snapshot => {
+      chatBox.scrollTop =
+        chatBox.scrollHeight;
 
-        const remote =
-          snapshot.val();
+    }
 
 
-        if(remote) {
+    /* ================================
+       MESSAGE STATUS
+    ================================= */
 
-          const local =
-            getSettings();
+    function getStatusHTML(
+      data
+    ) {
 
 
-          const merged =
-            {
-              ...local,
-              ...remote
-            };
+      const settings =
+        getSettings();
+
+
+      if (
+        !settings.messageStatus
+      ) {
+
+        return "";
+
+      }
+
+
+      if (
+        data.read
+      ) {
+
+        return (
+          '<span ' +
+          'class="message-status" ' +
+          'title="Read">' +
+          '✓✓' +
+          '</span>'
+        );
+
+      }
+
+
+      if (
+        data.delivered
+      ) {
+
+        return (
+          '<span ' +
+          'class="message-status" ' +
+          'title="Delivered">' +
+          '✓✓' +
+          '</span>'
+        );
+
+      }
+
+
+      return (
+        '<span ' +
+        'class="message-status" ' +
+        'title="Sent">' +
+        '✓' +
+        '</span>'
+      );
+
+    }
+
+
+    function refreshMessageStatus(
+      messageId
+    ) {
+
+
+      onValue(
+        ref(
+          db,
+          "messages/" +
+          messageId
+        ),
+        snapshot => {
+
+
+          const data =
+            snapshot.val();
+
+
+          if (!data) {
+            return;
+          }
+
+
+          const element =
+            document.querySelector(
+              '[data-message-id="' +
+              messageId +
+              '"]'
+            );
+
+
+          if (!element) {
+            return;
+          }
+
+
+          if (
+            data.user !==
+            currentUser
+          ) {
+
+            return;
+
+          }
+
+
+          const timestamp =
+            element.querySelector(
+              ".timestamp"
+            );
+
+
+          if (!timestamp) {
+            return;
+          }
+
+
+          const oldStatus =
+            timestamp.querySelector(
+              ".message-status"
+            );
+
+
+          if (oldStatus) {
+
+            oldStatus.remove();
+
+          }
+
+
+          timestamp.insertAdjacentHTML(
+            "beforeend",
+            getStatusHTML(
+              data
+            )
+          );
+
+        }
+      );
+
+    }
+
+
+    /* ================================
+       READ ALL OTHER MESSAGES
+    ================================= */
+
+    function markMessagesAsRead() {
+
+
+      const settings =
+        getSettings();
+
+
+      if (
+        !settings.read
+      ) {
+
+        return;
+
+      }
+
+
+      onValue(
+        messagesRef,
+        snapshot => {
+
+
+          snapshot.forEach(
+            child => {
+
+
+              const data =
+                child.val();
+
+
+              if (
+                data.user ===
+                getOtherUser() &&
+                !data.read
+              ) {
+
+
+                update(
+                  ref(
+                    db,
+                    "messages/" +
+                    child.key
+                  ),
+                  {
+                    read:
+                      true
+                  }
+                );
+
+              }
+
+            }
+          );
+
+        },
+        {
+          onlyOnce: true
+        }
+      );
+
+    }
+
+
+    /* ================================
+       PAGE VISIBILITY
+    ================================= */
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+
+
+        if (
+          document.visibilityState ===
+          "visible"
+        ) {
+
+          markMessagesAsRead();
+
+        }
+
+      }
+    );
+
+
+    /* ================================
+       REMEMBER SETTINGS FROM FIREBASE
+    ================================= */
+
+    function loadRemoteSettings() {
+
+
+      const settingsRef =
+        ref(
+          db,
+          "users/" +
+          currentUser +
+          "/settings"
+        );
+
+
+      onValue(
+        settingsRef,
+        snapshot => {
+
+
+          const remote =
+            snapshot.val();
+
+
+          if (!remote) {
+
+            saveSettings(
+              getSettings()
+            );
+
+            return;
+
+          }
+
+
+          const merged = {
+
+            ...defaultSettings,
+
+            ...remote
+
+          };
 
 
           saveSettings(
             merged
           );
 
-        }
 
-
-        openSettings();
-
-        closeSettings();
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     PRESENCE
-  ===================================================== */
-
-  function startPresence() {
-
-    const presenceRef =
-      ref(
-        database,
-        "presence/" +
-        currentUser
-      );
-
-
-    set(
-      presenceRef,
-      {
-        online: true,
-
-        lastSeen:
-          serverTimestamp()
-      }
-    );
-
-
-    onDisconnect(
-      presenceRef
-    ).set({
-
-      online: false,
-
-      lastSeen:
-        serverTimestamp()
-
-    });
-
-
-    /*
-      Listen to other user.
-    */
-
-    const otherPresence =
-      ref(
-        database,
-        "presence/" +
-        getOtherUser()
-      );
-
-
-    onValue(
-      otherPresence,
-      snapshot => {
-
-        const data =
-          snapshot.val();
-
-
-        const settings =
-          getSettings();
-
-
-        const status =
           document.getElementById(
-            "status-line"
-          );
+            "setting-last-seen"
+          ).checked =
+            merged.lastSeen;
 
 
-        if(!data) {
-
-          status.textContent =
-            "";
-
-          return;
-
-        }
-
-
-        if(
-          data.online &&
-          settings.online
-        ) {
-
-          status.textContent =
-            "🟢 Online";
-
-        }
-
-        else if(
-          !data.online &&
-          settings.lastSeen &&
-          data.lastSeen
-        ) {
-
-          const date =
-            new Date(
-              data.lastSeen
-            );
-
-
-          status.textContent =
-            "Last seen " +
-            date.toLocaleTimeString(
-              [],
-              {
-                hour:"2-digit",
-                minute:"2-digit"
-              }
-            );
-
-        }
-
-        else {
-
-          status.textContent =
-            "";
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     TYPING
-  ===================================================== */
-
-  function setupTyping() {
-
-    const typingRef =
-      ref(
-        database,
-        "typing"
-      );
-
-
-    onValue(
-      typingRef,
-      snapshot => {
-
-        const data =
-          snapshot.val();
-
-
-        const settings =
-          getSettings();
-
-
-        const indicator =
           document.getElementById(
-            "typing-indicator"
-          );
+            "setting-online"
+          ).checked =
+            merged.online;
 
 
-        if(
-          settings.typing &&
-          data &&
-          data.user ===
-          getOtherUser() &&
-          data.isTyping
-        ) {
-
-          indicator.textContent =
-            data.user +
-            " is typing...";
-
-        }
-
-        else {
-
-          indicator.textContent =
-            "";
-
-        }
-
-      }
-    );
-
-  }
+          document.getElementById(
+            "setting-typing"
+          ).checked =
+            merged.typing;
 
 
-  window.handleTyping =
-    function() {
-
-      const settings =
-        getSettings();
-
-
-      if(!settings.typing) {
-        return;
-      }
+          document.getElementById(
+            "setting-read"
+          ).checked =
+            merged.read;
 
 
-      const typingRef =
-        ref(
-          database,
-          "typing"
-        );
+          document.getElementById(
+            "setting-message-status"
+          ).checked =
+            merged.messageStatus;
 
 
-      set(
-        typingRef,
-        {
-          user: currentUser,
-
-          isTyping: true
         }
       );
 
+    }
 
-      clearTimeout(
-        typingTimeout
-      );
 
+    /* ================================
+       ESCAPE HTML
+    ================================= */
 
-      typingTimeout =
-        setTimeout(
-          function() {
-
-            set(
-              typingRef,
-              {
-                user: currentUser,
-
-                isTyping: false
-              }
-            );
-
-          },
-          2000
-        );
-
-    };
-
-
-  /* =====================================================
-     SEND MESSAGE
-  ===================================================== */
-
-  window.sendMessage =
-    function() {
-
-      const input =
-        document.getElementById(
-          "message"
-        );
-
-
-      const text =
-        input.value.trim();
-
-
-      if(!text) {
-        return;
-      }
-
-
-      const now =
-        new Date();
-
-
-      push(
-
-        ref(
-          database,
-          "messages"
-        ),
-
-        {
-
-          user:
-            currentUser,
-
-          text:
-            text,
-
-          time:
-            now.toLocaleTimeString(
-              [],
-              {
-                hour:"2-digit",
-                minute:"2-digit"
-              }
-            ),
-
-          createdAt:
-            serverTimestamp(),
-
-          delivered:
-            false,
-
-          read:
-            false
-
-        }
-
-      );
-
-
-      input.value = "";
-
-
-      document.getElementById(
-        "picker"
-      ).style.display =
-        "none";
-
-
-      set(
-
-        ref(
-          database,
-          "typing"
-        ),
-
-        {
-
-          user:
-            currentUser,
-
-          isTyping:
-            false
-
-        }
-
-      );
-
-    };
-
-
-  /* =====================================================
-     RECEIVE MESSAGES
-  ===================================================== */
-
-  function setupMessages() {
-
-    const messagesRef =
-      ref(
-        database,
-        "messages"
-      );
-
-
-    onChildAdded(
-      messagesRef,
-      snapshot => {
-
-        const data =
-          snapshot.val();
-
-
-        if(!data) {
-          return;
-        }
-
-
-        renderMessage(
-          snapshot.key,
-          data
-        );
-
-
-        /*
-          If message belongs
-          to the other person,
-          mark it delivered.
-        */
-
-        if(
-          data.user ===
-          getOtherUser()
-        ) {
-
-          update(
-
-            ref(
-              database,
-              "messages/" +
-              snapshot.key
-            ),
-
-            {
-              delivered:
-                true
-            }
-
-          );
-
-
-          /*
-            Mark as read if
-            read receipts are ON.
-          */
-
-          const settings =
-            getSettings();
-
-
-          if(
-            settings.read
-          ) {
-
-            update(
-
-              ref(
-                database,
-                "messages/" +
-                snapshot.key
-              ),
-
-              {
-                read:
-                  true
-              }
-
-            );
-
-          }
-
-        }
-
-
-        /*
-          Message notification
-          when tab isn't visible.
-        */
-
-        if(
-          data.user ===
-          getOtherUser()
-        ) {
-
-          const settings =
-            getSettings();
-
-
-          if(
-            settings.messageNotifications &&
-            document.visibilityState !==
-            "visible"
-          ) {
-
-            showBrowserNotification(
-
-              data.user === "akki"
-                ? "Akki"
-                : "Akkilover",
-
-              data.text
-
-            );
-
-
-            playAlertSound(
-              settings.alertSound
-            );
-
-          }
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     RENDER MESSAGE
-  ===================================================== */
-
-  function renderMessage(
-    messageId,
-    data
-  ) {
-
-    const chatBox =
-      document.getElementById(
-        "chat-box"
-      );
-
-
-    if(
-      document.querySelector(
-        `[data-message-id="${messageId}"]`
-      )
+    function escapeHTML(
+      text
     ) {
 
-      return;
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.textContent =
+        text;
+
+
+      return div.innerHTML;
 
     }
 
 
-    const div =
-      document.createElement(
-        "div"
-      );
-
-
-    div.dataset.messageId =
-      messageId;
-
-
-    const user =
-      (data.user || "")
-        .toLowerCase();
-
-
-    if(
-      user === "akki"
-    ) {
-
-      div.className =
-        "message akki-msg";
-
-    }
-
-    else if(
-      user === "akkilover"
-    ) {
-
-      div.className =
-        "message akkilover-msg";
-
-    }
-
-    else {
-
-      div.className =
-        "message other-msg";
-
-    }
-
-
-    let nameClass =
-      user === "akki"
-        ? "akki-name"
-        : "akkilover-name";
-
-
-    let displayName =
-      user === "akki"
-        ? "Akki"
-        : "Akkilover";
-
-
-    let status = "";
-
-
-    if(
-      user === currentUser
-    ) {
-
-      if(
-        data.read
-      ) {
-
-        status =
-          " ✓✓";
-
-      }
-
-      else if(
-        data.delivered
-      ) {
-
-        status =
-          " ✓✓";
-
-      }
-
-      else {
-
-        status =
-          " ✓";
-
-      }
-
-    }
-
-
-    const safeText =
-      escapeHTML(
-        data.text || ""
-      );
-
-
-    div.innerHTML =
-
-      `<strong class="${nameClass}">
-        ${displayName}:
-      </strong>
-      ${safeText}
-      <span class="timestamp">
-        ${data.time || ""}
-        <span class="message-status">
-          ${status}
-        </span>
-      </span>`;
-
-
-    chatBox.appendChild(
-      div
-    );
-
-
-    chatBox.scrollTop =
-      chatBox.scrollHeight;
-
-  }
-
-
-  /* =====================================================
-     ESCAPE HTML
-  ===================================================== */
-
-  function escapeHTML(text) {
-
-    const div =
-      document.createElement(
-        "div"
-      );
-
-
-    div.textContent =
-      text;
-
-
-    return div.innerHTML;
-
-  }
-
-
-  /* =====================================================
-     SEND NOTIFICATION
-  ===================================================== */
-
-  window.sendNotify =
-    function() {
-
-      const input =
-        document.getElementById(
-          "notify-text"
-        );
-
-
-      const text =
-        input.value.trim();
-
-
-      if(!text) {
-
-        alert(
-          "Please write something first."
-        );
-
-        return;
-
-      }
-
-
-      const words =
-        text.split(/\s+/);
-
-
-      if(
-        words.length > 50
-      ) {
-
-        alert(
-          "Maximum 50 words allowed."
-        );
-
-        return;
-
-      }
-
-
-      const receiver =
-        getOtherUser();
-
-
-      push(
-
-        ref(
-          database,
-          "notifications"
-        ),
-
-        {
-
-          from:
-            currentUser,
-
-          to:
-            receiver,
-
-          text:
-            text,
-
-          createdAt:
-            serverTimestamp(),
-
-          status:
-            "new"
-
-        }
-
-      );
-
-
-      input.value = "";
-
-
-      document.getElementById(
-        "notify-counter"
-      ).textContent =
-        "0 / 50 words";
-
-
-      alert(
-        "Notification sent!"
-      );
-
-    };
-
-
-  /* =====================================================
-     NOTIFICATION LISTENER
-  ===================================================== */
-
-  function setupNotifications() {
-
-    const notificationsRef =
-      ref(
-        database,
-        "notifications"
-      );
-
-
-    onChildAdded(
-      notificationsRef,
-      snapshot => {
-
-        const data =
-          snapshot.val();
-
-
-        if(!data) {
-          return;
-        }
-
-
-        if(
-          data.to !==
-          currentUser
-        ) {
-
-          return;
-
-        }
-
-
-        const settings =
-          getSettings();
-
-
-        if(
-          !settings.notifications
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-          Show notification popup.
-        */
-
-        showNotifyPopup(
-
-          data.from === "akki"
-            ? "🔔 Akki"
-            : "🔔 Akkilover",
-
-          data.text
-
-        );
-
-
-        /*
-          Play selected alert
-          for 2 seconds.
-        */
-
-        playAlertSound(
-          settings.alertSound
-        );
-
-
-        /*
-          Browser notification.
-        */
-
-        showBrowserNotification(
-
-          data.from === "akki"
-            ? "Akki wants to talk"
-            : "Akkilover wants to talk",
-
-          data.text
-
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     PAGE VISIBILITY
-  ===================================================== */
-
-  document.addEventListener(
-    "visibilitychange",
-    function() {
-
-      if(
-        document.visibilityState ===
-        "visible"
-      ) {
-
-        /*
-          User has returned
-          to the chat.
-        */
-
-        const settings =
-          getSettings();
-
-
-        if(
-          settings.read
-        ) {
-
-          updateReadMessages();
-
-        }
-
-      }
-
-    }
-  );
-
-
-  function updateReadMessages() {
-
-    const messagesRef =
-      ref(
-        database,
-        "messages"
-      );
-
-
-    onValue(
-      messagesRef,
-      snapshot => {
-
-        snapshot.forEach(
-          child => {
-
-            const data =
-              child.val();
-
-
-            if(
-              data.user ===
-              getOtherUser()
-            ) {
-
-              update(
-
-                ref(
-                  database,
-                  "messages/" +
-                  child.key
-                ),
-
-                {
-                  read:
-                    true
-                }
-
-              );
-
-            }
-
-          }
-        );
-
-      },
-      {
-        onlyOnce: true
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     ENTER KEY
-  ===================================================== */
-
-  document
-    .getElementById("message")
-    .addEventListener(
+    /* ================================
+       ENTER TO SEND
+    ================================= */
+
+    document.addEventListener(
       "keydown",
-      function(event) {
+      event => {
 
-        if(
-          event.key === "Enter"
+
+        if (
+          event.key ===
+          "Enter" &&
+          document.activeElement.id ===
+          "message"
         ) {
+
 
           event.preventDefault();
 
-          sendMessage();
+
+          window.sendMessage();
 
         }
 
       }
     );
 
-</script>
+
+    /* ================================
+       CLOSE SETTINGS WHEN CLICKING
+       OUTSIDE THE SETTINGS BOX
+    ================================= */
+
+    document
+      .getElementById(
+        "settings-modal"
+      )
+      .addEventListener(
+        "click",
+        event => {
+
+
+          if (
+            event.target.id ===
+            "settings-modal"
+          ) {
+
+            closeSettings();
+
+          }
+
+        }
+      );
+
+
+  </script>
 
 </body>
 </html>
