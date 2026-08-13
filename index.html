@@ -2,552 +2,225 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Private Chat & Alert System</title>
-  
-  <!-- Emoji Picker -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
-
+  <title>Ambient Video & Custom Alert Hub</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg-theme: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-      --chat-bg: rgba(255, 255, 255, 0.88);
-      --bubble-akki: #00e5ff;
-      --bubble-akkilover: #ffea00;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
     }
-
-    html, body {
-      width: 100%; height: 100%; height: 100dvh;
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .controls-panel {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    select, input[type="file"], button {
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 14px;
+    }
+    button {
+      cursor: pointer;
+      background: #007bff;
+      border: none;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg-theme);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      border-radius: 8px;
+      background: #000;
     }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .video-container video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
-
-    /* LOGIN SCREEN */
-    #login-screen {
-      height: 100dvh;
-      display: flex; justify-content: center; align-items: center; padding: 20px;
-    }
-    .login-box {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 25px; border-radius: 16px; text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2); width: 100%; max-width: 360px;
-    }
-
-    /* CHAT CONTAINER */
-    #chat-screen {
-      display: none; height: 100dvh; width: 100%; max-width: 500px;
-      margin: 0 auto; flex-direction: column; background: var(--chat-bg);
-      backdrop-filter: blur(10px); position: relative;
-    }
-
-    /* TOP BAR */
-    .control-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 14px; background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 10;
-    }
-    .user-status-head { display: flex; flex-direction: column; }
-    .status-badge { font-size: 11px; color: #28a745; font-weight: bold; }
-    
-    .btn-icon {
-      background: #4a5568; color: white; border: none; padding: 6px 12px;
-      border-radius: 8px; font-size: 13px; cursor: pointer;
-    }
-
-    /* SETTINGS MODAL */
-    #settings-modal {
-      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.98); z-index: 200; padding: 20px;
-      overflow-y: auto; flex-direction: column; gap: 15px;
-    }
-    .settings-group { background: #f7fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .settings-title { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #2d3748; }
-
-    /* CHAT BOX */
-    #chat-box {
-      flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px;
-    }
-    .message {
-      padding: 10px 14px; border-radius: 16px; max-width: 80%; word-wrap: break-word;
-      font-size: 15px; line-height: 1.35; position: relative; color: #111;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    .akki-msg { background: var(--bubble-akki); align-self: flex-start; border-bottom-left-radius: 4px; }
-    .akkilover-msg { background: var(--bubble-akkilover); align-self: flex-end; border-bottom-right-radius: 4px; }
-    .other-msg { background: #fff; align-self: flex-start; }
-
-    .msg-media { max-width: 100%; border-radius: 8px; margin-top: 5px; }
-    .msg-audio { width: 100%; margin-top: 5px; }
-    .timestamp { font-size: 10px; opacity: 0.6; text-align: right; display: block; margin-top: 4px; }
-
-    #typing-indicator { font-size: 12px; font-style: italic; color: #555; padding: 0 16px 4px; height: 16px; }
-
-    /* INPUT BAR */
-    .input-container {
-      padding: 10px 12px; background: rgba(255, 255, 255, 0.95);
-      border-top: 1px solid rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 6px;
-    }
-    .input-row { display: flex; gap: 6px; align-items: center; }
-    input[type="text"], input[type="password"], textarea {
-      padding: 10px 14px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-size: 14px;
-    }
-    #message { flex: 1; }
-    .send-btn { background: #007bff; color: white; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-    
-    .media-btn { background: #edf2f7; border: none; font-size: 18px; padding: 8px 10px; border-radius: 50%; cursor: pointer; }
-    .rec-active { background: #e53e3e !important; color: white; }
-
-    /* TOAST ALERT BANNER */
-    #alert-toast {
-      display: none; position: absolute; top: 55px; left: 50%; transform: translateX(-50%);
-      background: #ff8c00; color: white; padding: 12px 20px; border-radius: 25px;
-      font-size: 14px; font-weight: bold; z-index: 150; box-shadow: 0 4px 15px rgba(0,0,0,0.25); text-align: center;
-      width: 85%;
-    }
-
-    emoji-picker { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 360px; height: 280px; display: none; z-index: 100; }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
-  <div id="login-screen">
-    <div class="login-box">
-      <h2 style="margin-bottom: 10px;">🔒 Private Chat</h2>
-      <input type="password" id="pass-input" placeholder="Enter Password..." style="width: 100%; margin-bottom: 12px;">
-      <button class="send-btn" style="width: 100%;" onclick="checkPassword()">Enter Chat</button>
+<div class="container">
+  <h2>Ambient Hub & Custom Alert System</h2>
+
+  <div class="controls-panel">
+    <!-- Category Selection (15 videos per section) -->
+    <div class="control-group">
+      <label for="categorySelect">Choose Theme (15 Videos, 5-min auto switch):</label>
+      <select id="categorySelect" onchange="changeCategory()">
+        <option value="space">Space</option>
+        <option value="cinematic">Cinematic</option>
+        <option value="love">Love</option>
+        <option value="rain">Rain</option>
+      </select>
+    </div>
+
+    <!-- 10 Background Music Track Options -->
+    <div class="control-group">
+      <label for="musicSelect">Background Music (10 Options):</label>
+      <select id="musicSelect" onchange="changeMusic()">
+        <option value="">-- Mute Music --</option>
+        <option value="music1.mp3">1. Soft Piano</option>
+        <option value="music2.mp3">2. Gentle Rain Ambience</option>
+        <option value="music3.mp3">3. Cinematic Strings</option>
+        <option value="music4.mp3">4. Space Soundscape</option>
+        <option value="music5.mp3">5. Romantic Guitar</option>
+        <option value="music6.mp3">6. Deep Chill Lofi</option>
+        <option value="music7.mp3">7. Acoustic Medley</option>
+        <option value="music8.mp3">8. Celestial Waves</option>
+        <option value="music9.mp3">9. Emotional Violin</option>
+        <option value="music10.mp3">10. Peaceful Meditation</option>
+      </select>
+    </div>
+
+    <!-- 5 Downloaded Alert Tones + Custom Audio Upload -->
+    <div class="control-group">
+      <label for="toneSelect">Select Alert Tone:</label>
+      <select id="toneSelect" onchange="updateAlertTone()">
+        <option value="alert1.mp3">Alert Tone 1</option>
+        <option value="alert2.mp3">Alert Tone 2</option>
+        <option value="alert3.mp3">Alert Tone 3</option>
+        <option value="alert4.mp3">Alert Tone 4</option>
+        <option value="alert5.mp3">Alert Tone 5</option>
+        <option value="custom">Upload New Tone...</option>
+      </select>
+
+      <!-- Hidden File Input for Custom Tone Upload -->
+      <input type="file" id="customToneInput" accept="audio/*" style="display: none;" onchange="handleCustomTone(event)">
+      <button onclick="playAlertTone()">Test Alert Tone</button>
     </div>
   </div>
 
-  <!-- CHAT SCREEN -->
-  <div id="chat-screen">
-    <div class="control-bar">
-      <div class="user-status-head">
-        <strong>Private Channel</strong>
-        <span class="status-badge" id="presence-text">Offline</span>
-      </div>
-      <div>
-        <button class="btn-icon" onclick="toggleSettings()">⚙️ Settings</button>
-      </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION -->
-    <div id="alert-toast">🔔 Nudge received!</div>
-
-    <!-- SETTINGS PANEL OVERLAY -->
-    <div id="settings-modal">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>⚙️ Settings & Nudge</h2>
-        <button class="btn-icon" onclick="toggleSettings()">Close ✖</button>
-      </div>
-
-      <!-- 1. ALERT NUDGE (MAX 50 WORDS) -->
-      <div class="settings-group">
-        <div class="settings-title">🚨 Send Talk Alert (Max 50 Words)</div>
-        <textarea id="nudge-text" rows="2" style="width:100%; border-radius:10px; margin-bottom:6px;" placeholder="Hey! Time to chat..."></textarea>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span id="word-count" style="font-size: 11px; color: #718096;">0 / 50 words</span>
-          <button class="send-btn" style="background: #ff8c00; font-size: 12px;" onclick="sendTalkAlert()">Send Alert Nudge</button>
-        </div>
-      </div>
-
-      <!-- 2. NOTIFICATIONS & ALERT INBOX -->
-      <div class="settings-group">
-        <div class="settings-title">📬 Alert Inbox</div>
-        <div id="alert-inbox" style="max-height: 100px; overflow-y: auto; font-size: 12px; color: #4a5568;">
-          No alerts received yet.
-        </div>
-      </div>
-
-      <!-- 3. VISIBILITY TOGGLES -->
-      <div class="settings-group">
-        <div class="settings-title">👁️ Presence Privacy</div>
-        <label style="display: block; font-size: 13px; margin-bottom: 6px;">
-          <input type="checkbox" id="toggle-online" checked onchange="updatePrivacySettings()"> Show My Online Status
-        </label>
-        <label style="display: block; font-size: 13px; margin-bottom: 6px;">
-          <input type="checkbox" id="toggle-lastseen" checked onchange="updatePrivacySettings()"> Show My Last Seen
-        </label>
-        <label style="display: block; font-size: 13px;">
-          <input type="checkbox" id="toggle-typing" checked onchange="updatePrivacySettings()"> Show Typing Indicator
-        </label>
-      </div>
-
-      <!-- 4. ALERT SOUND PICKER -->
-      <div class="settings-group">
-        <div class="settings-title">🔔 Alert Sound Tone</div>
-        <div style="display: flex; gap: 8px;">
-          <select id="sound-select" style="flex:1; padding: 6px; border-radius: 8px;">
-            <option value="chime">Gentle Chime</option>
-            <option value="bell">Digital Bell</option>
-            <option value="buzz">Soft Buzz</option>
-          </select>
-          <button class="btn-icon" onclick="previewSelectedSound()">▶ Test</button>
-        </div>
-      </div>
-
-      <!-- 5. CUSTOM CHAT WALLPAPER -->
-      <div class="settings-group">
-        <div class="settings-title">🎨 Chat Theme & Background</div>
-        <select id="theme-select" style="width:100%; padding: 6px; border-radius: 8px;" onchange="applyCustomTheme(this.value)">
-          <option value="default">Sunset Gradient (Default)</option>
-          <option value="dark">Dark Slate</option>
-          <option value="rose">Rose Romance</option>
-          <option value="ocean">Ocean Blue</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- CHAT MESSAGES -->
-    <div id="chat-box"></div>
-    <div id="typing-indicator"></div>
-
-    <!-- INPUT PANEL -->
-    <div class="input-container">
-      <emoji-picker id="picker"></emoji-picker>
-      
-      <div class="input-row">
-        <input type="text" id="username" placeholder="Secret Alias (akki or akkilover)..." style="width:100%;">
-      </div>
-
-      <div class="input-row">
-        <button class="media-btn" onclick="toggleEmojiPicker()">😊</button>
-        
-        <!-- FILE & PHOTO ATTACHMENT -->
-        <input type="file" id="file-input" style="display:none;" onchange="handleFileUpload(this)">
-        <button class="media-btn" onclick="document.getElementById('file-input').click()">📎</button>
-        
-        <!-- AUDIO VOICE NOTE -->
-        <button class="media-btn" id="record-btn" onclick="toggleAudioRecording()">🎙️</button>
-
-        <input type="text" id="message" placeholder="Type a message..." oninput="handleTyping()">
-        <button class="send-btn" onclick="sendMessage()">Send</button>
-      </div>
-    </div>
+  <!-- Main Video Player -->
+  <div class="video-container">
+    <video id="mainPlayer" autoplay muted loop playsinline></video>
   </div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<!-- Audio Player for Background Music -->
+<audio id="bgMusicPlayer" loop></audio>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
-      authDomain: "privatechat-8f1a8.firebaseapp.com",
-      databaseURL: "https://privatechat-8f1a8-default-rtdb.firebaseio.com",
-      projectId: "privatechat-8f1a8",
-      storageBucket: "privatechat-8f1a8.firebasestorage.app",
-      messagingSenderId: "873702558512",
-      appId: "1:873702558512:web:ee506e3f954d0d9e69d6f5"
-    };
+<script>
+  // Database of 15 videos per category
+  const videoData = {
+    space: [
+      "space1.mp4", "space2.mp4", "space3.mp4", "space4.mp4", "space5.mp4",
+      "space6.mp4", "space7.mp4", "space8.mp4", "space9.mp4", "space10.mp4",
+      "space11.mp4", "space12.mp4", "space13.mp4", "space14.mp4", "space15.mp4"
+    ],
+    cinematic: [
+      "cinematic1.mp4", "cinematic2.mp4", "cinematic3.mp4", "cinematic4.mp4", "cinematic5.mp4",
+      "cinematic6.mp4", "cinematic7.mp4", "cinematic8.mp4", "cinematic9.mp4", "cinematic10.mp4",
+      "cinematic11.mp4", "cinematic12.mp4", "cinematic13.mp4", "cinematic14.mp4", "cinematic15.mp4"
+    ],
+    love: [
+      "love1.mp4", "love2.mp4", "love3.mp4", "love4.mp4", "love5.mp4",
+      "love6.mp4", "love7.mp4", "love8.mp4", "love9.mp4", "love10.mp4",
+      "love11.mp4", "love12.mp4", "love13.mp4", "love14.mp4", "love15.mp4"
+    ],
+    rain: [
+      "rain1.mp4", "rain2.mp4", "rain3.mp4", "rain4.mp4", "rain5.mp4",
+      "rain6.mp4", "rain7.mp4", "rain8.mp4", "rain9.mp4", "rain10.mp4",
+      "rain11.mp4", "rain12.mp4", "rain13.mp4", "rain14.mp4", "rain15.mp4"
+    ]
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  let currentCategory = "space";
+  let currentVideoIndex = 0;
+  let rotationTimer = null;
 
-    const messagesRef = ref(db, "messages");
-    const typingRef = ref(db, "typing");
-    const alertRef = ref(db, "talkAlerts");
-    const presenceRef = ref(db, "presence");
+  const player = document.getElementById("mainPlayer");
+  const bgMusicPlayer = document.getElementById("bgMusicPlayer");
+  
+  // Set default initial tone to your first downloaded file
+  let alertAudio = new Audio("alert1.mp3");
 
-    const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
-    let typingTimeout = null;
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
+  // Load initial video
+  function loadVideo() {
+    const videoList = videoData[currentCategory];
+    player.src = videoList[currentVideoIndex];
+    player.play().catch(e => console.log("Autoplay check:", e));
+  }
 
-    // PASSWORD
-    window.checkPassword = function() {
-      const enteredPass = document.getElementById("pass-input").value.trim().toUpperCase();
-      if (enteredPass === SECRET_PASSWORD) {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("chat-screen").style.display = "flex";
-        setupPresence();
-      } else {
-        alert("Incorrect password!");
-      }
-    };
+  // 5-minute auto rotation logic (300,000 ms)
+  function startVideoRotation() {
+    if (rotationTimer) clearInterval(rotationTimer);
+    
+    rotationTimer = setInterval(() => {
+      currentVideoIndex = (currentVideoIndex + 1) % videoData[currentCategory].length;
+      loadVideo();
+    }, 5 * 60 * 1000); 
+  }
 
-    // SETTINGS MODAL TOGGLE
-    window.toggleSettings = function() {
-      const modal = document.getElementById("settings-modal");
-      modal.style.display = modal.style.display === "flex" ? "none" : "flex";
-    };
+  function changeCategory() {
+    currentCategory = document.getElementById("categorySelect").value;
+    currentVideoIndex = 0;
+    loadVideo();
+    startVideoRotation();
+  }
 
-    // PRIVACY & PRESENCE
-    function setupPresence() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      if (!user) return;
-
-      const userPresenceRef = ref(db, `presence/${user}`);
-      set(userPresenceRef, { state: "online", lastSeen: Date.now() });
-      onDisconnect(userPresenceRef).set({ state: "offline", lastSeen: Date.now() });
+  // Music Player logic
+  function changeMusic() {
+    const musicSrc = document.getElementById("musicSelect").value;
+    if (musicSrc) {
+      bgMusicPlayer.src = musicSrc;
+      bgMusicPlayer.play().catch(e => console.log("Music play blocked:", e));
+    } else {
+      bgMusicPlayer.pause();
     }
+  }
 
-    onValue(presenceRef, (snapshot) => {
-      const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim().toLowerCase();
-      const presenceText = document.getElementById("presence-text");
-
-      if (!data) return;
-      const otherUser = currentUser === "akki" ? "akkilover" : "akki";
-      
-      if (data[otherUser]) {
-        const info = data[otherUser];
-        if (info.state === "online") {
-          presenceText.innerText = `${otherUser} is Online`;
-          presenceText.style.color = "#28a745";
-        } else {
-          const time = new Date(info.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          presenceText.innerText = `${otherUser} Last seen at ${time}`;
-          presenceText.style.color = "#718096";
-        }
-      }
-    });
-
-    window.updatePrivacySettings = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const showOnline = document.getElementById("toggle-online").checked;
-      if (user) {
-        set(ref(db, `presence/${user}/state`), showOnline ? "online" : "hidden");
-      }
-    };
-
-    // TALK ALERT NUDGE (MAX 50 WORDS)
-    const nudgeInput = document.getElementById("nudge-text");
-    nudgeInput.addEventListener("input", () => {
-      const words = nudgeInput.value.trim().split(/\s+/).filter(w => w.length > 0);
-      document.getElementById("word-count").innerText = `${words.length} / 50 words`;
-      if (words.length > 50) {
-        alert("Alert message cannot exceed 50 words!");
-      }
-    });
-
-    window.sendTalkAlert = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const text = nudgeInput.value.trim();
-      const words = text.split(/\s+/).filter(w => w.length > 0);
-
-      if (user !== "akki" && user !== "akkilover") {
-        alert("Please set your secret alias first!");
-        return;
-      }
-      if (words.length > 50) {
-        alert("Please keep your alert under 50 words.");
-        return;
-      }
-
-      push(alertRef, {
-        sender: user,
-        message: text || "Time to chat!",
-        timestamp: Date.now()
-      });
-
-      nudgeInput.value = "";
-      alert("Talk alert sent successfully!");
-    };
-
-    // LISTEN FOR TALK ALERTS
-    onChildAdded(alertRef, (snapshot) => {
-      const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim().toLowerCase();
-
-      // Add to Inbox Feed
-      const inbox = document.getElementById("alert-inbox");
-      const alertItem = document.createElement("div");
-      alertItem.style.margin = "4px 0";
-      alertItem.innerText = `🔔 [${new Date(data.timestamp).toLocaleTimeString()}] ${data.sender}: ${data.message}`;
-      inbox.prepend(alertItem);
-
-      if (data.sender !== currentUser && currentUser !== "") {
-        playAlertSound();
-        const toast = document.getElementById("alert-toast");
-        toast.innerText = `🔔 Alert from ${data.sender}: ${data.message}`;
-        toast.style.display = "block";
-        setTimeout(() => toast.style.display = "none", 4000);
-      }
-    });
-
-    // SOUND GENERATOR
-    window.previewSelectedSound = function() { playAlertSound(); };
-
-    function playAlertSound() {
-      const soundType = document.getElementById("sound-select").value;
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        let freq1 = 587.33, freq2 = 880;
-        if (soundType === "bell") { freq1 = 800; freq2 = 1200; }
-        if (soundType === "buzz") { freq1 = 300; freq2 = 450; osc.type = 'sawtooth'; }
-
-        osc.frequency.setValueAtTime(freq1, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.6);
-      } catch (e) { console.log(e); }
+  // Alert Tone Logic
+  function updateAlertTone() {
+    const select = document.getElementById("toneSelect");
+    if (select.value === "custom") {
+      document.getElementById("customToneInput").click();
+    } else {
+      alertAudio.src = select.value;
     }
+  }
 
-    // THEME SELECTION
-    window.applyCustomTheme = function(theme) {
-      if (theme === "dark") {
-        document.body.style.background = "#1a202c";
-        document.documentElement.style.setProperty('--chat-bg', 'rgba(45, 55, 72, 0.95)');
-      } else if (theme === "rose") {
-        document.body.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
-        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.9)');
-      } else if (theme === "ocean") {
-        document.body.style.background = "linear-gradient(135deg, #2b5876 0%, #4e4376 100%)";
-        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.9)');
-      } else {
-        document.body.style.background = "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)";
-        document.documentElement.style.setProperty('--chat-bg', 'rgba(255, 255, 255, 0.88)');
-      }
-    };
-
-    // AUDIO VOICE NOTES
-    window.toggleAudioRecording = async function() {
-      const recBtn = document.getElementById("record-btn");
-      if (!isRecording) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          audioChunks = [];
-          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-          mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = () => sendMediaMessage(reader.result, "audio");
-          };
-          mediaRecorder.start();
-          isRecording = true;
-          recBtn.classList.add("rec-active");
-        } catch (err) { alert("Microphone access denied!"); }
-      } else {
-        mediaRecorder.stop();
-        isRecording = false;
-        recBtn.classList.remove("rec-active");
-      }
-    };
-
-    // FILE ATTACHMENTS
-    window.handleFileUpload = function(input) {
-      const file = input.files[0];
-      if (!file) return;
-      if (file.size > 3 * 1024 * 1024) {
-        alert("Please select files under 3MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const type = file.type.startsWith("image/") ? "image" : "file";
-        sendMediaMessage(reader.result, type, file.name);
-      };
-    };
-
-    function sendMediaMessage(dataUrl, mediaType, fileName = "") {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      if (!user) { alert("Enter alias first!"); return; }
-
-      push(messagesRef, {
-        user: user,
-        media: dataUrl,
-        mediaType: mediaType,
-        fileName: fileName,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
+  function handleCustomTone(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const customUrl = URL.createObjectURL(file);
+      alertAudio.src = customUrl;
     }
+  }
 
-    // TEXT MESSAGING & TYPING
-    window.handleTyping = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const allowTyping = document.getElementById("toggle-typing").checked;
-      if (!user || !allowTyping) return;
+  function playAlertTone() {
+    alertAudio.currentTime = 0;
+    alertAudio.play().catch(err => console.log("Audio play blocked:", err));
+  }
 
-      set(typingRef, { user: user, isTyping: true });
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => set(typingRef, { user: user, isTyping: false }), 2000);
-    };
+  // Initialize
+  loadVideo();
+  startVideoRotation();
+</script>
 
-    onValue(typingRef, (snapshot) => {
-      const data = snapshot.val();
-      const currentUser = document.getElementById("username").value.trim().toLowerCase();
-      const typingDiv = document.getElementById("typing-indicator");
-
-      if (data && data.isTyping && data.user !== currentUser) {
-        typingDiv.innerText = `${data.user} is typing...`;
-      } else { typingDiv.innerText = ""; }
-    });
-
-    window.sendMessage = function() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const text = document.getElementById("message").value.trim();
-
-      if (user !== "akki" && user !== "akkilover") {
-        alert("Alias must be 'akki' or 'akkilover'"); return;
-      }
-      if (!text) return;
-
-      push(messagesRef, {
-        user: user,
-        text: text,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-
-      document.getElementById("message").value = "";
-      document.getElementById('picker').style.display = 'none';
-      set(typingRef, { user: user, isTyping: false });
-    };
-
-    onChildAdded(messagesRef, (snapshot) => {
-      const data = snapshot.val();
-      const userLower = data.user ? data.user.toLowerCase() : '';
-      const chatBox = document.getElementById("chat-box");
-      const msgDiv = document.createElement("div");
-
-      msgDiv.className = `message ${userLower}-msg`;
-
-      let content = `<strong>${data.user}:</strong> `;
-      if (data.text) content += data.text;
-      
-      if (data.mediaType === "image") {
-        content += `<br><img src="${data.media}" class="msg-media">`;
-      } else if (data.mediaType === "audio") {
-        content += `<br><audio controls src="${data.media}" class="msg-audio"></audio>`;
-      } else if (data.mediaType === "file") {
-        content += `<br><a href="${data.media}" download="${data.fileName}" style="color:#007bff;">📁 ${data.fileName}</a>`;
-      }
-
-      content += `<span class="timestamp">${data.time || ''}</span>`;
-      msgDiv.innerHTML = content;
-
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-
-    // EMOJI PICKER TOGGLE
-    const picker = document.getElementById('picker');
-    picker.addEventListener('emoji-click', event => {
-      document.getElementById("message").value += event.detail.unicode;
-    });
-    window.toggleEmojiPicker = function() {
-      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
-    };
-  </script>
 </body>
 </html>
