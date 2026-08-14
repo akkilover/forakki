@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Chat</title>
 
-  <!-- Emoji Picker -->
+  <!-- Emoji Picker Component -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
@@ -30,7 +28,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* BACKGROUND VIDEO */
     #bg-video {
       position: fixed;
       right: 0;
@@ -43,7 +40,6 @@
       display: none;
     }
 
-    /* LOGIN SCREEN */
     #login-screen {
       background: rgba(255, 255, 255, 0.92);
       padding: 20px;
@@ -54,7 +50,6 @@
       backdrop-filter: blur(8px);
     }
 
-    /* CHAT SCREEN */
     #chat-screen {
       display: none;
       background: rgba(255, 255, 255, 0.92);
@@ -126,30 +121,12 @@
       color: #222;
     }
 
-    .akki-msg {
-      background: #dff5ff;
-      margin-right: auto;
-    }
+    .akki-msg { background: #dff5ff; margin-right: auto; }
+    .akkilover-msg { background: #fff4a3; margin-left: auto; }
+    .other-msg { background: #e9e9eb; margin-right: auto; }
 
-    .akkilover-msg {
-      background: #fff4a3;
-      margin-left: auto;
-    }
-
-    .other-msg {
-      background: #e9e9eb;
-      margin-right: auto;
-    }
-
-    .akki-name {
-      color: #007bff;
-      font-weight: bold;
-    }
-
-    .akkilover-name {
-      color: #d4a900;
-      font-weight: bold;
-    }
+    .akki-name { color: #007bff; font-weight: bold; }
+    .akkilover-name { color: #d4a900; font-weight: bold; }
 
     .timestamp {
       font-size: 10px;
@@ -157,11 +134,6 @@
       margin-top: 4px;
       text-align: right;
       display: block;
-    }
-
-    .message-status {
-      font-size: 10px;
-      margin-left: 5px;
     }
 
     #typing-indicator {
@@ -192,9 +164,7 @@
       font-family: Arial, sans-serif;
     }
 
-    #message {
-      flex: 1;
-    }
+    #message { flex: 1; }
 
     button {
       padding: 10px 14px;
@@ -205,17 +175,10 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #0056b3;
-    }
+    button:hover { background: #0056b3; }
 
-    .gray-button {
-      background: #6c757d;
-    }
-
-    .gray-button:hover {
-      background: #545b62;
-    }
+    .gray-button { background: #6c757d; }
+    .gray-button:hover { background: #545b62; }
 
     .notify-section {
       margin-top: 10px;
@@ -239,10 +202,7 @@
       margin-top: 5px;
     }
 
-    .word-counter {
-      font-size: 11px;
-      color: #666;
-    }
+    .word-counter { font-size: 11px; color: #666; }
 
     emoji-picker {
       position: absolute;
@@ -254,7 +214,6 @@
       --category-emoji-size: 1.125rem;
     }
 
-    /* SETTINGS MODAL */
     #settings-modal {
       position: fixed;
       inset: 0;
@@ -284,17 +243,8 @@
       margin-bottom: 15px;
     }
 
-    .settings-header h2 {
-      margin: 0;
-    }
-
-    .settings-group-title {
-      font-size: 15px;
-      font-weight: bold;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      color: #333;
-    }
+    .settings-header h2 { margin: 0; }
+    .settings-group-title { font-size: 15px; font-weight: bold; margin-top: 15px; margin-bottom: 5px; color: #333; }
 
     .setting-row {
       display: flex;
@@ -305,31 +255,12 @@
       border-bottom: 1px solid #eee;
     }
 
-    .setting-info {
-      flex: 1;
-    }
+    .setting-info { flex: 1; }
+    .setting-name { font-weight: bold; font-size: 14px; }
+    .setting-description { font-size: 11px; color: #777; margin-top: 3px; }
+    .setting-row input[type="checkbox"] { width: 20px; height: 20px; }
+    .close-settings { background: #dc3545; }
 
-    .setting-name {
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .setting-description {
-      font-size: 11px;
-      color: #777;
-      margin-top: 3px;
-    }
-
-    .setting-row input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-    }
-
-    .close-settings {
-      background: #dc3545;
-    }
-
-    /* NOTIFICATION POPUP */
     #notify-popup {
       position: fixed;
       top: 20px;
@@ -349,34 +280,23 @@
       to { transform: translateX(0); }
     }
 
-    .popup-title {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .popup-message {
-      font-size: 14px;
-      color: #444;
-    }
+    .popup-title { font-weight: bold; margin-bottom: 5px; }
+    .popup-message { font-size: 14px; color: #444; }
   </style>
 </head>
 
 <body>
 
-  <!-- BACKGROUND VIDEO -->
   <video autoplay muted playsinline id="bg-video">
     <source id="video-source" src="" type="video/mp4">
   </video>
 
-  <!-- MUSIC -->
   <audio id="bg-music">
     <source id="music-source" src="music1.mp4" type="audio/mp4">
   </audio>
 
-  <!-- ALERT SOUND -->
   <audio id="alert-audio"></audio>
 
-  <!-- LOGIN SCREEN -->
   <div id="login-screen">
     <h2>🔒 Protected Chat</h2>
     <p>Enter the secret password to join:</p>
@@ -386,7 +306,6 @@
     </div>
   </div>
 
-  <!-- CHAT SCREEN -->
   <div id="chat-screen">
     <div class="control-bar">
       <div>
@@ -406,11 +325,9 @@
       </div>
     </div>
 
-    <!-- CHAT BOX -->
     <div id="chat-box"></div>
     <div id="typing-indicator"></div>
 
-    <!-- NOTIFY SECTION -->
     <div class="notify-section">
       <strong>🔔 Notify</strong>
       <textarea id="notify-text" maxlength="500" placeholder="Write something to notify the other person..."></textarea>
@@ -420,7 +337,6 @@
       </div>
     </div>
 
-    <!-- MESSAGE INPUT -->
     <div class="input-container">
       <emoji-picker id="picker"></emoji-picker>
 
@@ -437,7 +353,6 @@
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
   <div id="settings-modal">
     <div class="settings-box">
       <div class="settings-header">
@@ -516,14 +431,19 @@
     </div>
   </div>
 
-  <!-- NOTIFICATION POPUP -->
   <div id="notify-popup">
     <div class="popup-title" id="popup-title"></div>
     <div class="popup-message" id="popup-message"></div>
   </div>
 
-  <!-- NON-MODULE JAVASCRIPT HELPERS -->
   <script>
+    // Fallback place-holders before Module Script finishes loading
+    window.changeSetting = function() {};
+    window.sendMessage = function() {};
+    window.handleTyping = function() {};
+    window.sendNotify = function() {};
+    window.checkPassword = function() {};
+
     const videoThemes = {
       default: [],
       space: Array.from({length: 15}, (_, i) => `s${i + 1}.mp4`),
@@ -606,12 +526,15 @@
       document.getElementById("message").value += event.detail.unicode;
     });
 
+    /* FIXED: Allows proper spacebar entry without stripping spaces instantly */
     document.getElementById("notify-text").addEventListener("input", function() {
-      let text = this.value.trim();
-      let words = text ? text.split(/\s+/) : [];
+      let rawText = this.value;
+      let words = rawText.trim() ? rawText.trim().split(/\s+/) : [];
+      
       if (words.length > 50) {
-        words = words.slice(0, 50);
-        this.value = words.join(" ");
+        let allowed = rawText.split(/\s+/).slice(0, 50).join(" ");
+        this.value = allowed;
+        words = allowed.trim().split(/\s+/);
       }
       document.getElementById("notify-counter").textContent = words.length + " / 50 words";
     });
@@ -710,12 +633,16 @@
       popup.style.display = "block";
       setTimeout(() => { popup.style.display = "none"; }, 5000);
     }
+
+    // Allow Enter key to login
+    document.getElementById("pass-input").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") window.checkPassword();
+    });
   </script>
 
-  <!-- FIREBASE ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, onValue, set, update, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, onValue, set, remove, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAVmzfXqyT_oZaqOyYlM7rvi-PyOyiP_bA",
@@ -733,9 +660,15 @@
     const SECRET_PASSWORD = "AKKISOMEONELOVESYOU";
     window.currentUser = "";
     let typingTimeout = null;
+    let isInitialLoad = true;
+
+    /* Normalize string values safely */
+    function normalizeUser(name) {
+      return (name || "").toString().trim().toLowerCase();
+    }
 
     function getOtherUser() {
-      return window.currentUser === "akki" ? "akkilover" : "akki";
+      return normalizeUser(window.currentUser) === "akki" ? "akkilover" : "akki";
     }
 
     window.changeSetting = function(name, value) {
@@ -744,7 +677,7 @@
       saveSettings(settings);
 
       if (window.currentUser) {
-        set(ref(database, "users/" + window.currentUser + "/settings/" + name), value);
+        set(ref(database, "users/" + normalizeUser(window.currentUser) + "/settings/" + name), value);
       }
     };
 
@@ -757,7 +690,7 @@
       }
 
       let username = prompt("Enter your username:\n\nAkki\nor\nAkkilover");
-      username = (username || "").trim().toLowerCase();
+      username = normalizeUser(username);
 
       if (username !== "akki" && username !== "akkilover") {
         alert("Only Akki or Akkilover are allowed.");
@@ -765,13 +698,14 @@
       }
 
       window.currentUser = username;
+      isInitialLoad = true;
 
       document.getElementById("login-screen").style.display = "none";
       document.getElementById("chat-screen").style.display = "block";
 
       const userLabel = document.getElementById("current-user");
-      userLabel.textContent = window.currentUser === "akki" ? "Akki" : "Akkilover";
-      userLabel.className = window.currentUser === "akki" ? "akki-name" : "akkilover-name";
+      userLabel.textContent = username === "akki" ? "Akki" : "Akkilover";
+      userLabel.className = username === "akki" ? "akki-name" : "akkilover-name";
 
       loadSettingsFromFirebase();
       startPresence();
@@ -783,7 +717,7 @@
     };
 
     function loadSettingsFromFirebase() {
-      const settingsRef = ref(database, "users/" + window.currentUser + "/settings");
+      const settingsRef = ref(database, "users/" + normalizeUser(window.currentUser) + "/settings");
       onValue(settingsRef, snapshot => {
         const remote = snapshot.val();
         if (remote) {
@@ -794,7 +728,8 @@
     }
 
     function startPresence() {
-      const presenceRef = ref(database, "presence/" + window.currentUser);
+      const userKey = normalizeUser(window.currentUser);
+      const presenceRef = ref(database, "presence/" + userKey);
       set(presenceRef, { online: true, lastSeen: serverTimestamp() });
       onDisconnect(presenceRef).set({ online: false, lastSeen: serverTimestamp() });
 
@@ -818,28 +753,39 @@
 
     function setupMessages() {
       const messagesRef = ref(database, "messages");
+
+      /* Silent history load */
+      onValue(messagesRef, () => {
+        setTimeout(() => { isInitialLoad = false; }, 1000);
+      }, { onlyOnce: true });
+
       onChildAdded(messagesRef, snapshot => {
-        const data = snapshot.val();
-        displayMessage(data);
+        displayMessage(snapshot.val());
       });
     }
 
     function displayMessage(data) {
+      if (!data || !data.text) return;
+
       const chatBox = document.getElementById("chat-box");
       const msgDiv = document.createElement("div");
       
+      const sender = normalizeUser(data.sender);
+      const myUser = normalizeUser(window.currentUser);
+
       let classType = "other-msg";
-      if (data.sender === window.currentUser) {
-        classType = window.currentUser === "akki" ? "akki-msg" : "akkilover-msg";
-      } else {
-        classType = data.sender === "akki" ? "akki-msg" : "akkilover-msg";
+      if (sender === "akki") {
+        classType = "akki-msg";
+      } else if (sender === "akkilover") {
+        classType = "akkilover-msg";
       }
 
       msgDiv.className = "message " + classType;
 
+      const displayName = sender === "akki" ? "Akki" : (sender === "akkilover" ? "Akkilover" : sender);
       const nameSpan = document.createElement("span");
-      nameSpan.className = data.sender === "akki" ? "akki-name" : "akkilover-name";
-      nameSpan.textContent = (data.sender === "akki" ? "Akki" : "Akkilover") + ": ";
+      nameSpan.className = sender === "akki" ? "akki-name" : "akkilover-name";
+      nameSpan.textContent = displayName + ": ";
 
       const textNode = document.createTextNode(data.text);
       
@@ -855,11 +801,12 @@
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      if (data.sender !== window.currentUser) {
+      /* Only trigger notification for live new messages from the other user */
+      if (!isInitialLoad && sender !== myUser) {
         const settings = getSettings();
         if (settings.messageNotifications) {
           playAlertSound(settings.alertSound);
-          showBrowserNotification(data.sender, data.text);
+          showBrowserNotification(displayName, data.text);
         }
       }
     }
@@ -870,20 +817,20 @@
       if (!text) return;
 
       push(ref(database, "messages"), {
-        sender: window.currentUser,
+        sender: normalizeUser(window.currentUser),
         text: text,
         timestamp: serverTimestamp()
       });
 
       input.value = "";
-      set(ref(database, "typing/" + window.currentUser), false);
+      set(ref(database, "typing/" + normalizeUser(window.currentUser)), false);
     };
 
     window.handleTyping = function() {
-      set(ref(database, "typing/" + window.currentUser), true);
+      set(ref(database, "typing/" + normalizeUser(window.currentUser)), true);
       clearTimeout(typingTimeout);
       typingTimeout = setTimeout(() => {
-        set(ref(database, "typing/" + window.currentUser), false);
+        set(ref(database, "typing/" + normalizeUser(window.currentUser)), false);
       }, 2000);
     };
 
@@ -892,7 +839,8 @@
       onValue(otherTyping, snapshot => {
         const isTyping = snapshot.val();
         const indicator = document.getElementById("typing-indicator");
-        indicator.textContent = isTyping ? (getOtherUser() === "akki" ? "Akki" : "Akkilover") + " is typing..." : "";
+        const otherDisplayName = getOtherUser() === "akki" ? "Akki" : "Akkilover";
+        indicator.textContent = isTyping ? (otherDisplayName + " is typing...") : "";
       });
     }
 
@@ -902,7 +850,7 @@
       if (!text) return;
 
       set(ref(database, "notifications/" + getOtherUser()), {
-        sender: window.currentUser,
+        sender: normalizeUser(window.currentUser),
         text: text,
         timestamp: serverTimestamp()
       });
@@ -913,15 +861,21 @@
     };
 
     function setupNotifications() {
-      const myNotifyRef = ref(database, "notifications/" + window.currentUser);
+      const myNotifyRef = ref(database, "notifications/" + normalizeUser(window.currentUser));
       onValue(myNotifyRef, snapshot => {
         const data = snapshot.val();
         if (data && data.text) {
-          const senderName = data.sender === "akki" ? "Akki" : "Akkilover";
+          const senderKey = normalizeUser(data.sender);
+          const senderName = senderKey === "akki" ? "Akki" : "Akkilover";
+
           showNotifyPopup("🔔 " + senderName, data.text);
+
           const settings = getSettings();
           playAlertSound(settings.alertSound);
           showBrowserNotification("🔔 " + senderName, data.text);
+
+          // Clear notification once displayed
+          remove(myNotifyRef);
         }
       });
     }
